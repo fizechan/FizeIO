@@ -1,2 +1,2 @@
 # FizeIO
-common input / output libraries, produced by FizeChan.
+common input/output libraries, produced by FizeChan.

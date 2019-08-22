@@ -1,0 +1,182 @@
+<?php
+
+namespace fize\io;
+
+/**
+ * 缓冲区管理类
+ */
+class Ob
+{
+
+    /**
+     * 禁止实例化
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * 丢弃输出缓冲区中的内容。
+     * 此方法不会销毁输出缓冲区
+     */
+    public static function clean()
+    {
+        ob_clean();
+    }
+
+    /**
+     * 清空（擦除）缓冲区并关闭输出缓冲
+     * @return bool 成功时返回TRUE， 或者在失败时返回FALSE。
+     */
+    public static function endClean()
+    {
+        return ob_end_clean();
+    }
+
+    /**
+     * 输出缓冲区内容并关闭缓冲
+     * @return bool 成功时返回TRUE， 或者在失败时返回FALSE。
+     */
+    public static function endFlush()
+    {
+        return ob_end_flush();
+    }
+
+    /**
+     * 输出缓冲区中的内容
+     */
+    public static function flush()
+    {
+        flush();
+        ob_flush();
+    }
+
+    /**
+     * 得到当前缓冲区的内容并删除当前输出缓冲区。
+     * @return string 当前缓冲区的内容
+     */
+    public static function getClean()
+    {
+        return ob_get_clean();
+    }
+
+    /**
+     * 返回输出缓冲区的内容
+     * @return string 如果输出缓冲区无效将返回FALSE。
+     */
+    public static function getContents()
+    {
+        return ob_get_contents();
+    }
+
+    /**
+     * 输出缓冲区内容，以字符串形式返回内容，并关闭输出缓冲区。
+     * @return string 如果没有起作用的输出缓冲区，返回FALSE。
+     */
+    public static function getFlush()
+    {
+        return ob_get_flush();
+    }
+
+    /**
+     * 返回输出缓冲区内容的长度
+     * @return int
+     */
+    public static function getLength()
+    {
+        return ob_get_length();
+    }
+
+    /**
+     * 返回输出缓冲机制的嵌套级别
+     * @return int 如果输出缓冲区不起作用，返回0。
+     */
+    public static function getLevel()
+    {
+        return ob_get_level();
+    }
+
+    /**
+     * 返回最顶层输出缓冲区的状态信息；或者如果full_status设为TRUE，返回所有有效的输出缓冲级别。
+     * @param boolean $full_status 设为TRUE 返回所有有效的输出缓冲区级别的状态信息。如果设为 FALSE 或者没有设置，仅返回最 顶层输出缓冲区的状态信息。
+     * @return array
+     */
+    public static function getStatus($full_status = false)
+    {
+        return ob_get_status($full_status);
+    }
+
+    /**
+     * 在ob_start中使用的用来压缩输出缓冲区中内容的回调函数
+     * 注：为讲过手动调用该方法的情况
+     * @param string $buffer 待输出缓冲区内容
+     * @param int $mode 指定模式
+     * @return string 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
+     */
+    public static function gzhandler($buffer, $mode)
+    {
+        return ob_gzhandler($buffer, $mode);
+    }
+
+    /**
+     * 打开/关闭绝对刷送
+     * 绝对（隐式）刷送将导致在每次输出调用后有一次刷送操作，以便不再需要对 flush() 的显式调用
+     * @param boolean $flag 设为TRUE 打开绝对刷送，反之是 FALSE。
+     */
+    public static function implicitFlush($flag = true)
+    {
+        ob_implicit_flush($flag);
+    }
+
+    /**
+     * 列出所有使用中的输出处理程序。
+     * @return array
+     */
+    public static function listHandlers()
+    {
+        return ob_list_handlers();
+    }
+
+    /**
+     * 打开输出控制缓冲
+     * @param callable $output_callback 缓冲区内容发生变化时的回调函数
+     * @param int $chunk_size 缓冲区大小，默认0表示函数仅在最后被调用
+     * @param boolean $erase 如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
+     * @return boolean
+     */
+    public static function start(callable $output_callback = null, $chunk_size = 0, $erase = true)
+    {
+        return ob_start($output_callback, $chunk_size, $erase);
+    }
+
+    /**
+     * 以输出缓冲处理程序转换字符编码
+     * @param string $contents 内容
+     * @param int $status 状态码
+     * @return string
+     */
+    public static function iconvHandler($contents, $status)
+    {
+        return ob_iconv_handler($contents, $status);
+    }
+
+    /**
+     * 添加URL重写器的值
+     * @param string $name 变量名。
+     * @param string $value 变量值。
+     * @return bool
+     */
+    public static function outputAddRewriteVar($name, $value)
+    {
+        return output_add_rewrite_var($name, $value);
+    }
+
+    /**
+     * 重设URL重写器的值
+     * @return bool
+     */
+    public static function outputResetRewriteVars()
+    {
+        return output_reset_rewrite_vars();
+    }
+}

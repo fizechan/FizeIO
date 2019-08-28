@@ -9,8 +9,11 @@
         }
     ],
     "require": {
-		"php": ">=7.0.0"
-	},
+		"php": ">=5.4.0",
+        "ext-zlib": "*",
+        "ext-iconv": "*",
+        "ext-fileinfo": "*"
+    },
 	"autoload": {
         "psr-4": {
             "fize\\io\\": "src"

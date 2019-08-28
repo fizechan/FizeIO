@@ -7,6 +7,7 @@ use Directory as Dir;
 
 /**
  * 目录操作类
+ * @package fize\io
  */
 class Directory
 {
@@ -15,35 +16,26 @@ class Directory
      * 当前目录路径
      * @var string
      */
-    private $_path = '';
-
-    /**
-     * 当前Directory实例
-     * @var Dir
-     */
-    private $_directory = null;
+    private $path = '';
 
     /**
      * 当前目录句柄
      * @var resource
      */
-    private $_handle = null;
+    private $handle = null;
 
     /**
      * 构造函数
      * @param string $path 指定目录路径
-     * @param bool $auto_build 如果指定路径不存在，是否自动创建
-     * @param bool $handle 是否创建句柄，默认true，注意在本处创建句柄后当前工作目录将相应跟随
+     * @param bool $auto_build 指定的路径不存在时创建
      */
-    public function __construct($path, $auto_build = false, $handle = true)
+    public function __construct($path, $auto_build = false)
     {
+        $this->path = $path;
         if ($auto_build) {
-            $this->makeDir($path);
+            self::mk($path);
         }
-        $this->_path = $path;
-        if ($handle) {
-            $this->changeTo($path, true);
-        }
+        self::ch($path);
     }
 
     /**
@@ -51,36 +43,44 @@ class Directory
      */
     public function __destruct()
     {
-        if ($this->_handle) {
-            $this->close();
-        }
+        $this->close();
     }
 
     /**
-     * 创建目录,可递归创建多层目录
+     * 获取当前的Directory对象
+     * @param string $path 指定目录路径
+     * @return Dir
+     * @deprecated 本类已实现了全部的功能，无需再引入系统的Directory类，后续可能删除该接口
+     */
+    public static function dir($path)
+    {
+        $directory = dir($path);
+        return $directory;
+    }
+
+    /**
+     * 创建目录
      * @param string $path 要创建的目录，已存在则不进行处理
+     * @param int $mode 权限
+     * @param bool $recursive 是否可递归创建多层目录
      * @return bool
      */
-    private function makeDir($path)
+    public static function mk($path, $mode = 0777, $recursive = true)
     {
         if (is_dir($path)) {
             return true;
         } else {
-            return mkdir($path, 0777, true);
+            return mkdir($path, $mode, $recursive);
         }
     }
 
     /**
-     * 打开指定目录，返回Dir实例
+     * 打开指定目录
      * @param string $path 指定目录
-     * @return Dir
      */
     public function open($path)
     {
-        $this->_handle = opendir($path);
-        $directory = dir($path);
-        $this->_directory = $directory;
-        return $directory;
+        $this->handle = opendir($path);
     }
 
     /**
@@ -88,52 +88,35 @@ class Directory
      */
     public function close()
     {
-        closedir($this->_handle);
-        $this->_handle = null;
-    }
-
-    /**
-     * 获取当前的Directory对象
-     * @return Dir
-     */
-    public function getDirectory()
-    {
-        return $this->_directory;
+        if ($this->handle) {
+            closedir($this->handle);
+        }
+        $this->handle = null;
     }
 
     /**
      * 改变当前目录
      * @param string $path 指定目录
-     * @param bool $handle 是否为目标目录创建句柄，默认true
      * @return bool 如果指定目录不存在也返回false
      */
-    public function changeTo($path, $handle = true)
+    public static function ch($path)
     {
-        $this->makeDir($this->_path);
         if (!is_dir($path)) {
             return false;
         }
-        if ($handle) {
-            if ($this->_handle) {
-                $this->close();
-            }
-            $this->open($path);
-        }
-        $this->_path = $path;
         return chdir($path);
     }
 
     /**
      * 改变根目录
+     * @notice 本函数仅在系统支持且运行于 CLI，CGI 或嵌入 SAPI 版本时才能正确工作。此外本函数还需要 root 权限。
+     * @notice 此函数未在 Windows 平台下实现，故也返回false
      * @param string $path 指定目录
-     * @return bool 此函数未在 Windows 平台下实现，故也返回false
+     * @return bool
      */
-    public static function changeRoot($path)
+    public static function chroot($path)
     {
         if (!function_exists('chroot')) {
-
-            dirname(__FILE__); //当前文件路径
-
             return false;
         }
         return chroot($path);
@@ -143,7 +126,7 @@ class Directory
      * 取得当前工作目录
      * @return string
      */
-    public static function getCWD()
+    public static function getcwd()
     {
         return getcwd();
     }
@@ -151,11 +134,11 @@ class Directory
     /**
      * 遍历当前目录的文件条目
      * @param callable $func 遍历函数，参数($file);$file:
-     * @param bool $filter_base 是否剔除.和..，默认true
+     * @param bool $filter_base 是否剔除.和..
      */
-    public function read(callable $func, $filter_base = true)
+    public function read(callable $func, $filter_base = false)
     {
-        while (($file = readdir($this->_handle)) !== false) {
+        while (($file = readdir($this->handle)) !== false) {
             if ($filter_base && ($file == "." || $file == "..")) {
                 continue;
             }
@@ -168,61 +151,60 @@ class Directory
      */
     public function rewind()
     {
-        rewinddir($this->_handle);
+        rewinddir($this->handle);
     }
 
     /**
      * 列出指定路径中的文件和目录 (含.和..)
+     * @param string $path 路径
      * @param int $sorting_order 排序
-     * @param string $path 指定相对于当前工作目录的路径，不指定则为当前目录下
      * @return array
      */
-    public function scan($sorting_order = 0, $path = null)
+    public static function scan($path, $sorting_order = 0)
     {
-        if ($path == null) {
-            $path = "./"; //未指定表示当前工作目录下
-        }
         $arr = scandir($path, $sorting_order);
         return $arr;
     }
 
     /**
-     * 在当前创建一个文件，返回结果
-     * @param string $name 不含路径的文件名
+     * 创建一个空文件
+     * @param string $name 文件路径
+     * @param bool $recursive 是否可递归创建多层目录
      * @return bool
      */
-    public function createFile($name)
+    public static function createFile($name, $recursive = false)
     {
+        if ($recursive) {
+            $dir = dirname($name);
+            self::mk($dir);
+        }
         return touch($name, time(), null);
     }
 
     /**
-     * 在本目录下新建目录
+     * 新建目录
      * @param string $name 新建目录名
      * @param int $mode 设置访问权
-     * @return bool
+     * @param bool $recursive 是否可递归创建多层目录
+     * @return bool 已有该目录则也返回true
      */
-    public function createDirectory($name, $mode = 0777)
+    public static function createDirectory($name, $mode = 0777, $recursive = false)
     {
-        if (is_dir($name)) { //已有该目录则直接返回true
-            return true;
-        }
-        return mkdir($name, $mode, true);
+        return self::mk($name, $mode, $recursive);
     }
 
     /**
-     * 删除当前目录下的指定文件
-     * 虽然该方法也可以用来删除文件夹，但不建议如此使用
-     * @param string $name 不含路径的文件名
-     * @return bool
+     * 删除指定文件
+     * @notice 虽然该方法也可以用来删除文件夹，但不建议如此使用
+     * @param string $name 文件路径
+     * @return bool 没有该文件则也返回true
      */
-    public function deleteFile($name)
+    public static function deleteFile($name)
     {
-        if (is_file($name)) {
-            return unlink($name);
-        } else {
-            return true; //没有该文件则返回true
+        if (!is_file($name)) {
+            return true;
         }
+        return unlink($name);
     }
 
     /**
@@ -230,62 +212,60 @@ class Directory
      * @param string $path 待删除目录路径
      * @return bool
      */
-    private function deleteDirectoryForce($path)
+    private static function deleteDirectoryForce($path)
     {
-        $handle = false;
-        if (is_dir($path)) {
-            $handle = opendir($path);
+        if (!is_dir($path)) {
+            return true;
         }
-        if ($handle) {
-            while (false !== ($item = readdir($handle))) { //删除文件夹内的文件及文件夹
-                clearstatcache();
-                if ($item != "." && $item != "..") {
-                    is_dir("{$path}/{$item}") ? $this->deleteDirectoryForce("{$path}/{$item}") : unlink("{$path}/{$item}");
+
+        //删除文件夹内的文件及文件夹
+        $handle = opendir($path);
+        while (false !== ($item = readdir($handle))) {
+            clearstatcache();
+            if ($item != "." && $item != "..") {
+                if (is_dir("{$path}/{$item}")) {
+                    self::deleteDirectoryForce("{$path}/{$item}");
+                } else {
+                    unlink("{$path}/{$item}");
                 }
             }
-            closedir($handle);
-            if($path == '.'){
-                return true;
-            }
-            return rmdir($path);
-        } else {
-            if (file_exists($path)) {
-                return unlink($path);
-            } else {
-                return false;
-            }
         }
+        closedir($handle);
+        if ($path == '.') {
+            return true;
+        }
+        return rmdir($path);
     }
 
     /**
-     * 删除当前目录下的指定文件夹
+     * 删除指定文件夹
      * @param string $name 要删除的目录名， 可以指定多级目录
      * @param bool $force 如果目录不为空时是否强制删除
      * @return bool
      */
-    public function deleteDirectory($name, $force = false)
+    public static function deleteDirectory($name, $force = false)
     {
         if (!is_dir($name)) {
             return true;
         }
         if ($force) {
-            return $this->deleteDirectoryForce($name);
+            return self::deleteDirectoryForce($name);
         } else {
             return rmdir($name);
         }
     }
 
     /**
-     * 清理当前文件夹，即删除里面的所有文件及文件夹
+     * 清理当前工作文件夹，即删除里面的所有文件及文件夹
+     * @return bool
      */
-    public function clear()
+    public static function clear()
     {
-        $this->deleteDirectoryForce('.');
+        return self::deleteDirectoryForce('.');
     }
 
     /**
      * 判断给定文件名是否是一个目录
-     * 注意当前工作目录的指向会影响相对路径
      * @param string $path 指定目录
      * @return bool
      */
@@ -295,13 +275,24 @@ class Directory
     }
 
     /**
-     * 在当前工作文件夹建立一个具有唯一文件名的文件，返回其文件名
+     * 在当前工作文件夹建立一个具有唯一文件名的文件
      * @param string $prefix 产生临时文件的前缀
-     * @return string
+     * @return string 返回其文件名
      */
     public static function createTempFile($prefix = '')
     {
-        $file = tempnam(getcwd(), $prefix);
+        $file = tempnam(self::getcwd(), $prefix);
         return $file;
+    }
+
+    /**
+     * 寻找与模式匹配的文件路径
+     * @param string $pattern 匹配模式
+     * @param int $flags 有效标识
+     * @return array
+     */
+    public static function glob($pattern, $flags = null)
+    {
+        return glob($pattern, $flags);
     }
 }

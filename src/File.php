@@ -7,22 +7,31 @@ use SplFileObject;
 
 /**
  * 文件操作类
- * @todo 未处理函数:glob,realpath_cache_get,realpath_cache_size,tmpfile.
+ * @todo 未处理函数:realpath_cache_get,realpath_cache_size,disk_free_space,disk_total_space .
+ * @package fize\io
  */
 class File extends SplFileObject
 {
 
     /**
-     * 当前文件完整路径
-     * @var string
+     * @var string 当前文件完整路径
      */
-    private $_path;
+    private $path;
 
     /**
-     * 当前文件句柄
-     * @var resource
+     * @var resource 当前文件句柄
      */
-    private $_resource;
+    private $resource;
+
+    /**
+     * @var bool 是否为单向通道
+     */
+    private $progress = false;
+
+    /**
+     * @var string 打开模式
+     */
+    private $mode;
 
     /**
      * 构造
@@ -31,39 +40,41 @@ class File extends SplFileObject
      */
     public function __construct($filename, $mode = 'r')
     {
-        $this->_path = $filename;
+        $this->path = $filename;
+        $this->mode = $mode;
         $auto_build = in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+']);
         if ($auto_build) {
-            $dir = dirname($this->_path);
-            new Directory($dir, true, false);
+            $dir = dirname($this->path);
+            Directory::createDirectory($dir, 0777, true);
             touch($filename);
         }
         parent::__construct($filename, $mode);
-        $this->open($mode);
     }
 
     /**
      * 改变当前文件所属的组
+     * 只有超级用户可以任意修改文件的组，其它用户可能只能将文件的组改成该用户自己所在的组。
      * @param mixed $group 组的名称或数字。
      * @return bool
      */
-    public function changeGroup($group)
+    public function chgrp($group)
     {
         if ($this->isLink()) {
-            return lchgrp($this->_path, $group);
+            return lchgrp($this->path, $group);
         } else {
-            return chgrp($this->_path, $group);
+            return chgrp($this->path, $group);
         }
     }
 
     /**
      * 改变当前文件模式
-     * @param int $mode 注意 mode 不会被自动当成八进制数值，而且也不能用字符串（例如 "g+w"）。要确保正确操作，需要给 mode 前面加上 0：
+     * @param int $mode 注意 mode 不会被自动当成八进制数值，而且也不能用字符串（例如 "g+w"）。要确保正确操作，需要给 mode 前面加上 0
      * @return bool
      */
-    public function changeMode($mode)
+    public function chmod($mode)
     {
-        return chmod($this->_path, $mode);
+        $this->mode = $mode;
+        return chmod($this->path, $mode);
     }
 
     /**
@@ -71,21 +82,21 @@ class File extends SplFileObject
      * @param mixed $user 用户名或数字。
      * @return bool
      */
-    public function changeOwner($user)
+    public function chown($user)
     {
         if ($this->isLink()) {
-            return lchown($this->_path, $user);
+            return lchown($this->path, $user);
         } else {
-            return chown($this->_path, $user);
+            return chown($this->path, $user);
         }
     }
 
     /**
      * 清除当前文件状态缓存
      */
-    public function clearStatCache()
+    public function clearstatcache()
     {
-        clearstatcache(true, $this->_path);
+        clearstatcache(true, $this->path);
     }
 
     /**
@@ -95,29 +106,29 @@ class File extends SplFileObject
      * @param bool $cover 如果指定文件存在，是否覆盖
      * @return bool
      */
-    public function copyTo($dest, $name = "", $cover = false)
+    public function copy($dest, $name = null, $cover = false)
     {
-        if (empty($name)) {
+        if (is_null($name)) {
             $name = $this->getBaseName();
         }
         $full_dest = $dest . "/" . $name;
-        if (!$cover && is_file($full_dest)) {
-            return false; //文件已存在，且不允许覆盖
+        if (!$cover && is_file($full_dest)) {  //文件已存在，且不允许覆盖
+            return false;
         }
-        new Directory($dest, true, false);
-        return copy($this->_path, $full_dest);
+        Directory::createDirectory($dest, 0777, true);
+        return copy($this->path, $full_dest);
     }
 
     /**
      * 删除当前文件
-     * @return bool
+     * @return bool 没有该文件也返回true
      */
     public function delete()
     {
-        if (is_file($this->_path)) {
-            return unlink($this->_path);
+        if (is_file($this->path)) {
+            return unlink($this->path);
         } else {
-            return true; //没有该文件则返回true
+            return true;
         }
     }
 
@@ -125,30 +136,25 @@ class File extends SplFileObject
      * 返回当前文件路径中的目录部分
      * @return string
      */
-    public function getDirName()
+    public function dirname()
     {
-        return dirname($this->_path);
+        return dirname($this->path);
     }
 
     /**
      * 关闭当前文件
-     * @param bool $progress
      * @return bool
      */
-    public function close($progress = false)
+    public function close()
     {
-        if ($this->_resource) {
-            if ($progress) {
-                $result = pclose($this->_resource);
-            } else {
-                $result = fclose($this->_resource);
-            }
+        if ($this->progress) {
+            $result = pclose($this->resource);
         } else {
-            $result = true; //已关闭则返回true
+            $result = fclose($this->resource);
         }
 
         if ($result) {
-            $this->_resource = null; //如果正确关闭了则清空当前对象的file_resource
+            $this->resource = null; //如果正确关闭了则清空当前对象的file_resource
         }
 
         return $result;
@@ -160,24 +166,16 @@ class File extends SplFileObject
      */
     public function flush()
     {
-        if ($this->_resource) {
-            return fflush($this->_resource);
-        } else {
-            return false;
-        }
+        return fflush($this->resource);
     }
 
     /**
      * 从文件指针中读取一个字符。 碰到 EOF 则返回 FALSE 。
      * @return string 如果碰到 EOF 则返回 FALSE。
      */
-    public function getC()
+    public function getc()
     {
-        if ($this->_resource) {
-            return fgetc($this->_resource);
-        } else {
-            return '';
-        }
+        return fgetc($this->resource);
     }
 
     /**
@@ -188,13 +186,9 @@ class File extends SplFileObject
      * @param string $escape 设置转义字符（只允许一个字符），默认是一个反斜杠。
      * @return array 如果碰到 EOF 则返回 FALSE。
      */
-    public function getCSV($length = 0, $delimiter = ",", $enclosure = '"', $escape = "\\")
+    public function getcsv($length = 0, $delimiter = ",", $enclosure = '"', $escape = "\\")
     {
-        if ($this->_resource) {
-            return fgetcsv($this->_resource, $length, $delimiter, $enclosure, $escape);
-        } else {
-            return [];
-        }
+        return fgetcsv($this->resource, $length, $delimiter, $enclosure, $escape);
     }
 
     /**
@@ -202,39 +196,31 @@ class File extends SplFileObject
      * @param int $length 规定要读取的字节数。默认是 1024 字节。
      * @return string 若失败，则返回 false。
      */
-    public function getS($length = null)
+    public function gets($length = null)
     {
-        if ($this->_resource) {
-            if (is_null($length)) {
-                $rst = fgets($this->_resource);
-            } else {
-                $rst = fgets($this->_resource, $length);
-            }
-            return $rst;
+        if (is_null($length)) {
+            $rst = fgets($this->resource);
         } else {
-            return '';
+            $rst = fgets($this->resource, $length);
         }
+        return $rst;
     }
 
     /**
      * 从文件指针中读取一行并过滤掉HTML和PHP标记。
-     * @deprecated 不建议使用该方法
      * @param int $length 规定要读取的字节数。默认是 1024 字节
      * @param string $allowable_tags 规定不会被删除的标签。形如“<p>,<b>”
      * @return string
+     * @deprecated 不建议使用该方法
      */
-    public function getSS($length = null, $allowable_tags = null)
+    public function getss($length = null, $allowable_tags = null)
     {
-        if ($this->_resource) {
-            if (is_null($length)) {
-                $rst = fgetss($this->_resource);
-            } else {
-                $rst = fgetss($this->_resource, $length, $allowable_tags);
-            }
-            return $rst;
+        if (is_null($length)) {
+            $rst = fgetss($this->resource);
         } else {
-            return '';
+            $rst = fgetss($this->resource, $length, $allowable_tags);
         }
+        return $rst;
     }
 
     /**
@@ -256,9 +242,9 @@ class File extends SplFileObject
     public function getContents($offset = 0, $maxlen = null)
     {
         if (is_null($maxlen)) {
-            return file_get_contents($this->_path, false, null, $offset);
+            return file_get_contents($this->path, false, null, $offset);
         } else {
-            return file_get_contents($this->_path, false, null, $offset, $maxlen);
+            return file_get_contents($this->path, false, null, $offset, $maxlen);
         }
     }
 
@@ -270,7 +256,7 @@ class File extends SplFileObject
      */
     public function putContents($data, $flags = 0)
     {
-        return file_put_contents($this->_path, $data, $flags);
+        return file_put_contents($this->path, $data, $flags);
     }
 
     /**
@@ -280,7 +266,7 @@ class File extends SplFileObject
      */
     public function getContentsOnArray($flags = 0)
     {
-        return file($this->_path, $flags);
+        return file($this->path, $flags);
     }
 
     /**
@@ -292,31 +278,31 @@ class File extends SplFileObject
     {
         switch ($key) {
             case 'atime' : //上次访问时间
-                $rst = fileatime($this->_path);
+                $rst = fileatime($this->path);
                 break;
             case 'ctime' : //inode修改时间
-                $rst = filectime($this->_path);
+                $rst = filectime($this->path);
                 break;
             case 'group' : //文件的组
-                $rst = filegroup($this->_path);
+                $rst = filegroup($this->path);
                 break;
             case 'inode' : //文件的inode
-                $rst = fileinode($this->_path);
+                $rst = fileinode($this->path);
                 break;
             case 'mtime' : //文件修改时间
-                $rst = filemtime($this->_path);
+                $rst = filemtime($this->path);
                 break;
             case 'owner' : //文件的所有者
-                $rst = fileowner($this->_path);
+                $rst = fileowner($this->path);
                 break;
             case 'perms' : //文件的权限
-                $rst = fileperms($this->_path);
+                $rst = fileperms($this->path);
                 break;
             case 'size' : //文件大小
-                $rst = filesize($this->_path);
+                $rst = filesize($this->path);
                 break;
             case 'type' : //文件类型
-                $rst = filetype($this->_path);
+                $rst = filetype($this->path);
                 break;
             default :
                 $rst = false;
@@ -332,11 +318,7 @@ class File extends SplFileObject
      */
     public function lock($operation, &$wouldblock = null)
     {
-        if ($this->_resource) {
-            return flock($this->_resource, $operation, $wouldblock);
-        } else {
-            return false;
-        }
+        return flock($this->resource, $operation, $wouldblock);
     }
 
     /**
@@ -345,34 +327,33 @@ class File extends SplFileObject
      * @param int $flags [FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD|FNM_CASEFOLD] 指定配置
      * @return bool
      */
-    public function nameMatch($pattern, $flags = 0)
+    public function nmatch($pattern, $flags = 0)
     {
         return fnmatch($pattern, $this->getBaseName(), $flags);
     }
 
     /**
      * 打开当前文件用于读取和写入
-     * @todo 针对popen执行进程文件还存在问题，待修复
      * @param string $mode 访问类型
      * @param bool $progress 指向进程文件
      * @param string $command 命令
      * @return resource
+     * @todo 针对popen执行进程文件还存在问题，待修复
      */
     public function open($mode, $progress = false, $command = '')
     {
+        $this->progress = $progress;
         if ($progress) {
             $res = popen($command, $mode);
             var_dump($res);
         } else {
-            if (is_file($this->_path)) {
-                $res = fopen($this->_path, $mode);
+            if (is_file($this->path)) {
+                $res = fopen($this->path, $mode);
             } else {
                 $res = false;
             }
         }
-        if ($res) {
-            $this->_resource = $res;
-        }
+        $this->resource = $res;
         return $res;
     }
 
@@ -382,11 +363,7 @@ class File extends SplFileObject
      */
     public function passthru()
     {
-        if ($this->_resource) {
-            return fpassthru($this->_resource);
-        } else {
-            return 0;
-        }
+        return fpassthru($this->resource);
     }
 
     /**
@@ -397,13 +374,9 @@ class File extends SplFileObject
      * @param string $escape_char 转义符
      * @return int 如果失败返回false
      */
-    public function putCSV(array $fields, $delimiter = ",", $enclosure = '"', $escape_char = "\\")
+    public function putcsv(array $fields, $delimiter = ",", $enclosure = '"', $escape_char = "\\")
     {
-        if ($this->_resource) {
-            return fputcsv($this->_resource, $fields, $delimiter, $enclosure, $escape_char);
-        } else {
-            return false;
-        }
+        return fputcsv($this->resource, $fields, $delimiter, $enclosure, $escape_char);
     }
 
     /**
@@ -412,18 +385,14 @@ class File extends SplFileObject
      * @param int $length 指定写入长度
      * @return int 如果失败返回false
      */
-    public function putS($string, $length = null)
+    public function puts($string, $length = null)
     {
-        if ($this->_resource) {
-            if (is_null($length)) {
-                $rst = fputs($this->_resource, $string);
-            } else {
-                $rst = fputs($this->_resource, $string, $length);
-            }
-            return $rst;
+        if (is_null($length)) {
+            $rst = fputs($this->resource, $string);
         } else {
-            return false;
+            $rst = fputs($this->resource, $string, $length);
         }
+        return $rst;
     }
 
     /**
@@ -433,11 +402,7 @@ class File extends SplFileObject
      */
     public function read($length)
     {
-        if ($this->_resource) {
-            return fread($this->_resource, $length);
-        } else {
-            return '';
-        }
+        return fread($this->resource, $length);
     }
 
     /**
@@ -447,26 +412,22 @@ class File extends SplFileObject
      */
     public function scanf($format)
     {
-        if ($this->_resource) {
-            return fscanf($this->_resource, $format);
-        } else {
-            return [];
-        }
+        return fscanf($this->resource, $format);
     }
 
     /**
      * 通过已打开的文件指针取得文件信息
      * @return array
      */
-    public function getStat()
+    public function stat()
     {
         if ($this->isLink()) {
-            return lstat($this->_path);
+            return lstat($this->path);
         } else {
-            if ($this->_resource) {
-                return fstat($this->_resource);
+            if ($this->resource) {
+                return fstat($this->resource);
             } else {
-                return stat($this->_path);
+                return stat($this->path);
             }
         }
     }
@@ -477,11 +438,7 @@ class File extends SplFileObject
      */
     public function tell()
     {
-        if ($this->_resource) {
-            return ftell($this->_resource);
-        } else {
-            return false;
-        }
+        return ftell($this->resource);
     }
 
     /**
@@ -491,11 +448,7 @@ class File extends SplFileObject
      */
     public function truncate($size)
     {
-        if ($this->_resource) {
-            return ftruncate($this->_resource, $size);
-        } else {
-            return false;
-        }
+        return ftruncate($this->resource, $size);
     }
 
     /**
@@ -506,16 +459,12 @@ class File extends SplFileObject
      */
     public function write($string, $length = null)
     {
-        if ($this->_resource) {
-            if (is_null($length)) {
-                $rst = fwrite($this->_resource, $string);
-            } else {
-                $rst = fwrite($this->_resource, $string, $length);
-            }
-            return $rst;
+        if (is_null($length)) {
+            $rst = fwrite($this->resource, $string);
         } else {
-            return false;
+            $rst = fwrite($this->resource, $string, $length);
         }
+        return $rst;
     }
 
     /**
@@ -524,7 +473,7 @@ class File extends SplFileObject
      */
     public function isUploadedFile()
     {
-        return is_uploaded_file($this->_path);
+        return is_uploaded_file($this->path);
     }
 
     /**
@@ -533,7 +482,7 @@ class File extends SplFileObject
      */
     public function isWriteable()
     {
-        return is_writeable($this->_path);
+        return is_writeable($this->path);
     }
 
     /**
@@ -541,18 +490,18 @@ class File extends SplFileObject
      * @param string $target 要链接的目标
      * @return bool
      */
-    public function linkTo($target)
+    public function link($target)
     {
-        return link($target, $this->_path);
+        return link($target, $this->path);
     }
 
     /**
      * 获取一个连接的信息(不能运行在windows环境下)
      * @return int
      */
-    public function getLinkInfo()
+    public function linkinfo()
     {
-        return linkinfo($this->_path);
+        return linkinfo($this->path);
     }
 
     /**
@@ -560,12 +509,12 @@ class File extends SplFileObject
      * @param mixed $options 如果没有传入 options ，将会返回包括以下单元的数组 array ：dirname，basename和 extension（如果有），以 及filename。
      * @return mixed
      */
-    public function pathInfo($options = null)
+    public function pathinfo($options = null)
     {
         if (is_null($options)) {
-            return pathinfo($this->_path);
+            return pathinfo($this->path);
         } else {
-            return pathinfo($this->_path, $options);
+            return pathinfo($this->path, $options);
         }
     }
 
@@ -573,34 +522,34 @@ class File extends SplFileObject
      * 读取文件并写入到输出缓冲。
      * @return int
      */
-    public function echoReadFile()
+    public function readfile()
     {
-        return readfile($this->_path);
+        return readfile($this->path);
     }
 
     /**
      * 返回符号连接指向的目标(不能运行在windows环境下)
      * @return string
      */
-    public function returnReadLink()
+    public function readlink()
     {
-        return readlink($this->_path);
+        return readlink($this->path);
     }
 
     /**
      * 重命名一个文件,可用于移动文件
-     * @todo 测试时发现问题
      * @param string $newname 要移动到的目标位置路径
      * @param bool $auto_build 如果指定的路径不存在，是否创建，默认true
      * @return bool
+     * @todo 测试时发现问题
      */
-    public function reName($newname, $auto_build = true)
+    public function rename($newname, $auto_build = true)
     {
         if ($auto_build) {
             $dir = dirname($newname);
-            new Directory($dir, true, false);
+            Directory::createDirectory($dir, 0777, true);
         }
-        return rename($this->_path, $newname);
+        return rename($this->path, $newname);
     }
 
     /**
@@ -608,9 +557,9 @@ class File extends SplFileObject
      * @param string $target 目标路径
      * @return bool
      */
-    public function symLinkTo($target)
+    public function symlink($target)
     {
-        return symlink($target, $this->_path);
+        return symlink($target, $this->path);
     }
 
     /**
@@ -620,31 +569,26 @@ class File extends SplFileObject
      * @param int $atime 要设定的访问时间
      * @return bool
      */
-    public function setTouch($time = null, $atime = null)
+    public function touch($time = null, $atime = null)
     {
         if (is_null($time)) {
             $time = time();
         }
-        return touch($this->_path, $time, $atime);
+        return touch($this->path, $time, $atime);
     }
 
     /**
-     * 改变当前的 umask
-     * @param int $mask
+     * 获取或改变当前的umask
+     * @param int $mask 指定该值时将改变当前umask
      * @return int
      */
-    public static function changeUmask($mask)
+    public static function umask($mask = null)
     {
-        return umask($mask);
-    }
-
-    /**
-     * 获取当前的 umask
-     * @return int
-     */
-    public static function getUmask()
-    {
-        return umask();
+        if (is_null($mask)) {
+            return umask();
+        } else {
+            return umask($mask);
+        }
     }
 
     /**
@@ -654,10 +598,15 @@ class File extends SplFileObject
      */
     public function setBuffer($buffer)
     {
-        if ($this->_resource) {
-            return set_file_buffer($this->_resource, $buffer);
-        } else {
-            return false;
-        }
+        return set_file_buffer($this->resource, $buffer);
+    }
+
+    /**
+     * 建立一个临时文件
+     * @return resource
+     */
+    public static function tmpfile()
+    {
+        return tmpfile();
     }
 }

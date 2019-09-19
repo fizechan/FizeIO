@@ -295,4 +295,24 @@ class Directory
     {
         return glob($pattern, $flags);
     }
+
+    /**
+     * 返回目录中的可用空间
+     * @param string $directory 指定目录或盘符
+     * @return float 可用的字节数，失败时返回false
+     */
+    public static function diskFreeSpace($directory)
+    {
+        return disk_free_space($directory);
+    }
+
+    /**
+     * 返回一个目录的磁盘总大小
+     * @param string $directory 指定目录或盘符
+     * @return float 字节数，失败时返回false
+     */
+    public static function diskTotalSpace($directory)
+    {
+        return disk_total_space($directory);
+    }
 }

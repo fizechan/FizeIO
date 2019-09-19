@@ -8,5 +8,9 @@ use streamWrapper;
 
 class Stream extends streamWrapper
 {
-    //put your code here
+
+    public function test()
+    {
+        stream_bucket_append();
+    }
 }

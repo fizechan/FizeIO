@@ -7,7 +7,6 @@ use SplFileObject;
 
 /**
  * 文件操作类
- * @todo 未处理函数:realpath_cache_get,realpath_cache_size,disk_free_space,disk_total_space .
  * @package fize\io
  */
 class File extends SplFileObject
@@ -534,6 +533,24 @@ class File extends SplFileObject
     public function readlink()
     {
         return readlink($this->path);
+    }
+
+    /**
+     * 获取真实目录缓存的详情
+     * @return array
+     */
+    public static function realpathCacheGet()
+    {
+        return realpath_cache_get();
+    }
+
+    /**
+     * 获取真实路径缓冲区的大小
+     * @return int
+     */
+    public static function realpathCacheSize()
+    {
+        return realpath_cache_size();
     }
 
     /**

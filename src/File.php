@@ -333,14 +333,17 @@ class File extends SplFileObject
 
     /**
      * 打开当前文件用于读取和写入
-     * @param string $mode 访问类型
+     * @param string $mode 访问模式,未指定则为当前模式
      * @param bool $progress 指向进程文件
      * @param string $command 命令
      * @return resource
      * @todo 针对popen执行进程文件还存在问题，待修复
      */
-    public function open($mode, $progress = false, $command = '')
+    public function open($mode = null, $progress = false, $command = '')
     {
+        if(is_null($mode)) {
+            $mode = $this->mode;
+        }
         $this->progress = $progress;
         if ($progress) {
             $res = popen($command, $mode);

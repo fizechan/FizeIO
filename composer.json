@@ -1,6 +1,6 @@
 {
     "name": "fize/io",
-    "description": "common input/output libraries, produced by FizeChan.",
+    "description": "common input/output libraries.",
     "license": "Apache-2.0",
     "authors": [
         {

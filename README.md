@@ -1,2 +1,2 @@
 # FizeIo
-common input/output libraries, produced by FizeChan.
+输入\输出操作类。

@@ -1,6 +1,6 @@
 {
     "name": "fize/io",
-    "description": "常用的输入\\输出类库",
+    "description": "常用的[输入/输出]类库",
     "license": "Apache-2.0",
     "authors": [
         {

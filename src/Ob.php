@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpComposerExtensionStubsInspection */
+<?php
+/** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace fize\io;
 
@@ -47,8 +48,8 @@ class Ob
      */
     public static function flush()
     {
-        flush();
         ob_flush();
+        flush();
     }
 
     /**
@@ -98,7 +99,7 @@ class Ob
 
     /**
      * 返回最顶层输出缓冲区的状态信息；或者如果full_status设为TRUE，返回所有有效的输出缓冲级别。
-     * @param boolean $full_status 设为TRUE 返回所有有效的输出缓冲区级别的状态信息。如果设为 FALSE 或者没有设置，仅返回最 顶层输出缓冲区的状态信息。
+     * @param bool $full_status 设为TRUE 返回所有有效的输出缓冲区级别的状态信息。如果设为 FALSE 或者没有设置，仅返回最 顶层输出缓冲区的状态信息。
      * @return array
      */
     public static function getStatus($full_status = false)
@@ -108,7 +109,7 @@ class Ob
 
     /**
      * 在ob_start中使用的用来压缩输出缓冲区中内容的回调函数
-     * 注：为讲过手动调用该方法的情况
+     * @notice 未讲过手动调用该方法的情况
      * @param string $buffer 待输出缓冲区内容
      * @param int $mode 指定模式
      * @return string 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
@@ -121,7 +122,7 @@ class Ob
     /**
      * 打开/关闭绝对刷送
      * 绝对（隐式）刷送将导致在每次输出调用后有一次刷送操作，以便不再需要对 flush() 的显式调用
-     * @param boolean $flag 设为TRUE 打开绝对刷送，反之是 FALSE。
+     * @param bool $flag 设为TRUE 打开绝对刷送，反之是 FALSE。
      */
     public static function implicitFlush($flag = true)
     {
@@ -141,23 +142,15 @@ class Ob
      * 打开输出控制缓冲
      * @param callable $output_callback 缓冲区内容发生变化时的回调函数
      * @param int $chunk_size 缓冲区大小，默认0表示函数仅在最后被调用
-     * @param boolean $erase 如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
-     * @return boolean
+     * @param bool $erase 如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
+     * @return bool
      */
     public static function start(callable $output_callback = null, $chunk_size = 0, $erase = true)
     {
+        if(!$output_callback) {
+            return ob_start();
+        }
         return ob_start($output_callback, $chunk_size, $erase);
-    }
-
-    /**
-     * 以输出缓冲处理程序转换字符编码
-     * @param string $contents 内容
-     * @param int $status 状态码
-     * @return string
-     */
-    public static function iconvHandler($contents, $status)
-    {
-        return ob_iconv_handler($contents, $status);
     }
 
     /**

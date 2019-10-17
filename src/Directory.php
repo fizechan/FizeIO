@@ -54,8 +54,7 @@ class Directory
      */
     public static function dir($path)
     {
-        $directory = dir($path);
-        return $directory;
+        return dir($path);
     }
 
     /**
@@ -162,8 +161,7 @@ class Directory
      */
     public static function scan($path, $sorting_order = 0)
     {
-        $arr = scandir($path, $sorting_order);
-        return $arr;
+        return scandir($path, $sorting_order);
     }
 
     /**
@@ -281,8 +279,7 @@ class Directory
      */
     public static function createTempFile($prefix = '')
     {
-        $file = tempnam(self::getcwd(), $prefix);
-        return $file;
+        return tempnam(self::getcwd(), $prefix);
     }
 
     /**

@@ -11,6 +11,11 @@ class Stream
 {
 
     /**
+     * @var resource 资源流上下文
+     */
+    protected $context;
+
+    /**
      * 将桶附加到队列
      * @param resource $brigade 队列
      * @param object $bucket 桶
@@ -57,9 +62,11 @@ class Stream
      * @param array $params 必须是 $arr['parameter'] = $value 格式的关联数组。请参考 context parameters 里的标准资源流参数列表。
      * @return resource
      */
-    public static function contextCreate(array $options = null, array $params = null)
+    public function contextCreate(array $options = null, array $params = null)
     {
-        return stream_context_create($options, $params);
+        $context = stream_context_create($options, $params);
+        $this->context = $context;
+        return $this->context;
     }
 
     /**

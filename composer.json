@@ -1,6 +1,6 @@
 {
     "name": "fize/io",
-    "description": "常用的[输入/输出]类库",
+    "description": "常用的[I/O]类库",
     "license": "Apache-2.0",
     "authors": [
         {
@@ -16,8 +16,9 @@
         "guzzlehttp/guzzle": "~6.3"
     },
     "suggest": {
-        "ext-zlib": "*",
-        "ext-iconv": "*"
+        "ext-exif": "*",
+        "ext-iconv": "*",
+        "ext-zlib": "*"
     },
 	"autoload": {
         "psr-4": {

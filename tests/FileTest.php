@@ -7,6 +7,76 @@ use PHPUnit\Framework\TestCase;
 class FileTest extends TestCase
 {
 
+    public function test__construct()
+    {
+        $file = new File('../temp/test.txt', 'r+');
+        $file->open('w');
+        $len = $file->fwrite("1234567890\r\n");
+        $file->close();
+        self::assertGreaterThan(0, $len);
+    }
+
+    public function testChgrp()
+    {
+        $group = filegroup('../temp/test.txt');
+        var_dump($group);
+        $file = new File('../temp/test.txt', 'r');
+        $result = $file->chgrp(0);
+        var_dump($result);
+        self::assertTrue($result);
+    }
+
+    public function testChmod()
+    {
+        $file = new File('../temp/test.txt', 'r');
+        $result = $file->chmod(0777);
+        var_dump($result);
+        self::assertTrue($result);
+    }
+
+    public function testChown()
+    {
+        $ower = fileowner('../temp/test.txt');
+        var_dump($ower);
+        $file = new File('../temp/test.txt', 'r');
+        $result = $file->chown('cfz87');
+        var_dump($result);
+        self::assertTrue($result);
+    }
+
+    public function testClearstatcache()
+    {
+        $file = new File('../temp/test.txt', 'a+');
+        $file->fwrite("123456");
+        $size1 = $file->getSize();
+        $file->fwrite("789000");
+        $size2 = $file->getSize();
+        self::assertEquals($size1, $size2);
+        $file->clearstatcache();
+        $size3 = $file->getSize();
+        self::assertNotEquals($size2, $size3);
+        $file->close();
+    }
+
+    public function testCopy()
+    {
+        $file = new File('../temp/test.txt', 'a+');
+        $result1 = $file->copy('../temp/temp2');
+        var_dump($result1);
+        self::assertTrue($result1);
+        $result1 = $file->copy('../temp', 'test2.txt');
+        var_dump($result1);
+        self::assertTrue($result1);
+        $result1 = $file->copy('../temp', 'test2.txt', true);
+        var_dump($result1);
+        self::assertTrue($result1);
+    }
+
+    public function testDelete()
+    {
+
+    }
+
     public function testTmpfile()
     {
         $resource = File::tmpfile();
@@ -104,25 +174,16 @@ class FileTest extends TestCase
 
     }
 
-    public function testClearstatcache()
-    {
 
-    }
 
-    public function testDelete()
-    {
 
-    }
 
     public function testRead()
     {
 
     }
 
-    public function testChown()
-    {
 
-    }
 
     public function testPathinfo()
     {
@@ -150,11 +211,6 @@ class FileTest extends TestCase
     }
 
     public function testOpen()
-    {
-
-    }
-
-    public function testChmod()
     {
 
     }
@@ -199,10 +255,7 @@ class FileTest extends TestCase
 
     }
 
-    public function testChgrp()
-    {
 
-    }
 
     public function testStat()
     {
@@ -224,15 +277,8 @@ class FileTest extends TestCase
 
     }
 
-    public function test__construct()
-    {
 
-    }
 
-    public function testCopy()
-    {
-
-    }
 
     public function testScanf()
     {

@@ -4,8 +4,7 @@
 namespace fize\io;
 
 /**
- * Stream流处理
- * @package fize\io
+ * Stream 流处理
  */
 class Stream
 {
@@ -58,8 +57,13 @@ class Stream
 
     /**
      * 创建资源流上下文
-     * @param array $options 必须是一个二维关联数组，格式如下：$arr['wrapper']['option'] = $value 。
-     * @param array $params 必须是 $arr['parameter'] = $value 格式的关联数组。请参考 context parameters 里的标准资源流参数列表。
+     *
+     * 参数 `$options` :
+     *   格式如下：$arr['wrapper']['option'] = $value 。
+     * 参数 `$params` :
+     *   必须是 $arr['parameter'] = $value 格式的关联数组。请参考 context parameters 里的标准资源流参数列表。
+     * @param array $options 选项，必须是一个二维关联数组。
+     * @param array $params 参数
      * @return resource
      */
     public function contextCreate(array $options = null, array $params = null)
@@ -146,9 +150,12 @@ class Stream
 
     /**
      * 将过滤器附加到流
+     *
+     * 参数 `$read_write` :
+     *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
      * @param resource $stream 流
      * @param string $filtername 过滤器
-     * @param int $read_write STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
+     * @param int $read_write 读写模式
      * @param mixed $params 相关参数
      * @return resource
      */
@@ -159,9 +166,12 @@ class Stream
 
     /**
      * 将过滤器附加到流
+     *
+     * 参数 `$read_write` :
+     *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
      * @param resource $stream 流
      * @param string $filtername 过滤器
-     * @param int $read_write STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
+     * @param int $read_write 读写模式
      * @param mixed $params 相关参数
      * @return resource
      */
@@ -193,9 +203,14 @@ class Stream
 
     /**
      * 读取资源流到一个字符串
+     *
+     * 参数 `$maxlength` :
+     *   默认是-1（读取全部的缓冲数据）。
+     * 参数 `$offset` :
+     *   如果这个数字是负数，就不进行查找，直接从当前位置开始读取。
      * @param resource $handle 一个资源流
-     * @param int $maxlength 需要读取的最大的字节数。默认是-1（读取全部的缓冲数据）。
-     * @param int $offset 在读取数据之前先查找指定的偏移量。如果这个数字是负数，就不进行查找，直接从当前位置开始读取。
+     * @param int $maxlength 需要读取的最大的字节数
+     * @param int $offset 在读取数据之前先查找指定的偏移量
      * @return string 失败时返回false
      */
     public static function getContents($handle, $maxlength = null, $offset = null)
@@ -354,9 +369,14 @@ class Stream
 
     /**
      * 接受由 stream_socket_server() 创建的套接字连接
+     *
+     * 参数 `$timeout` :
+     *   输入的时间需以秒为单位。
+     * 参数 `$peername` :
+     *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
      * @param resource $server_socket 需要接受的服务器创建的套接字连接。
-     * @param float $timeout 覆盖默认的套接字接受的超时时限。输入的时间需以秒为单位。
-     * @param string $peername 如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）（
+     * @param float $timeout 覆盖默认的套接字接受的超时时限
+     * @param string $peername 设置给连接中的客户端主机的名称（地址）
      * @return resource 失败时返回false
      */
     public static function socketAccept($server_socket, $timeout = null, &$peername = null)
@@ -366,11 +386,14 @@ class Stream
 
     /**
      * 打开Internet或Unix域套接字连接
+     *
+     * 参数 `$flags` :
+     *   选择仅限于STREAM_CLIENT_CONNECT(默认)、STREAM_CLIENT_ASYNC_CONNECT和STREAM_CLIENT_PERSISTENT。
      * @param string $remote_socket 要连接到的套接字的地址。
      * @param int $errno 错误码
      * @param string $errstr 错误信息
      * @param float $timeout 超时时限。输入的时间需以秒为单位。
-     * @param int $flags 选择仅限于STREAM_CLIENT_CONNECT(默认)、STREAM_CLIENT_ASYNC_CONNECT和STREAM_CLIENT_PERSISTENT。
+     * @param int $flags 标识
      * @param resource $context 使用stream_context_create()创建的有效上下文资源。
      * @return resource 失败时返回false
      */
@@ -394,8 +417,11 @@ class Stream
 
     /**
      * 获取本地或者远程的套接字名称
+     *
+     * 参数 `$want_peer` :
+     *   如果设置为 TRUE ，那么将返回 remote 套接字连接名称；如果设置为 FALSE 则返回 local 套接字连接名称。
      * @param resource $handle 需要获取其名称的套接字连接
-     * @param int $want_peer 如果设置为 TRUE ，那么将返回 remote 套接字连接名称；如果设置为 FALSE 则返回 local 套接字连接名称。
+     * @param int $want_peer 是否远程套接字
      * @return string
      */
     public static function socketGetName($handle, $want_peer)
@@ -405,9 +431,16 @@ class Stream
 
     /**
      * 创建一对完全一样的网络套接字连接流
-     * @param int $domain 使用的协议族： STREAM_PF_INET, STREAM_PF_INET6 or STREAM_PF_UNIX
-     * @param int $type 通信类型: STREAM_SOCK_DGRAM, STREAM_SOCK_RAW, STREAM_SOCK_RDM, STREAM_SOCK_SEQPACKET or STREAM_SOCK_STREAM
-     * @param int $protocol 使用的传输协议: STREAM_IPPROTO_ICMP, STREAM_IPPROTO_IP, STREAM_IPPROTO_RAW, STREAM_IPPROTO_TCP or STREAM_IPPROTO_UDP
+     *
+     * 参数 `$domain` :
+     *   可选值：STREAM_PF_INET, STREAM_PF_INET6 or STREAM_PF_UNIX
+     * 参数 `$type` :
+     *   可选值：STREAM_SOCK_DGRAM, STREAM_SOCK_RAW, STREAM_SOCK_RDM, STREAM_SOCK_SEQPACKET or STREAM_SOCK_STREAM
+     * 参数 `$protocol` :
+     *   可选值：STREAM_IPPROTO_ICMP, STREAM_IPPROTO_IP, STREAM_IPPROTO_RAW, STREAM_IPPROTO_TCP or STREAM_IPPROTO_UDP
+     * @param int $domain 使用的协议族
+     * @param int $type 通信类型
+     * @param int $protocol 使用的传输协议
      * @return array 数组包括了两个socket资源，失败返回false
      */
     public static function socketPair($domain, $type, $protocol)
@@ -443,7 +476,10 @@ class Stream
 
     /**
      * 创建Internet或Unix域服务器套接字
-     * @param string $local_socket 创建的套接字类型由使用标准URL格式transport: transport://target指定的传输类型决定。
+     *
+     * 参数 `$local_socket` :
+     *   创建的套接字类型由使用标准URL格式transport: transport://target指定的传输类型决定。
+     * @param string $local_socket 套接字字符串
      * @param int $errno 错误码
      * @param string $errstr 错误描述
      * @param int $flags 标识
@@ -457,8 +493,13 @@ class Stream
 
     /**
      * 关闭全双工连接
-     * @param resource $stream 一个打开的流(例如，用stream_socket_client()打开)
-     * @param int $how 以下常量之一:STREAM_SHUT_RD(禁用进一步的接收)、STREAM_SHUT_WR(禁用进一步的传输)或STREAM_SHUT_RDWR(禁用进一步的接收和传输)。
+     *
+     * 参数 `$stream` :
+     *   (例如，用stream_socket_client()打开)
+     * 参数 `$how` :
+     *   以下常量之一:STREAM_SHUT_RD(禁用进一步的接收)、STREAM_SHUT_WR(禁用进一步的传输)或STREAM_SHUT_RDWR(禁用进一步的接收和传输)。
+     * @param resource $stream 一个打开的流
+     * @param int $how 定义如何处理
      * @return bool
      */
     public static function socketShutdown($stream, $how)
@@ -478,9 +519,12 @@ class Stream
 
     /**
      * 注册一个用 PHP 类实现的 URL 封装协议
+     *
+     * 参数 `$flags` :
+     *   如果协议是URL协议，则应设置为STREAM_IS_URL。默认值是0,即本地流。
      * @param string $protocol 待注册的封装的名字
      * @param string $classname 实现了protocol的类名
-     * @param int $flags 如果协议是URL协议，则应设置为STREAM_IS_URL。默认值是0,即本地流。
+     * @param int $flags 标识
      * @return bool
      */
     public static function wrapperRegister($protocol, $classname, $flags = null)

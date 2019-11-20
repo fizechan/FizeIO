@@ -8,7 +8,6 @@ use Closure;
 
 /**
  * 文件上传类
- * @package fize\io
  */
 class Upload
 {
@@ -295,7 +294,10 @@ class Upload
 
     /**
      * 获取保存文件名
-     * @param string|bool $savename 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
+     *
+     * 参数 `$savename` :
+     *   特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
+     * @param string|bool $savename 保存的文件名
      * @param bool $auto_append_ext 自动补充扩展名
      * @return string
      */
@@ -316,7 +318,6 @@ class Upload
 
     /**
      * 自动生成文件名
-     * @access protected
      * @return string
      */
     protected function autoBuildName()

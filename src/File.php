@@ -7,7 +7,6 @@ use SplFileObject;
 
 /**
  * 文件操作类
- * @package fize\io
  */
 class File extends SplFileObject
 {
@@ -35,7 +34,7 @@ class File extends SplFileObject
     /**
      * 构造
      * @param string $filename 完整含目录文件名
-     * @param string $mode 打开模式，默认r
+     * @param string $mode 打开模式
      */
     public function __construct($filename, $mode = 'r')
     {
@@ -52,6 +51,8 @@ class File extends SplFileObject
 
     /**
      * 改变当前文件所属的组
+     *
+     * 该函数不能在 Windows 系统上运行
      * 只有超级用户可以任意修改文件的组，其它用户可能只能将文件的组改成该用户自己所在的组。
      * @param mixed $group 组的名称或数字。
      * @return bool
@@ -67,7 +68,11 @@ class File extends SplFileObject
 
     /**
      * 改变当前文件模式
-     * @param int $mode 注意 mode 不会被自动当成八进制数值，而且也不能用字符串（例如 "g+w"）。要确保正确操作，需要给 mode 前面加上 0
+     *
+     * 参数 `$mode` :
+     *   注意 mode 不会被自动当成八进制数值，而且也不能用字符串（例如 "g+w"）。
+     *   要确保正确操作，需要给 mode 前面加上 0
+     * @param int $mode 模式
      * @return bool
      */
     public function chmod($mode)
@@ -78,6 +83,8 @@ class File extends SplFileObject
 
     /**
      * 改变当前文件的所有者
+     *
+     * 该函数不能在 Windows 系统上运行
      * @param mixed $user 用户名或数字。
      * @return bool
      */
@@ -100,22 +107,22 @@ class File extends SplFileObject
 
     /**
      * 将当前文件拷贝到路径dest
-     * @param string $dest 指定路径
+     * @param string $dir 指定要复制的文件夹路径
      * @param string $name 指定文件名，不指定则为原文件名
      * @param bool $cover 如果指定文件存在，是否覆盖
      * @return bool
      */
-    public function copy($dest, $name = null, $cover = false)
+    public function copy($dir, $name = null, $cover = false)
     {
         if (is_null($name)) {
-            $name = $this->getBaseName();
+            $name = $this->getBasename();
         }
-        $full_dest = $dest . "/" . $name;
-        if (!$cover && is_file($full_dest)) {  //文件已存在，且不允许覆盖
+        $dest = $dir . "/" . $name;
+        if (!$cover && is_file($dest)) {  //文件已存在，且不允许覆盖
             return false;
         }
-        Directory::createDirectory($dest, 0777, true);
-        return copy($this->path, $full_dest);
+        Directory::createDirectory($dir, 0777, true);
+        return copy($this->path, $dest);
     }
 
     /**
@@ -146,10 +153,13 @@ class File extends SplFileObject
      */
     public function close()
     {
-        if ($this->progress) {
-            $result = pclose($this->resource);
-        } else {
-            $result = fclose($this->resource);
+        $result = false;
+        if($this->resource) {
+            if ($this->progress) {
+                $result = pclose($this->resource);
+            } else {
+                $result = fclose($this->resource);
+            }
         }
 
         if ($result) {
@@ -179,10 +189,19 @@ class File extends SplFileObject
 
     /**
      * 从文件指针中读入一行并解析 CSV 字段
-     * @param int $length 规定行的最大长度。必须大于 CVS 文件内最长的一行。
-     * @param string $delimiter 设置字段分界符（只允许一个字符），默认值为逗号。
-     * @param string $enclosure 设置字段环绕符（只允许一个字符），默认值为双引号。
-     * @param string $escape 设置转义字符（只允许一个字符），默认是一个反斜杠。
+     *
+     * 参数 `$length` :
+     *   必须大于 CVS 文件内最长的一行。
+     * 参数 `$delimiter` :
+     *   （只允许一个字符），默认值为逗号。
+     * 参数 `$enclosure` :
+     *   （只允许一个字符），默认值为双引号。
+     * 参数 `$escape` :
+     *   （只允许一个字符），默认是一个反斜杠。
+     * @param int $length 规定行的最大长度
+     * @param string $delimiter 设置字段分界符
+     * @param string $enclosure 设置字段环绕符
+     * @param string $escape 设置转义字符
      * @return array 如果碰到 EOF 则返回 FALSE。
      */
     public function getcsv($length = 0, $delimiter = ",", $enclosure = '"', $escape = "\\")
@@ -192,7 +211,10 @@ class File extends SplFileObject
 
     /**
      * 从文件指针中读取一行
-     * @param int $length 规定要读取的字节数。默认是 1024 字节。
+     *
+     * 参数 `$length` :
+     *   默认是 1024 字节。
+     * @param int $length 规定要读取的字节数
      * @return string 若失败，则返回 false。
      */
     public function gets($length = null)
@@ -207,8 +229,13 @@ class File extends SplFileObject
 
     /**
      * 从文件指针中读取一行并过滤掉HTML和PHP标记。
-     * @param int $length 规定要读取的字节数。默认是 1024 字节
-     * @param string $allowable_tags 规定不会被删除的标签。形如“<p>,<b>”
+     *
+     * 参数 `$length` :
+     *   默认是 1024 字节
+     * 参数 `$allowable_tags` :
+     *   形如“<p>,<b>”
+     * @param int $length 规定要读取的字节数
+     * @param string $allowable_tags 规定不会被删除的标签
      * @return string
      * @deprecated 不建议使用该方法
      */
@@ -234,8 +261,13 @@ class File extends SplFileObject
 
     /**
      * 将整个文件读入一个字符串
-     * @param int $offset 插入位置偏移量，默认为0表示最开始地方
-     * @param int $maxlen 指定读取长度，超过该长度则不读取，默认不指定全部读取
+     *
+     * 参数 `$offset` :
+     *   默认为0表示最开始地方
+     * 参数 `$maxlen` :
+     *   超过该长度则不读取，默认不指定全部读取
+     * @param int $offset 插入位置偏移量
+     * @param int $maxlen 指定读取长度
      * @return string
      */
     public function getContents($offset = 0, $maxlen = null)
@@ -249,8 +281,13 @@ class File extends SplFileObject
 
     /**
      * 将一个字符串写入文件
-     * @param mixed $data 要写入的数据。类型可以是 string ， array 或者是 stream 资源
-     * @param int $flags [FILE_USE_INCLUDE_PATH|FILE_APPEND|LOCK_EX] 指定配置
+     *
+     * 参数 `$data` :
+     *   类型可以是 string ， array 或者是 stream 资源
+     * 参数  `$flags` :
+     *   可选值：[FILE_USE_INCLUDE_PATH|FILE_APPEND|LOCK_EX]
+     * @param mixed $data 要写入的数据
+     * @param int $flags 指定配置
      * @return int
      */
     public function putContents($data, $flags = 0)
@@ -260,7 +297,10 @@ class File extends SplFileObject
 
     /**
      * 把整个文件读入一个数组中
-     * @param int $flags [FILE_USE_INCLUDE_PATH|FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES] 指定配置
+     *
+     * 参数 `$flags` :
+     *   可选值：[FILE_USE_INCLUDE_PATH|FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES]
+     * @param int $flags 指定配置
      * @return array
      */
     public function getContentsOnArray($flags = 0)
@@ -311,7 +351,10 @@ class File extends SplFileObject
 
     /**
      * 轻便的咨询文件锁定
-     * @param int $operation [LOCK_SH|LOCK_EX|LOCK_UN]
+     *
+     * 参数 `$operation` :
+     *   可选值：[LOCK_SH|LOCK_EX|LOCK_UN]
+     * @param int $operation 操作
      * @param int $wouldblock 如果锁定会堵塞的话返回1
      * @return bool
      */
@@ -322,18 +365,24 @@ class File extends SplFileObject
 
     /**
      * 用模式匹配文件名
-     * @param string $pattern shell 统配符
-     * @param int $flags [FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD|FNM_CASEFOLD] 指定配置
+     *
+     * 参数 `$flags` :
+     *   可选值：[FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD|FNM_CASEFOLD]
+     * @param string $pattern 统配符[shell]
+     * @param int $flags 指定配置
      * @return bool
      */
     public function nmatch($pattern, $flags = 0)
     {
-        return fnmatch($pattern, $this->getBaseName(), $flags);
+        return fnmatch($pattern, $this->getBasename(), $flags);
     }
 
     /**
      * 打开当前文件用于读取和写入
-     * @param string $mode 访问模式,未指定则为当前模式
+     *
+     * 参数 `$mode` :
+     *   未指定则为当前模式
+     * @param string $mode 访问模式
      * @param bool $progress 指向进程文件
      * @param string $command 命令
      * @return resource
@@ -488,7 +537,9 @@ class File extends SplFileObject
     }
 
     /**
-     * 建立一个硬连接(不能运行在windows环境下)
+     * 建立一个硬连接
+     *
+     * (不能运行在windows环境下)
      * @param string $target 要链接的目标
      * @return bool
      */
@@ -498,7 +549,9 @@ class File extends SplFileObject
     }
 
     /**
-     * 获取一个连接的信息(不能运行在windows环境下)
+     * 获取一个连接的信息
+     *
+     * (不能运行在windows环境下)
      * @return int
      */
     public function linkinfo()
@@ -508,7 +561,10 @@ class File extends SplFileObject
 
     /**
      * 返回文件路径的信息
-     * @param mixed $options 如果没有传入 options ，将会返回包括以下单元的数组 array ：dirname，basename和 extension（如果有），以 及filename。
+     *
+     * 参数 `$options` :
+     *   如果没有传入 options ，将会返回包括以下单元的数组 array ：dirname，basename和 extension（如果有），以 及filename。
+     * @param mixed $options 选项
      * @return mixed
      */
     public function pathinfo($options = null)
@@ -530,7 +586,9 @@ class File extends SplFileObject
     }
 
     /**
-     * 返回符号连接指向的目标(不能运行在windows环境下)
+     * 返回符号连接指向的目标
+     *
+     * (不能运行在windows环境下)
      * @return string
      */
     public function readlink()
@@ -559,7 +617,7 @@ class File extends SplFileObject
     /**
      * 重命名一个文件,可用于移动文件
      * @param string $newname 要移动到的目标位置路径
-     * @param bool $auto_build 如果指定的路径不存在，是否创建，默认true
+     * @param bool $auto_build 如果指定的路径不存在，是否创建
      * @return bool
      * @todo 测试时发现问题
      */
@@ -573,7 +631,9 @@ class File extends SplFileObject
     }
 
     /**
-     * 对于已有的 target 建立一个名为 link 的符号连接。(不能运行在windows环境下)
+     * 对于已有的 target 建立一个名为 link 的符号连接。
+     *
+     * (不能运行在windows环境下)
      * @param string $target 目标路径
      * @return bool
      */
@@ -584,6 +644,7 @@ class File extends SplFileObject
 
     /**
      * 设定文件的访问和修改时间
+     *
      * 注意，如果文件不存在则尝试创建
      * @param int $time 要设定的修改时间
      * @param int $atime 要设定的访问时间
@@ -614,7 +675,7 @@ class File extends SplFileObject
     /**
      * 设置当前打开文件的缓冲大小。
      * @param int $buffer 规定缓冲大小，以字节计。
-     * @return mixed 为启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
+     * @return mixed 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
      */
     public function setBuffer($buffer)
     {

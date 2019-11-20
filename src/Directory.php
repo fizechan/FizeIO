@@ -7,7 +7,6 @@ use Directory as Dir;
 
 /**
  * 目录操作类
- * @package fize\io
  */
 class Directory
 {
@@ -108,8 +107,10 @@ class Directory
 
     /**
      * 改变根目录
-     * @notice 本函数仅在系统支持且运行于 CLI，CGI 或嵌入 SAPI 版本时才能正确工作。此外本函数还需要 root 权限。
-     * @notice 此函数未在 Windows 平台下实现，故也返回false
+     *
+     * 本函数仅在系统支持且运行于 CLI，CGI 或嵌入 SAPI 版本时才能正确工作。
+     * 此外本函数还需要 root 权限。
+     * 此函数未在 Windows 平台下实现，故也返回false
      * @param string $path 指定目录
      * @return bool
      */
@@ -132,7 +133,10 @@ class Directory
 
     /**
      * 遍历当前目录的文件条目
-     * @param callable $func 遍历函数，参数($file);$file:
+     *
+     * 参数 `$func` :
+     *   函数参数($file); $file : 条目名称
+     * @param callable $func 遍历函数
      * @param bool $filter_base 是否剔除.和..
      */
     public function read(callable $func, $filter_base = false)
@@ -193,7 +197,8 @@ class Directory
 
     /**
      * 删除指定文件
-     * @notice 虽然该方法也可以用来删除文件夹，但不建议如此使用
+     *
+     * 虽然该方法也可以用来删除文件夹，但不建议如此使用
      * @param string $name 文件路径
      * @return bool 没有该文件则也返回true
      */

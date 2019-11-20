@@ -17,7 +17,8 @@ class Ob
     }
 
     /**
-     * 丢弃输出缓冲区中的内容。
+     * 丢弃输出缓冲区中的内容
+     *
      * 此方法不会销毁输出缓冲区
      */
     public static function clean()
@@ -98,8 +99,11 @@ class Ob
     }
 
     /**
-     * 返回最顶层输出缓冲区的状态信息；或者如果full_status设为TRUE，返回所有有效的输出缓冲级别。
-     * @param bool $full_status 设为TRUE 返回所有有效的输出缓冲区级别的状态信息。如果设为 FALSE 或者没有设置，仅返回最 顶层输出缓冲区的状态信息。
+     * 获取缓冲区的状态信息
+     *
+     * 返回最顶层输出缓冲区的状态信息；
+     * 或者如果full_status设为TRUE，返回所有有效的输出缓冲级别。
+     * @param bool $full_status 是否返回所有有效的输出缓冲级别。
      * @return array
      */
     public static function getStatus($full_status = false)
@@ -108,7 +112,9 @@ class Ob
     }
 
     /**
-     * 在ob_start中使用的用来压缩输出缓冲区中内容的回调函数
+     * 在Ob::start()中使用的用来压缩输出缓冲区中内容的回调函数
+     *
+     * 使用该方法必须启用 zlib 扩展
      * @notice 未讲过手动调用该方法的情况
      * @param string $buffer 待输出缓冲区内容
      * @param int $mode 指定模式
@@ -121,6 +127,7 @@ class Ob
 
     /**
      * 打开/关闭绝对刷送
+     *
      * 绝对（隐式）刷送将导致在每次输出调用后有一次刷送操作，以便不再需要对 flush() 的显式调用
      * @param bool $flag 设为TRUE 打开绝对刷送，反之是 FALSE。
      */

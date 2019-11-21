@@ -1,4 +1,5 @@
 <?php
+/** @noinspection HtmlUnknownTarget */
 
 use PHPUnit\Framework\TestCase;
 use fize\io\Ob;
@@ -105,7 +106,6 @@ class ObTest extends TestCase
         self::assertEquals($ob_length, 4);
     }
 
-
     public function testGetLevel()
     {
         Ob::start();
@@ -133,10 +133,12 @@ class ObTest extends TestCase
         self::assertIsArray($statuses);
     }
 
+    /**
+     * @todo 该测试实际未进行
+     */
     public function testGzhandler()
     {
-        //@todo 该测试实际未进行
-        $cmd = 'start cmd /k "cd /d %cd%/website &&php -S localhost:8123"';
+        $cmd = 'start cmd /k "cd /d %cd%/../examples &&php -S localhost:8123"';
         $pid = popen($cmd, 'r');
         pclose($pid);
         sleep(3);  //待服务器启动
@@ -182,18 +184,19 @@ class ObTest extends TestCase
         self::assertTrue($result);
     }
 
+    /**
+     * @todo file.php并没有如文档缩写的变为file.php?var=value
+     */
     public function testOutputAddRewriteVar()
     {
-        //@todo file.php并没有如文档缩写的变为file.php?var=value
-
         //Ob::start();
 
         Ob::outputAddRewriteVar('var', 'value');
 
-// some links
-        echo '<a href="/">link</a> <a href="http://example.com">link2</a>';
+        // some links
+        echo '<a href="file.php">link</a> <a href="http://example.com">link2</a>';
 
-// a form
+        // a form
         echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';
 
         Ob::endFlush();
@@ -204,7 +207,7 @@ class ObTest extends TestCase
 
     public function testOutputResetRewriteVars()
     {
-        Ob::outputAddRewriteVar('var', 'value');
+        Ob::outputAddRewriteVar('var1', 'value1');
         echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';
         Ob::flush();
         Ob::outputResetRewriteVars();

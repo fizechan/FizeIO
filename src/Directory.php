@@ -278,16 +278,6 @@ class Directory
     }
 
     /**
-     * 在当前工作文件夹建立一个具有唯一文件名的文件
-     * @param string $prefix 产生临时文件的前缀
-     * @return string 返回其文件名
-     */
-    public static function createTempFile($prefix = '')
-    {
-        return tempnam(self::getcwd(), $prefix);
-    }
-
-    /**
      * 寻找与模式匹配的文件路径
      * @param string $pattern 匹配模式
      * @param int $flags 有效标识
@@ -316,5 +306,24 @@ class Directory
     public static function diskTotalSpace($directory)
     {
         return disk_total_space($directory);
+    }
+
+    /**
+     * 返回规范化的绝对路径名
+     * @return string
+     */
+    public function realpath()
+    {
+        return realpath($this->path);
+    }
+
+    /**
+     * 在当前工作文件夹建立一个具有唯一文件名的文件
+     * @param string $prefix 产生临时文件的前缀
+     * @return string 返回其文件名
+     */
+    public static function tempnam($prefix = '')
+    {
+        return tempnam(self::getcwd(), $prefix);
     }
 }

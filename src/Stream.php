@@ -16,6 +16,7 @@ class Stream
 
     /**
      * 将桶附加到队列
+     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $brigade 队列
      * @param object $bucket 桶
      */
@@ -26,6 +27,7 @@ class Stream
 
     /**
      * 从队列中返回一个bucket对象，用于操作
+     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $brigade 队列
      * @return object
      */
@@ -36,6 +38,7 @@ class Stream
 
     /**
      * 创建一个用于当前流的新桶
+     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $stream 流
      * @param string $buffer 缓存区
      * @return object
@@ -47,6 +50,7 @@ class Stream
 
     /**
      * 为队列准备桶
+     * @todo 官方文档过于复杂，暂时不测试
      * @param resource $brigade 队列
      * @param resource $bucket 桶
      */
@@ -61,7 +65,8 @@ class Stream
      * 参数 `$options` :
      *   格式如下：$arr['wrapper']['option'] = $value 。
      * 参数 `$params` :
-     *   必须是 $arr['parameter'] = $value 格式的关联数组。请参考 context parameters 里的标准资源流参数列表。
+     *   必须是 $arr['parameter'] = $value 格式的关联数组。
+     *   请参考 context parameters 里的标准资源流参数列表。
      * @param array $options 选项，必须是一个二维关联数组。
      * @param array $params 参数
      * @return resource

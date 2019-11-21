@@ -7,8 +7,9 @@ use SplFileObject;
 
 /**
  * 文件操作类
+ * @todo 未处理函数：parse_ini_file、parse_ini_string
  */
-class File extends SplFileObject
+class File
 {
 
     /**
@@ -33,20 +34,38 @@ class File extends SplFileObject
 
     /**
      * 构造
-     * @param string $filename 完整含目录文件名
+     * @param string $filename 文件名，对于 popen 可以使用null来指定
      * @param string $mode 打开模式
      */
-    public function __construct($filename, $mode = 'r')
+    public function __construct($filename, $mode = null)
     {
         $this->path = $filename;
         $this->mode = $mode;
         $auto_build = in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+']);
-        if ($auto_build) {
+        if ($filename && $auto_build) {
             $dir = dirname($this->path);
             Directory::createDirectory($dir, 0777, true);
             touch($filename);
         }
-        parent::__construct($filename, $mode);
+    }
+
+    /**
+     * 返回对应的SPL文件对象
+     * @return SplFileObject
+     */
+    public function getSplFileObject()
+    {
+        return new SplFileObject($this->path, $this->mode);
+    }
+
+    /**
+     * 返回路径中的文件名部分
+     * @param string $suffix 如果文件名是以 suffix 结束的，那这一部分也会被去掉
+     * @return string
+     */
+    public function basename($suffix = null)
+    {
+        return basename($this->path, $suffix);
     }
 
     /**
@@ -115,7 +134,7 @@ class File extends SplFileObject
     public function copy($dir, $name = null, $cover = false)
     {
         if (is_null($name)) {
-            $name = $this->getBasename();
+            $name = $this->basename();
         }
         $dest = $dir . "/" . $name;
         if (!$cover && is_file($dest)) {  //文件已存在，且不允许覆盖
@@ -127,12 +146,13 @@ class File extends SplFileObject
 
     /**
      * 删除当前文件
+     * @param resource $context 上下文
      * @return bool 没有该文件也返回true
      */
-    public function delete()
+    public function delete($context = null)
     {
         if (is_file($this->path)) {
-            return unlink($this->path);
+            return unlink($this->path, $context);
         } else {
             return true;
         }
@@ -167,6 +187,15 @@ class File extends SplFileObject
         }
 
         return $result;
+    }
+
+    /**
+     * 测试文件指针是否到了文件结束的位置
+     * @return bool
+     */
+    public function eof()
+    {
+        return feof($this->resource);
     }
 
     /**
@@ -267,16 +296,18 @@ class File extends SplFileObject
      *   默认为0表示最开始地方
      * 参数 `$maxlen` :
      *   超过该长度则不读取，默认不指定全部读取
+     * @param bool $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context 上下文支持
      * @param int $offset 插入位置偏移量
      * @param int $maxlen 指定读取长度
      * @return string
      */
-    public function getContents($offset = 0, $maxlen = null)
+    public function getContents($use_include_path = false, $context = null, $offset = 0, $maxlen = null)
     {
         if (is_null($maxlen)) {
-            return file_get_contents($this->path, false, null, $offset);
+            return file_get_contents($this->path,$use_include_path, $context, $offset, $maxlen);
         } else {
-            return file_get_contents($this->path, false, null, $offset, $maxlen);
+            return file_get_contents($this->path, $use_include_path, $context, $offset, $maxlen);
         }
     }
 
@@ -289,11 +320,12 @@ class File extends SplFileObject
      *   可选值：[FILE_USE_INCLUDE_PATH|FILE_APPEND|LOCK_EX]
      * @param mixed $data 要写入的数据
      * @param int $flags 指定配置
+     * @param resource $context 上下文支持
      * @return int
      */
-    public function putContents($data, $flags = 0)
+    public function putContents($data, $flags = 0, $context = null)
     {
-        return file_put_contents($this->path, $data, $flags);
+        return file_put_contents($this->path, $data, $flags, $context);
     }
 
     /**
@@ -304,50 +336,92 @@ class File extends SplFileObject
      * @param int $flags 指定配置
      * @return array
      */
-    public function getContentsArray($flags = 0)
+    public function file($flags = 0)
     {
         return file($this->path, $flags);
     }
 
     /**
-     * 获取文件信息
-     * @param string $key 信息名
-     * @return mixed
+     * 取得文件的上次访问时间
+     * @return int
      */
-    public function getInfo($key)
+    public function atime()
     {
-        switch ($key) {
-            case 'atime' : //上次访问时间
-                $rst = fileatime($this->path);
-                break;
-            case 'ctime' : //inode修改时间
-                $rst = filectime($this->path);
-                break;
-            case 'group' : //文件所属用户组
-                $rst = filegroup($this->path);
-                break;
-            case 'inode' : //文件的inode
-                $rst = fileinode($this->path);
-                break;
-            case 'mtime' : //文件修改时间
-                $rst = filemtime($this->path);
-                break;
-            case 'owner' : //文件的所有者
-                $rst = fileowner($this->path);
-                break;
-            case 'perms' : //文件的权限
-                $rst = fileperms($this->path);
-                break;
-            case 'size' : //文件大小(字节数)
-                $rst = filesize($this->path);
-                break;
-            case 'type' : //文件类型(可能的值有 fifo，char，dir，block，link，file 和 unknown。)
-                $rst = filetype($this->path);
-                break;
-            default :
-                $rst = false;
-        }
-        return $rst;
+        return fileatime($this->path);
+    }
+
+    /**
+     * 取得文件的 inode 修改时间
+     * @return int
+     */
+    public function ctime()
+    {
+        return filectime($this->path);
+    }
+
+    /**
+     * 取得文件的组
+     * @return int
+     */
+    public function group()
+    {
+        return filegroup($this->path);
+    }
+
+    /**
+     * 文件的inode
+     * @return int
+     */
+    public function inode()
+    {
+        return fileinode($this->path);
+    }
+
+    /**
+     * 文件修改时间
+     * @return int
+     */
+    public function mtime()
+    {
+        return filemtime($this->path);
+    }
+
+    /**
+     * 文件的所有者
+     * @return int
+     */
+    public function owner()
+    {
+        return fileowner($this->path);
+    }
+
+    /**
+     * 文件的权限
+     * @return int
+     */
+    public function perms()
+    {
+        return fileperms($this->path);
+    }
+
+    /**
+     * 文件大小(字节数)
+     * @return int
+     */
+    public function size()
+    {
+        return filesize($this->path);
+    }
+
+    /**
+     * 文件类型
+     *
+     * (可能的值有 fifo，char，dir，block，link，file 和 unknown。)
+     * @return string
+     */
+    public function type()
+    {
+        return filetype($this->path);
     }
 
     /**
@@ -377,37 +451,18 @@ class File extends SplFileObject
      */
     public function nmatch($pattern, $flags = 0)
     {
-        return fnmatch($pattern, $this->getBasename(), $flags);
+        return fnmatch($pattern, $this->basename(), $flags);
     }
 
     /**
-     * 打开当前文件用于读取和写入
-     *
-     * 参数 `$mode` :
-     *   未指定则为当前模式
-     * @param string $mode 访问模式
-     * @param bool $progress 是否指向进程文件
-     * @param string $command 命令
-     * @return resource
+     * 打开文件或者 URL
+     * @param bool $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context 上下文支持
      */
-    public function open($mode = null, $progress = false, $command = '')
+    public function open($use_include_path = false, $context = null)
     {
-        if(is_null($mode)) {
-            $mode = $this->mode;
-        }
-        $this->progress = $progress;
-        if ($progress) {
-            $res = popen($command, $mode);
-        } else {
-            if (is_file($this->path)) {
-                $res = fopen($this->path, $mode);
-            } else {
-                //throw error
-                $res = false;
-            }
-        }
-        $this->resource = $res;
-        return $res;
+        $this->progress = false;
+        $this->resource = fopen($this->path, $this->mode, $use_include_path, $context);
     }
 
     /**
@@ -469,6 +524,24 @@ class File extends SplFileObject
     }
 
     /**
+     * 在文件指针中定位
+     *
+     * 参数 `$offset` :
+     *   要移动到文件尾之前的位置，需要给 offset 传递一个负值，并设置 whence 为 SEEK_END。
+     * 参数 `$whence` :
+     *   SEEK_SET - 设定位置等于 offset 字节。
+     *   SEEK_CUR - 设定位置为当前位置加上 offset。
+     *   SEEK_END - 设定位置为文件尾加上 offset。
+     * @param int $offset 偏移量
+     * @param int $whence 设置方式
+     * @return int
+     */
+    public function seek($offset, $whence = 0)
+    {
+        return fseek($this->resource, $offset, $whence);
+    }
+
+    /**
      * 通过已打开的文件指针取得文件信息
      * @return array
      */
@@ -521,6 +594,42 @@ class File extends SplFileObject
     }
 
     /**
+     * 文件是否可执行
+     * @return bool
+     */
+    public function isExecutable()
+    {
+        return is_executable($this->path);
+    }
+
+    /**
+     * 判断是否为一个正常的文件
+     * @return bool
+     */
+    public function isFile()
+    {
+        return is_file($this->path);
+    }
+
+    /**
+     * 判断是否为符号连接
+     * @return bool
+     */
+    public function isLink()
+    {
+        return is_link($this->path);
+    }
+
+    /**
+     * 判断是否可读
+     * @return bool
+     */
+    public function isReadable()
+    {
+        return is_readable($this->path);
+    }
+
+    /**
      * 判断当前文件是否是通过 HTTP POST 上传的
      * @return bool
      */
@@ -533,9 +642,9 @@ class File extends SplFileObject
      * 判断当前文件是否可写
      * @return bool
      */
-    public function isWriteable()
+    public function isWritable()
     {
-        return is_writeable($this->path);
+        return is_writable($this->path);
     }
 
     /**
@@ -575,6 +684,16 @@ class File extends SplFileObject
     }
 
     /**
+     * 打开一个指向进程的管道
+     * @param string $command 命令
+     */
+    public function popen($command)
+    {
+        $this->progress = true;
+        $this->resource = popen($command, $this->mode);
+    }
+
+    /**
      * 读取文件并写入到输出缓冲。
      * @return int
      */
@@ -611,6 +730,15 @@ class File extends SplFileObject
     }
 
     /**
+     * 返回规范化的绝对路径名
+     * @return string
+     */
+    public function realpath()
+    {
+        return realpath($this->path);
+    }
+
+    /**
      * 重命名一个文件,可用于移动文件
      * @param string $newname 要移动到的目标位置路径
      * @param bool $auto_build 如果指定的路径不存在，是否创建
@@ -626,6 +754,25 @@ class File extends SplFileObject
     }
 
     /**
+     * 倒回文件指针的位置
+     * @return bool
+     */
+    public function rewind()
+    {
+        return rewind($this->resource);
+    }
+
+    /**
+     * 设置当前打开文件的缓冲大小。
+     * @param int $buffer 规定缓冲大小，以字节计。
+     * @return mixed 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
+     */
+    public function setBuffer($buffer)
+    {
+        return set_file_buffer($this->resource, $buffer);
+    }
+
+    /**
      * 建立一个名为 link 的符号连接。
      *
      * 在Windows下该方法需要超级管理员权限
@@ -635,6 +782,15 @@ class File extends SplFileObject
     public function symlink($link)
     {
         return symlink($this->path, $link);
+    }
+
+    /**
+     * 建立一个临时文件
+     * @return resource
+     */
+    public static function tmpfile()
+    {
+        return tmpfile();
     }
 
     /**
@@ -668,21 +824,12 @@ class File extends SplFileObject
     }
 
     /**
-     * 设置当前打开文件的缓冲大小。
-     * @param int $buffer 规定缓冲大小，以字节计。
-     * @return mixed 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
+     * 删除文件
+     * @param resource $context 上下文
+     * @return bool
      */
-    public function setBuffer($buffer)
+    public function unlink($context = null)
     {
-        return set_file_buffer($this->resource, $buffer);
-    }
-
-    /**
-     * 建立一个临时文件
-     * @return resource
-     */
-    public static function tmpfile()
-    {
-        return tmpfile();
+        return unlink($this->path, $context);
     }
 }

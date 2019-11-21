@@ -289,7 +289,10 @@ class Upload
      */
     protected function isValid()
     {
-        return is_uploaded_file($this->file['tmp_name']);
+        $file = new File($this->file['tmp_name']);
+        $bool = $file->isUploadedFile();
+        unset($file);
+        return $bool;
     }
 
     /**
@@ -369,7 +372,7 @@ class Upload
             return true;
         }
 
-        $this->error = "directory {$path} creation failed";
+        $this->error = "directory `{$path}` creation failed";
         return false;
     }
 

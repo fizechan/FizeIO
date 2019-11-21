@@ -214,6 +214,7 @@ class File extends SplFileObject
      *
      * 参数 `$length` :
      *   默认是 1024 字节。
+     *   实际返回的字节是 $length - 1
      * @param int $length 规定要读取的字节数
      * @return string 若失败，则返回 false。
      */
@@ -237,7 +238,7 @@ class File extends SplFileObject
      * @param int $length 规定要读取的字节数
      * @param string $allowable_tags 规定不会被删除的标签
      * @return string
-     * @deprecated 不建议使用该方法
+     * @deprecated PHP7.3不建议使用该方法
      */
     public function getss($length = null, $allowable_tags = null)
     {
@@ -303,7 +304,7 @@ class File extends SplFileObject
      * @param int $flags 指定配置
      * @return array
      */
-    public function getContentsOnArray($flags = 0)
+    public function getContentsArray($flags = 0)
     {
         return file($this->path, $flags);
     }
@@ -322,7 +323,7 @@ class File extends SplFileObject
             case 'ctime' : //inode修改时间
                 $rst = filectime($this->path);
                 break;
-            case 'group' : //文件的组
+            case 'group' : //文件所属用户组
                 $rst = filegroup($this->path);
                 break;
             case 'inode' : //文件的inode
@@ -337,10 +338,10 @@ class File extends SplFileObject
             case 'perms' : //文件的权限
                 $rst = fileperms($this->path);
                 break;
-            case 'size' : //文件大小
+            case 'size' : //文件大小(字节数)
                 $rst = filesize($this->path);
                 break;
-            case 'type' : //文件类型
+            case 'type' : //文件类型(可能的值有 fifo，char，dir，block，link，file 和 unknown。)
                 $rst = filetype($this->path);
                 break;
             default :
@@ -364,8 +365,10 @@ class File extends SplFileObject
     }
 
     /**
-     * 用模式匹配文件名
+     * 检查是否模式匹配文件名
      *
+     * 普通用户可能习惯于 shell 模式或者至少其中最简单的形式 '?' 和 '*' 通配符，
+     * 因此使用 fnmatch() 来代替 Preg::match() 来进行前端搜索表达式输入对于非程序员用户更加方便。
      * 参数 `$flags` :
      *   可选值：[FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD|FNM_CASEFOLD]
      * @param string $pattern 统配符[shell]
@@ -383,10 +386,9 @@ class File extends SplFileObject
      * 参数 `$mode` :
      *   未指定则为当前模式
      * @param string $mode 访问模式
-     * @param bool $progress 指向进程文件
+     * @param bool $progress 是否指向进程文件
      * @param string $command 命令
      * @return resource
-     * @todo 针对popen执行进程文件还存在问题，待修复
      */
     public function open($mode = null, $progress = false, $command = '')
     {
@@ -396,11 +398,11 @@ class File extends SplFileObject
         $this->progress = $progress;
         if ($progress) {
             $res = popen($command, $mode);
-            var_dump($res);
         } else {
             if (is_file($this->path)) {
                 $res = fopen($this->path, $mode);
             } else {
+                //throw error
                 $res = false;
             }
         }
@@ -538,20 +540,16 @@ class File extends SplFileObject
 
     /**
      * 建立一个硬连接
-     *
-     * (不能运行在windows环境下)
-     * @param string $target 要链接的目标
+     * @param string $link 链接的名称
      * @return bool
      */
-    public function link($target)
+    public function link($link)
     {
-        return link($target, $this->path);
+        return link($this->path, $link);
     }
 
     /**
      * 获取一个连接的信息
-     *
-     * (不能运行在windows环境下)
      * @return int
      */
     public function linkinfo()
@@ -587,8 +585,6 @@ class File extends SplFileObject
 
     /**
      * 返回符号连接指向的目标
-     *
-     * (不能运行在windows环境下)
      * @return string
      */
     public function readlink()
@@ -619,7 +615,6 @@ class File extends SplFileObject
      * @param string $newname 要移动到的目标位置路径
      * @param bool $auto_build 如果指定的路径不存在，是否创建
      * @return bool
-     * @todo 测试时发现问题
      */
     public function rename($newname, $auto_build = true)
     {
@@ -631,15 +626,15 @@ class File extends SplFileObject
     }
 
     /**
-     * 对于已有的 target 建立一个名为 link 的符号连接。
+     * 建立一个名为 link 的符号连接。
      *
-     * (不能运行在windows环境下)
-     * @param string $target 目标路径
+     * 在Windows下该方法需要超级管理员权限
+     * @param string $link 链接的名称
      * @return bool
      */
-    public function symlink($target)
+    public function symlink($link)
     {
-        return symlink($target, $this->path);
+        return symlink($this->path, $link);
     }
 
     /**

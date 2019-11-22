@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpParamsInspection */
+/** @noinspection PhpLanguageLevelInspection */
 
 
 use fize\io\File;
@@ -9,11 +11,27 @@ class FileTest extends TestCase
 
     public function test__construct()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
-        $len = $file->fwrite("1234567890\r\n");
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
+        $len = $file->write("1234567890\r\n");
         $file->close();
         self::assertGreaterThan(0, $len);
+    }
+
+    public function testGetSplFileObject()
+    {
+        $file = new File('../temp/test.txt', 'w');
+        $spl = $file->getSplFileObject();
+        var_dump($spl);
+        self::assertInstanceOf(SplFileObject::class, $spl);
+    }
+
+    public function testBasename()
+    {
+        $file = new File('../temp/test.txt');
+        $basename = $file->basename();
+        var_dump($basename);
+        self::assertEquals($basename, 'test.txt');
     }
 
     /**
@@ -31,7 +49,7 @@ class FileTest extends TestCase
 
     public function testChmod()
     {
-        $file = new File('../temp/test.txt', 'r');
+        $file = new File('../temp/test.txt');
         $result = $file->chmod(0777);
         var_dump($result);
         self::assertTrue($result);
@@ -53,20 +71,21 @@ class FileTest extends TestCase
     public function testClearstatcache()
     {
         $file = new File('../temp/test.txt', 'a+');
-        $file->fwrite("123456");
-        $size1 = $file->getSize();
-        $file->fwrite("789000");
-        $size2 = $file->getSize();
+        $file->open();
+        $file->write("123456");
+        $size1 = $file->size();
+        $file->write("789000");
+        $size2 = $file->size();
         self::assertEquals($size1, $size2);
         $file->clearstatcache();
-        $size3 = $file->getSize();
+        $size3 = $file->size();
         self::assertNotEquals($size2, $size3);
         $file->close();
     }
 
     public function testCopy()
     {
-        $file = new File('../temp/test.txt', 'a+');
+        $file = new File('../temp/test.txt');
         $result1 = $file->copy('../temp/temp2');
         var_dump($result1);
         self::assertTrue($result1);
@@ -88,7 +107,7 @@ class FileTest extends TestCase
 
     public function testDirname()
     {
-        $file = new File('../temp/test.txt', 'w+');
+        $file = new File('../temp/test.txt');
         $dir = $file->dirname();
         var_dump($dir);
         self::assertIsString($dir);
@@ -96,17 +115,30 @@ class FileTest extends TestCase
 
     public function testClose()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
-        $file->fwrite("1234567890\r\n");
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
+        $file->write("1234567890\r\n");
         $result = $file->close();
         self::assertTrue($result);
     }
 
+    public function testEof()
+    {
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
+        $rst = $file->eof();
+        var_dump($rst);
+        self::assertFalse($rst);
+        $file->read(1024);
+        $rst = $file->eof();
+        var_dump($rst);
+        self::assertTrue($rst);
+    }
+
     public function testFlush()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('w');
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
         $file->write("1234567890\r\n");
         $file->write("1234567890\r\n");
         $file->write("1234567890\r\n");
@@ -117,7 +149,7 @@ class FileTest extends TestCase
 
     public function testGetc()
     {
-        $file = new File('../temp/test.txt');
+        $file = new File('../temp/test.txt', 'r');
         $file->open();
         $char = $file->getc();
         var_dump($char);
@@ -127,7 +159,7 @@ class FileTest extends TestCase
 
     public function testGetcsv()
     {
-        $file = new File('../temp/data/test.csv');
+        $file = new File('../temp/data/test.csv', 'r');
         $file->open();
         $csv = $file->getcsv();
         var_dump($csv);
@@ -137,8 +169,8 @@ class FileTest extends TestCase
 
     public function testGets()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('r');
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
         $content = $file->gets(11);
         var_dump($content);
         self::assertEquals(strlen($content), 10);
@@ -150,8 +182,8 @@ class FileTest extends TestCase
      */
     public function testGetss()
     {
-        $file = new File('../temp/data/test.html');
-        $file->open('r');
+        $file = new File('../temp/data/test.html', 'r');
+        $file->open();
         $content = $file->getss();
         var_dump($content);
         self::assertEquals($content, '我是中国人');
@@ -181,50 +213,90 @@ class FileTest extends TestCase
         self::assertIsInt($len);
     }
 
-    public function testGetContentsArray()
+    public function testFile()
     {
         $file = new File('../temp/data/test.html');
-        $lines = $file->getContentsArray();
+        $lines = $file->file();
         var_dump($lines);
         self::assertIsArray($lines);
     }
 
-    public function testGetInfo()
+    public function testAtime()
     {
         $file = new File('../temp/data/test.html');
-        $atime = $file->getInfo('atime');
+        $atime = $file->atime();
         var_dump($atime);
         self::assertIsInt($atime);
-        $ctime = $file->getInfo('ctime');
+    }
+
+    public function testCtime()
+    {
+        $file = new File('../temp/data/test.html');
+        $ctime = $file->ctime();
         var_dump($ctime);
         self::assertIsInt($ctime);
-        $group = $file->getInfo('group');
+    }
+
+    public function testGroup()
+    {
+        $file = new File('../temp/data/test.html');
+        $group = $file->group();
         var_dump($group);
         self::assertIsInt($group);
-        $inode = $file->getInfo('inode');
+    }
+
+    public function testInode()
+    {
+        $file = new File('../temp/data/test.html');
+        $inode = $file->inode();
         var_dump($inode);
         self::assertIsInt($inode);
-        $mtime = $file->getInfo('mtime');
+    }
+
+    public function testMtime()
+    {
+        $file = new File('../temp/data/test.html');
+        $mtime = $file->mtime();
         var_dump($mtime);
         self::assertIsInt($mtime);
-        $owner = $file->getInfo('owner');
+    }
+
+    public function testOwner()
+    {
+        $file = new File('../temp/data/test.html');
+        $owner = $file->owner();
         var_dump($owner);
         self::assertIsInt($owner);
-        $perms = $file->getInfo('perms');
+    }
+
+    public function testPerms()
+    {
+        $file = new File('../temp/data/test.html');
+        $perms = $file->perms();
         var_dump($perms);
         self::assertIsInt($perms);
-        $size = $file->getInfo('size');
+    }
+
+    public function testSize()
+    {
+        $file = new File('../temp/data/test.html');
+        $size = $file->size();
         var_dump($size);
         self::assertIsInt($size);
-        $type = $file->getInfo('type');
+    }
+
+    public function testType()
+    {
+        $file = new File('../temp/data/test.html');
+        $type = $file->type();
         var_dump($type);
         self::assertEquals($type, 'file');
     }
 
     public function testLock()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('w+');
+        $file = new File('../temp/test.txt', 'w+');
+        $file->open();
         $rst1 = $file->lock(LOCK_EX);
         self::assertTrue($rst1);
         if($rst1) {
@@ -244,38 +316,25 @@ class FileTest extends TestCase
         self::assertTrue($rst);
     }
 
-    /**
-     * @todo Linux测试条件不一样，待测试
-     */
     public function testOpen()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
         $len = $file->write("1234567890\r\n");
         $file->close();
         self::assertGreaterThan(0, $len);
-
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
-        } else {
-            $cmd = "bash php --version";
-        }
-        $file->open('r', true, $cmd);
-        $content = $file->gets();
-        var_dump($content);
-        $file->close();
     }
 
     public function testPassthru()
     {
-        $file = new File('../temp/test.txt');  //必须指定文件，待优化。
+        $file = new File();
 
         if (substr(php_uname(), 0, 7) == "Windows"){
             $cmd = "start /B php --version";
         } else {
             $cmd = "bash php --version";  //@todo 待验证
         }
-        $file->open('r', true, $cmd);
+        $file->popen($cmd, 'r');
         $len = $file->passthru();
         $file->close();
         self::assertIsInt($len);
@@ -283,8 +342,8 @@ class FileTest extends TestCase
 
     public function testPutcsv()
     {
-        $file = new File('../temp/data/test.csv');
-        $file->open('a+');
+        $file = new File('../temp/data/test.csv', 'a+');
+        $file->open();
         $fields = ['汽车', 'VIN码查询', 'Vin/query', '根据VIN码查询车辆相关信息', '聚合', '通过'];
         $len = $file->putcsv($fields);
         var_dump($len);
@@ -294,8 +353,8 @@ class FileTest extends TestCase
 
     public function testPuts()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('a+');
+        $file = new File('../temp/test.txt', 'a+');
+        $file->open();
         $len = $file->puts('这是我要写入的字符串');
         var_dump($len);
         self::assertIsInt($len);
@@ -304,8 +363,8 @@ class FileTest extends TestCase
 
     public function testRead()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('r');
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
         $content = $file->read(1024);
         var_dump($content);
         self::assertIsString($content);
@@ -314,8 +373,8 @@ class FileTest extends TestCase
 
     public function testScanf()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('r');
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
         $info = $file->scanf('%s');
         var_dump($info);
         self::assertIsArray($info);
@@ -324,8 +383,8 @@ class FileTest extends TestCase
 
     public function testStat()
     {
-        $file = new File('../temp/test.txt');
-        $file->open('r');
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
         $stat = $file->stat();
         var_dump($stat);
         self::assertIsArray($stat);
@@ -333,9 +392,9 @@ class FileTest extends TestCase
 
     public function testTell()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
-        $file->fwrite("1234567890\r\n");
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
+        $file->write("1234567890\r\n");
         $file->close();
         $file->open('r');
         $cursor1 = $file->tell();
@@ -353,8 +412,8 @@ class FileTest extends TestCase
 
     public function testTruncate()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('a+');
+        $file = new File('../temp/test.txt', 'a+');
+        $file->open();
         $rst = $file->truncate(5);
         self::assertTrue($rst);
         $file->close();
@@ -362,16 +421,48 @@ class FileTest extends TestCase
 
     public function testWrite()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
+        $file = new File('../temp/test.txt', 'w');
+        $file->open();
         $len = $file->write("1234567890\r\n");
         $file->close();
         self::assertGreaterThan(0, $len);
     }
 
+    public function testIsExecutable()
+    {
+        $file = new File('../temp/test.txt', 'w');
+        $rst = $file->isExecutable();
+        var_dump($rst);
+        self::assertFalse($rst);
+    }
+
+    public function testIsFile()
+    {
+        $file = new File('../temp/test.txt', 'w');
+        $rst = $file->isFile();
+        var_dump($rst);
+        self::assertTrue($rst);
+    }
+
+    public function testIsLink()
+    {
+        $file = new File('../temp/test.txt', 'w');
+        $rst = $file->isLink();
+        var_dump($rst);
+        self::assertFalse($rst);
+    }
+
+    public function testIsReadable()
+    {
+        $file = new File('../temp/test.txt', 'r');
+        $rst = $file->isReadable();
+        var_dump($rst);
+        self::assertTrue($rst);
+    }
+
     public function testIsUploadedFile()
     {
-        $file = new File('../temp/test.txt', 'r+');
+        $file = new File('../temp/test.txt');
         $bool = $file->isUploadedFile();
         var_dump($bool);
         self::assertFalse($bool);
@@ -379,8 +470,8 @@ class FileTest extends TestCase
 
     public function testIsWriteable()
     {
-        $file = new File('../temp/test.txt', 'r');
-        $bool = $file->isWriteable();
+        $file = new File('../temp/test.txt');
+        $bool = $file->isWritable();
         var_dump($bool);
         self::assertTrue($bool);
     }
@@ -413,9 +504,24 @@ class FileTest extends TestCase
         self::assertIsString($dir);
     }
 
+    public function testPopen()
+    {
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version";
+        } else {
+            $cmd = "bash php --version";
+        }
+        $progress = new File();
+        $progress->popen($cmd, 'r');
+        $content = $progress->gets();
+        var_dump($content);
+        self::assertIsString($content);
+        $progress->close();
+    }
+
     public function testReadfile()
     {
-        $file = new File('../temp/test.txt', 'r');
+        $file = new File('../temp/test.txt');
         $rst = $file->readfile();
         var_dump($rst);
         self::assertIsInt($rst);
@@ -423,7 +529,7 @@ class FileTest extends TestCase
 
     public function testReadlink()
     {
-        $file = new File('../temp/test_link.txt', 'r');
+        $file = new File('../temp/test_link.txt');
         $rst = $file->readlink();
         var_dump($rst);
         self::assertIsString($rst);
@@ -443,12 +549,49 @@ class FileTest extends TestCase
         self::assertIsInt($size);
     }
 
+    public function testRealpath()
+    {
+        $file = new File('../temp/test2.txt');
+        $realpath = $file->realpath();
+        var_dump($realpath);
+        self::assertIsString($realpath);
+    }
+
     public function testRename()
     {
         $file = new File('../temp/test2.txt');
         $rst = $file->rename('../temp/test2_new.txt');
         var_dump($rst);
         self::assertTrue($rst);
+    }
+
+    public function testRewind()
+    {
+        $file = new File('../temp/test.txt', 'r');
+        $file->open();
+        $content1 = $file->gets();
+        var_dump($content1);
+        $file->rewind();
+        $content2 = $file->gets();
+        var_dump($content2);
+        self::assertEquals($content1, $content2);
+        $file->close();
+    }
+
+    /**
+     * @todo 测试未通过
+     */
+    public function testSetBuffer()
+    {
+        $file = new File('../temp/test.txt', 'r+');
+        $file->open('w');
+        $rst = $file->setBuffer(512);
+        var_dump($rst);
+        self::assertEquals(0, $rst);
+
+        $len = $file->write("1234567890\r\n");
+        $file->close();
+        self::assertGreaterThan(0, $len);
     }
 
     /**
@@ -460,6 +603,18 @@ class FileTest extends TestCase
         $bool = $file->symlink('F:/git/github/fize/FizeIo/temp/test_symlink');
         var_dump($bool);
         self::assertTrue($bool);
+    }
+
+    public function testTmpfile()
+    {
+        $resource = File::tmpfile();
+        var_dump($resource);
+        self::assertIsResource($resource);
+
+        fwrite($resource, "这是一些测试字符串");
+        fseek($resource, 0);
+        $string = fread($resource, 1024);
+        self::assertEquals($string, "这是一些测试字符串");
     }
 
     public function testTouch()
@@ -482,31 +637,11 @@ class FileTest extends TestCase
         }
     }
 
-    /**
-     * @todo 测试未通过
-     */
-    public function testSetBuffer()
+    public function testUnlink()
     {
-        $file = new File('../temp/test.txt', 'r+');
-        $file->open('w');
-        $rst = $file->setBuffer(512);
-        var_dump($rst);
-        self::assertEquals(0, $rst);
-
-        $len = $file->write("1234567890\r\n");
-        $file->close();
-        self::assertGreaterThan(0, $len);
-    }
-
-    public function testTmpfile()
-    {
-        $resource = File::tmpfile();
-        var_dump($resource);
-        self::assertIsResource($resource);
-
-        fwrite($resource, "这是一些测试字符串");
-        fseek($resource, 0);
-        $string = fread($resource, 1024);
-        self::assertEquals($string, "这是一些测试字符串");
+        $file = new File('../temp/test3.txt');
+        $result = $file->unlink();
+        var_dump($result);
+        self::assertTrue($result);
     }
 }

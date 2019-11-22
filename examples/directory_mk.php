@@ -22,13 +22,11 @@ $wd = Directory::getcwd();
 var_dump($wd);
 
 $result = Directory::mk('./测试目录7/测试目录8');  //当前目录已在测试目录6
-self::assertTrue($result);
 
 $wd = Directory::getcwd();
 var_dump($wd);
 
 $result = Directory::mk( $root . '/data/测试目录1/测试目录2');  //绝对路径
-self::assertTrue($result);
 
 $wd = Directory::getcwd();
 var_dump($wd);

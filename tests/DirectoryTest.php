@@ -379,16 +379,6 @@ class DirectoryTest extends TestCase
         self::assertTrue($result);
     }
 
-    public function testCreateTempFile()
-    {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
-        Directory::ch(PATH_ROOT);
-
-        $file_full_name = Directory::createTempFile('test');
-        var_dump($file_full_name);
-        self::assertIsString($file_full_name);
-    }
-
     public function testGlob()
     {
         define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
@@ -413,5 +403,23 @@ class DirectoryTest extends TestCase
         $space = Directory::diskTotalSpace(PATH_ROOT);
         var_dump($space);
         self::assertIsFloat($space);
+    }
+
+    public function testRealpath()
+    {
+        $dir = new Directory("../temp/temp1");
+        $realpath = $dir->realpath();
+        var_dump($realpath);
+        self::assertIsString($realpath);
+    }
+
+    public function testTempnam()
+    {
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        Directory::ch(PATH_ROOT);
+
+        $file_full_name = Directory::tempnam('test');
+        var_dump($file_full_name);
+        self::assertIsString($file_full_name);
     }
 }

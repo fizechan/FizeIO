@@ -37,7 +37,7 @@ class File
      * @param string $filename 文件名，对于 popen 可以使用null来指定
      * @param string $mode 打开模式
      */
-    public function __construct($filename, $mode = null)
+    public function __construct($filename = null, $mode = null)
     {
         $this->path = $filename;
         $this->mode = $mode;
@@ -456,13 +456,15 @@ class File
 
     /**
      * 打开文件或者 URL
+     * @param string 打开模式，不指定则为当前模式
      * @param bool $use_include_path 是否在 include_path 中搜寻文件
      * @param resource $context 上下文支持
      */
-    public function open($use_include_path = false, $context = null)
+    public function open($mode = null, $use_include_path = false, $context = null)
     {
         $this->progress = false;
-        $this->resource = fopen($this->path, $this->mode, $use_include_path, $context);
+        $mode = $mode ? $mode : $this->mode;
+        $this->resource = fopen($this->path, $mode, $use_include_path, $context);
     }
 
     /**
@@ -686,11 +688,13 @@ class File
     /**
      * 打开一个指向进程的管道
      * @param string $command 命令
+     * @param string 模式
      */
-    public function popen($command)
+    public function popen($command, $mode = null)
     {
         $this->progress = true;
-        $this->resource = popen($command, $this->mode);
+        $mode = $mode ? $mode : $this->mode;
+        $this->resource = popen($command, $mode);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /** @noinspection PhpComposerExtensionStubsInspection */
-require_once "../../vendor/autoload.php";
+require_once "../vendor/autoload.php";
 
 use fize\io\Upload;
 
@@ -9,7 +9,7 @@ $info1 = Upload::single('upfile1');
 $config = [
     'rule'    => 'md5'
 ];
-Upload::init($config);
+Upload::config($config);
 
 $info2 = Upload::single('upfile2');
 

@@ -15,6 +15,36 @@ class Stream
     protected $context;
 
     /**
+     * 初始化
+     * @param resource $stream_or_context 资源流/数据包/上下文
+     */
+    public function __construct($stream_or_context)
+    {
+        $this->context = $stream_or_context;
+    }
+
+    /**
+     * 析构
+     *
+     * 清理资源对象，防止内存泄漏
+     */
+    public function __destruct()
+    {
+        if($this->context && is_resource($this->context)) {
+            fclose($this->context);
+        }
+    }
+
+    /**
+     * 取回上下文资源流
+     * @return resource
+     */
+    public function get()
+    {
+        return $this->context;
+    }
+
+    /**
      * 将桶附加到队列
      * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $brigade 队列
@@ -71,11 +101,9 @@ class Stream
      * @param array $params 参数
      * @return resource
      */
-    public function contextCreate(array $options = null, array $params = null)
+    public static function contextCreate(array $options = null, array $params = null)
     {
-        $context = stream_context_create($options, $params);
-        $this->context = $context;
-        return $this->context;
+        return stream_context_create($options, $params);
     }
 
     /**
@@ -83,29 +111,27 @@ class Stream
      * @param array $options 选项
      * @return resource
      */
-    public static function contextGetDefault(array $options = null)
+    public static function contextGetDefault(array $options = [])
     {
         return stream_context_get_default($options);
     }
 
     /**
      * 获取资源流/数据包/上下文的参数
-     * @param resource $stream_or_context 获取参数信息的 stream 或者 context 。
      * @return array 返回一个包含有原参数的关联数组。
      */
-    public static function contextGetOptions($stream_or_context)
+    public function contextGetOptions()
     {
-        return stream_context_get_options($stream_or_context);
+        return stream_context_get_options($this->context);
     }
 
     /**
      * 从上下文检索参数
-     * @param resource $stream_or_context 获取参数信息的 stream 或者 context 。
      * @return array 参数
      */
-    public static function contextGetParams($stream_or_context)
+    public function contextGetParams()
     {
-        return stream_context_get_params($stream_or_context);
+        return stream_context_get_params($this->context);
     }
 
     /**
@@ -120,69 +146,64 @@ class Stream
 
     /**
      * 对资源流、数据包或者上下文设置参数
-     * @param resource $stream_or_context 获取参数信息的 stream 或者 context 。
      * @param array $options 选项
      * @return bool
      */
-    public static function contextSetOption($stream_or_context, array $options)
+    public function contextSetOption(array $options)
     {
-        return stream_context_set_option($stream_or_context, $options);
+        return stream_context_set_option($this->context, $options);
     }
 
     /**
      * 设置流/包装器/上下文的参数
-     * @param resource $stream_or_context 获取参数信息的 stream 或者 context 。
      * @param array $params 参数
      * @return bool
      */
-    public static function contextSetParams($stream_or_context, array $params)
+    public function contextSetParams(array $params)
     {
-        return stream_context_set_params($stream_or_context, $params);
+        return stream_context_set_params($this->context, $params);
     }
 
     /**
-     * 将数据从一个流复制到另一个流
-     * @param resource $source 源流
+     * 将数据复制到另一个流
      * @param resource $dest 目标流
      * @param int $maxlength 最大长度
      * @param int $offset 偏移量
      * @return int 失败时返回false
      */
-    public static function copyToStream($source, $dest, $maxlength = null, $offset = null)
+    public function copyToStream($dest, $maxlength = -1, $offset = 0)
     {
-        return stream_copy_to_stream($source, $dest, $maxlength, $offset);
+        return stream_copy_to_stream($this->context, $dest, $maxlength, $offset);
     }
 
     /**
-     * 将过滤器附加到流
+     * 将后置过滤器附加到流
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
-     * @param resource $stream 流
      * @param string $filtername 过滤器
      * @param int $read_write 读写模式
      * @param mixed $params 相关参数
      * @return resource
      */
-    public static function filterAppend($stream, $filtername, $read_write = null, $params = null)
+    public function filterAppend($filtername, $read_write = null, $params = null)
     {
-        return stream_filter_append($stream, $filtername, $read_write, $params);
+        return stream_filter_append($this->context, $filtername, $read_write, $params);
     }
 
     /**
-     * 将过滤器附加到流
+     * 将前置过滤器附加到流
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
-     * @param resource $stream 流
      * @param string $filtername 过滤器
      * @param int $read_write 读写模式
      * @param mixed $params 相关参数
      * @return resource
      */
-    public static function filterPrepend($stream, $filtername, $read_write = null, $params = null)
+    public function filterPrepend($filtername, $read_write = null, $params = null)
     {
-        return stream_filter_prepend($stream, $filtername, $read_write, $params);
+        return stream_filter_prepend($this->context, $filtername, $read_write, $params);
     }
 
     /**
@@ -213,14 +234,13 @@ class Stream
      *   默认是-1（读取全部的缓冲数据）。
      * 参数 `$offset` :
      *   如果这个数字是负数，就不进行查找，直接从当前位置开始读取。
-     * @param resource $handle 一个资源流
      * @param int $maxlength 需要读取的最大的字节数
      * @param int $offset 在读取数据之前先查找指定的偏移量
      * @return string 失败时返回false
      */
-    public static function getContents($handle, $maxlength = null, $offset = null)
+    public function getContents($maxlength = -1, $offset = -1)
     {
-        return stream_get_contents($handle, $maxlength, $offset);
+        return stream_get_contents($this->context, $maxlength, $offset);
     }
 
     /**
@@ -234,24 +254,22 @@ class Stream
 
     /**
      * 从资源流里读取一行直到给定的定界符
-     * @param resource $handle 一个有效的文件句柄
      * @param int $length 需要从句柄里读取的字节数。
      * @param string $ending 可选参数，字符串定界符。
      * @return string 如果发生错误，则返回 FALSE.
      */
-    public static function getLine($handle, $length, $ending = null)
+    public function getLine($length, $ending = null)
     {
-        return stream_get_line($handle, $length, $ending);
+        return stream_get_line($this->context, $length, $ending);
     }
 
     /**
      *  从封装协议文件指针中取得报头／元数据
-     * @param resource $stream 流
      * @return array
      */
-    public static function getMetaData($stream)
+    public function getMetaData()
     {
-        return stream_get_meta_data($stream);
+        return stream_get_meta_data($this->context);
     }
 
     /**
@@ -274,22 +292,24 @@ class Stream
 
     /**
      * 检查流是否是本地流
-     * @param mixed $stream_or_url 流或者URL
+     * @param mixed $stream_or_url 可以指定流或者URL
      * @return bool
      */
-    public static function isLocal($stream_or_url)
+    public function isLocal($stream_or_url = null)
     {
+        if(is_null($stream_or_url)) {
+            $stream_or_url = $this->context;
+        }
         return stream_is_local($stream_or_url);
     }
 
     /**
-     * 检查流是否为TTY
-     * @param resource $stream 流
+     * 确定流是否引用有效的终端类型设备
      * @return bool
      */
-    public static function isatty($stream)
+    public function isatty()
     {
-        return stream_isatty($stream);
+        return stream_isatty($this->context);
     }
 
     /**
@@ -317,76 +337,73 @@ class Stream
     }
 
     /**
-     * 为资源流设置阻塞或者阻塞模式
-     * @param resource $stream 流
+     * 为资源流设置阻塞或者非阻塞模式
      * @param int $mode 模式
      * @return bool
      */
-    public static function setBlocking($stream, $mode)
+    public function setBlocking($mode)
     {
-        return stream_set_blocking($stream, $mode);
+        return stream_set_blocking($this->context, $mode);
     }
 
     /**
      * 设置资源流区块大小
-     * @param resource $fp 目标资源流
      * @param int $chunk_size 想设置的新的区块大小。
      * @return int 失败时返回false
      */
-    public static function setChunkSize($fp , $chunk_size)
+    public function setChunkSize($chunk_size)
     {
-        return stream_set_chunk_size($fp , $chunk_size);
+        return stream_set_chunk_size($this->context , $chunk_size);
     }
 
     /**
-     * 设置给定流上的读取文件缓冲
-     * @param resource $stream 流
+     * 设置流上的读取文件缓冲
      * @param int $buffer 缓冲大小
      * @return int
      */
-    public static function setReadBuffer($stream, $buffer)
+    public function setReadBuffer($buffer)
     {
-        return stream_set_read_buffer($stream, $buffer);
+        return stream_set_read_buffer($this->context, $buffer);
     }
 
     /**
      * 设置流超时时间
-     * @param resource $stream 流
      * @param int $seconds 指定秒
      * @param int $microseconds 指定毫秒
      * @return bool
      */
-    public static function setTimeout($stream, $seconds, $microseconds = null)
+    public function setTimeout($seconds, $microseconds = null)
     {
-        return stream_set_timeout($stream, $seconds, $microseconds);
+        return stream_set_timeout($this->context, $seconds, $microseconds);
     }
 
     /**
-     * 设置给定流上的写文件缓冲
-     * @param resource $stream 流
+     * 设置流上的写文件缓冲
      * @param int $buffer 缓冲大小
      * @return int
      */
-    public static function setWriteBuffer($stream, $buffer)
+    public function setWriteBuffer($buffer)
     {
-        return stream_set_write_buffer($stream, $buffer);
+        return stream_set_write_buffer($this->context, $buffer);
     }
 
     /**
-     * 接受由 stream_socket_server() 创建的套接字连接
+     * 接受由 Stream::socketServer() 创建的套接字连接
      *
      * 参数 `$timeout` :
      *   输入的时间需以秒为单位。
      * 参数 `$peername` :
      *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
-     * @param resource $server_socket 需要接受的服务器创建的套接字连接。
      * @param float $timeout 覆盖默认的套接字接受的超时时限
      * @param string $peername 设置给连接中的客户端主机的名称（地址）
      * @return resource 失败时返回false
      */
-    public static function socketAccept($server_socket, $timeout = null, &$peername = null)
+    public function socketAccept($timeout = null, &$peername = null)
     {
-        return stream_socket_accept($server_socket, $timeout, $peername);
+        if(is_null($timeout)) {
+            return stream_socket_accept($this->context);
+        }
+        return stream_socket_accept($this->context, $timeout, $peername);
     }
 
     /**
@@ -402,22 +419,27 @@ class Stream
      * @param resource $context 使用stream_context_create()创建的有效上下文资源。
      * @return resource 失败时返回false
      */
-    public static function socketClient($remote_socket, &$errno = null, &$errstr = null, $timeout = null, $flags = null, $context = null)
+    public static function socketClient($remote_socket, &$errno = null, &$errstr = null, $timeout = null, $flags = 4, $context = null)
     {
+        if (is_null($context)) {
+            return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
+        }
         return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
     }
 
     /**
      * 在已连接的套接字上打开/关闭加密
-     * @param resource $stream 已连接的套接字
      * @param bool $enable 是否开启加密
      * @param int $crypto_type 可选的加密类型
      * @param resource $session_stream 用来自session_stream的设置为流。
-     * @return mixed
+     * @return mixed 成功true，失败false。没有足够数据时返回0
      */
-    public static function socketEnableCrypto($stream, $enable, $crypto_type = null, $session_stream = null)
+    public function socketEnableCrypto($enable, $crypto_type = null, $session_stream = null)
     {
-        return stream_socket_enable_crypto($stream, $enable, $crypto_type, $session_stream);
+        if (is_null($session_stream)) {
+            return stream_socket_enable_crypto($this->context, $enable, $crypto_type);
+        }
+        return stream_socket_enable_crypto($this->context, $enable, $crypto_type, $session_stream);
     }
 
     /**
@@ -425,13 +447,12 @@ class Stream
      *
      * 参数 `$want_peer` :
      *   如果设置为 TRUE ，那么将返回 remote 套接字连接名称；如果设置为 FALSE 则返回 local 套接字连接名称。
-     * @param resource $handle 需要获取其名称的套接字连接
      * @param int $want_peer 是否远程套接字
      * @return string
      */
-    public static function socketGetName($handle, $want_peer)
+    public function socketGetName($want_peer)
     {
-        return stream_socket_get_name($handle, $want_peer);
+        return stream_socket_get_name($this->context, $want_peer);
     }
 
     /**
@@ -455,28 +476,26 @@ class Stream
 
     /**
      * 从套接字接收数据，无论是否连接
-     * @param resource $socket 套接字
      * @param int $length 长度
      * @param int $flags 标识
      * @param string $address 将使用远程套接字的地址填充。
      * @return string 以字符串的形式返回读取的数据
      */
-    public static function socketRecvfrom($socket, $length, $flags = null, &$address = null)
+    public function socketRecvfrom($length, $flags = 0, &$address = null)
     {
-        return stream_socket_recvfrom($socket, $length, $flags, $address);
+        return stream_socket_recvfrom($this->context, $length, $flags, $address);
     }
 
     /**
      * 向套接字发送消息，不管它是否连接
-     * @param resource $socket 套接字
      * @param string $data 消息
      * @param int $flags 标识
      * @param string $address 将使用远程套接字的地址填充。
      * @return int 以整数形式返回结果代码。
      */
-    public static function socketSendto($socket, $data, $flags = null, $address = null)
+    public function socketSendto($data, $flags = 0, $address = null)
     {
-        return stream_socket_sendto($socket, $data, $flags, $address);
+        return stream_socket_sendto($this->context, $data, $flags, $address);
     }
 
     /**
@@ -491,8 +510,11 @@ class Stream
      * @param resource $context 有效上下文资源。
      * @return resource 失败时返回false
      */
-    public static function socketServer($local_socket, &$errno = null, &$errstr = null, $flags = null, $context = null)
+    public static function socketServer($local_socket, &$errno = null, &$errstr = null, $flags = 12, $context = null)
     {
+        if(is_null($context)) {
+            return stream_socket_server($local_socket, $errno, $errstr, $flags);
+        }
         return stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
     }
 
@@ -503,23 +525,21 @@ class Stream
      *   (例如，用stream_socket_client()打开)
      * 参数 `$how` :
      *   以下常量之一:STREAM_SHUT_RD(禁用进一步的接收)、STREAM_SHUT_WR(禁用进一步的传输)或STREAM_SHUT_RDWR(禁用进一步的接收和传输)。
-     * @param resource $stream 一个打开的流
      * @param int $how 定义如何处理
      * @return bool
      */
-    public static function socketShutdown($stream, $how)
+    public function socketShutdown($how)
     {
-        return stream_socket_shutdown($stream, $how);
+        return stream_socket_shutdown($this->context, $how);
     }
 
     /**
      * 表示流是否支持锁定
-     * @param resource $stream 流
      * @return bool
      */
-    public static function supportsLock($stream)
+    public function supportsLock()
     {
-        return stream_supports_lock($stream);
+        return stream_supports_lock($this->context);
     }
 
     /**
@@ -532,7 +552,7 @@ class Stream
      * @param int $flags 标识
      * @return bool
      */
-    public static function wrapperRegister($protocol, $classname, $flags = null)
+    public static function wrapperRegister($protocol, $classname, $flags = 0)
     {
         return stream_wrapper_register($protocol, $classname, $flags);
     }

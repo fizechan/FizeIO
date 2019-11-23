@@ -34,12 +34,20 @@ class File
 
     /**
      * 构造
-     * @param string $filename 文件名，对于 popen 可以使用null来指定
+     *
+     * 参数 `$filename` :
+     *   对于 popen 可以使用null来指定
+     *   可以传入上下文流进行流操作
+     * @param string $filename 文件名
      * @param string $mode 打开模式
      */
     public function __construct($filename = null, $mode = null)
     {
-        $this->path = $filename;
+        if(is_resource($filename)) {
+            $this->resource = $filename;
+        } else {
+            $this->path = $filename;
+        }
         $this->mode = $mode;
         $auto_build = in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+']);
         if ($filename && $auto_build) {
@@ -50,12 +58,31 @@ class File
     }
 
     /**
+     * 析构
+     *
+     * 清理资源对象，防止内存泄漏
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    /**
      * 返回对应的SPL文件对象
      * @return SplFileObject
      */
     public function getSplFileObject()
     {
         return new SplFileObject($this->path, $this->mode);
+    }
+
+    /**
+     * 获取资源流
+     * @return resource
+     */
+    public function getStream()
+    {
+        return $this->resource;
     }
 
     /**
@@ -699,11 +726,13 @@ class File
 
     /**
      * 读取文件并写入到输出缓冲。
+     * @param bool $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context 上下文支持
      * @return int
      */
-    public function readfile()
+    public function readfile($use_include_path = false, $context = null)
     {
-        return readfile($this->path);
+        return readfile($this->path, $use_include_path, $context);
     }
 
     /**

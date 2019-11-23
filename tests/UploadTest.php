@@ -29,7 +29,7 @@ class UploadTest extends TestCase
 
         if(!self::$seriver) {
             self::$seriver = true;
-            $cmd = 'start cmd /k "cd /d %cd%/website &&php -S localhost:8123"';
+            $cmd = 'start cmd /k "cd /d %cd%/../examples &&php -S localhost:8123"';
             $pid = popen($cmd, 'r');
             pclose($pid);
             sleep(3);  //待服务器启动
@@ -48,7 +48,7 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfile',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ]
             ]
         ]);
@@ -66,11 +66,11 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfile1',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ],
                 [
                     'name'     => 'upfile2',
-                    'contents' => fopen(__DIR__ . '/data/video1.mp4', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/video1.mp4', 'r')
                 ]
             ]
         ]);
@@ -96,11 +96,11 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfile1',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ],
                 [
                     'name'     => 'upfile2',
-                    'contents' => fopen(__DIR__ . '/data/video1.mp4', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/video1.mp4', 'r')
                 ]
             ]
         ]);
@@ -126,7 +126,7 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfile',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ]
             ]
         ]);
@@ -147,15 +147,15 @@ class UploadTest extends TestCase
 
     public function testInit()
     {
-        $response = $this->client->request('POST', 'upload_init.php', [
+        $response = $this->client->request('POST', 'upload_config.php', [
             'multipart' => [
                 [
                     'name'     => 'upfile1',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ],
                 [
                     'name'     => 'upfile2',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ]
             ]
         ]);
@@ -183,7 +183,7 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfile',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ]
             ]
         ]);
@@ -208,15 +208,15 @@ class UploadTest extends TestCase
             'multipart' => [
                 [
                     'name'     => 'upfiles[]',
-                    'contents' => fopen(__DIR__ . '/data/image1.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image1.jpg', 'r')
                 ],
                 [
                     'name'     => 'upfiles[]',
-                    'contents' => fopen(__DIR__ . '/data/image2.jpg', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/image2.jpg', 'r')
                 ],
                 [
                     'name'     => 'upfiles[]',
-                    'contents' => fopen(__DIR__ . '/data/water.png', 'r')
+                    'contents' => fopen(__DIR__ . '/../temp/data/water.png', 'r')
                 ]
             ]
         ]);

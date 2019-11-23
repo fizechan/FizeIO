@@ -1,6 +1,6 @@
 <?php
 /** @noinspection PhpComposerExtensionStubsInspection */
-require_once "../../vendor/autoload.php";
+require_once "../vendor/autoload.php";
 
 use fize\io\Upload;
 
@@ -13,7 +13,7 @@ $result = [
     'errcode' => 0,
     'errmsg'  => '',
     'data' => [
-        'path' => $file->getRealPath()
+        'path' => $file->realpath()
     ]
 ];
 

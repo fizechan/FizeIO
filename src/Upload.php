@@ -377,10 +377,10 @@ class Upload
     }
 
     /**
-     * 初始化单例配置
+     * 单例配置
      * @param array $config 配置
      */
-    public static function init(array $config = [])
+    public static function config(array $config = [])
     {
         self::$staticConfig = array_merge(self::$staticConfig, $config);
     }

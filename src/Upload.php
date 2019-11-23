@@ -427,7 +427,7 @@ class Upload
     /**
      * 简易模式下的多文件上传
      * @param mixed $files 多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
-     * @param array $config
+     * @param array $config 配置
      * @return array
      */
     public static function multiple($files, array $config = [])

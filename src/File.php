@@ -332,7 +332,7 @@ class File
     public function getContents($use_include_path = false, $context = null, $offset = 0, $maxlen = null)
     {
         if (is_null($maxlen)) {
-            return file_get_contents($this->path,$use_include_path, $context, $offset, $maxlen);
+            return file_get_contents($this->path, $use_include_path, $context, $offset);
         } else {
             return file_get_contents($this->path, $use_include_path, $context, $offset, $maxlen);
         }

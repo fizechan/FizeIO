@@ -73,12 +73,11 @@ class Directory
     }
 
     /**
-     * 打开指定目录
-     * @param string $path 指定目录
+     * 打开当前目录
      */
-    public function open($path)
+    public function open()
     {
-        $this->handle = opendir($path);
+        $this->handle = opendir($this->path);
     }
 
     /**

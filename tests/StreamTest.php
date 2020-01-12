@@ -522,19 +522,17 @@ class StreamTest extends TestCase
         self::assertTrue($rst);
     }
 
-    /**
-     * @todo 提示“never existed, nothing to restore”
-     */
     public function testWrapperRestore()
     {
-        $existed = in_array("var", Stream::getWrappers());
+        $existed = in_array("http", Stream::getWrappers());
         if ($existed) {
-            Stream::wrapperUnregister("var");
+            Stream::wrapperUnregister("http");
         }
-        Stream::wrapperRegister("var", "TxtStreamWrapper");
+        $rst = Stream::wrapperRegister("http", "TxtStreamWrapper");
+        self::assertTrue($rst);
         $myvar = "";
 
-        $fp = fopen("var://myvar", "r+");
+        $fp = fopen("http://myvar", "r+");
 
         fwrite($fp, "line1\n");
         fwrite($fp, "line2\n");
@@ -547,13 +545,13 @@ class StreamTest extends TestCase
         fclose($fp);
         var_dump($myvar);
 
-        //$existed = in_array("var", Stream::getWrappers());
+        $existed = in_array("http", Stream::getWrappers());
         if ($existed) {
-            $rst = Stream::wrapperRestore("var");
+            $rst = Stream::wrapperRestore("http");
             var_dump($rst);
             self::assertTrue($rst);
         }
-        $rst = Stream::wrapperRestore("var");
+        $rst = Stream::wrapperRestore("http");
         var_dump($rst);
         self::assertTrue($rst);
     }
@@ -593,8 +591,11 @@ class TxtStreamWrapper
     const WRAPPER_NAME = 'callback';
 
     public $context;
+
     private $_cb;
+
     private $seek = 0;
+
     private $_eof = false;
 
     private static $_isRegistered = false;

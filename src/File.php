@@ -43,17 +43,25 @@ class File
      */
     public function __construct($filename = null, $mode = null)
     {
-        if(is_resource($filename)) {
+        if (is_resource($filename)) {
             $this->resource = $filename;
         } else {
             $this->path = $filename;
         }
         $this->mode = $mode;
-        $auto_build = in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+']);
-        if ($filename && $auto_build) {
-            $dir = dirname($this->path);
-            Directory::createDirectory($dir, 0777, true);
-            touch($filename);
+
+        if ($filename) {
+            // 协议格式不进行文件自动创建
+            $info = parse_url($filename);
+            if (isset($info['scheme'])) {
+                return;
+            }
+
+            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
+                $dir = dirname($this->path);
+                Directory::createDirectory($dir, 0777, true);
+                touch($filename);
+            }
         }
     }
 
@@ -201,7 +209,7 @@ class File
     public function close()
     {
         $result = false;
-        if($this->resource) {
+        if ($this->resource) {
             if ($this->progress) {
                 $result = pclose($this->resource);
             } else {

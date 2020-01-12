@@ -38,7 +38,7 @@ class File
      * 参数 `$filename` :
      *   对于 popen 可以使用null来指定
      *   可以传入上下文流进行流操作
-     * @param string $filename 文件名
+     * @param string|resource|null $filename 文件名、资源流、null
      * @param string $mode 打开模式
      */
     public function __construct($filename = null, $mode = null)
@@ -50,7 +50,7 @@ class File
         }
         $this->mode = $mode;
 
-        if ($filename) {
+        if ($filename && is_string($filename)) {
             // 协议格式不进行文件自动创建
             $info = parse_url($filename);
             if (isset($info['scheme'])) {

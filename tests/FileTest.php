@@ -4,6 +4,7 @@
 
 
 use fize\io\File;
+use fize\io\Stream;
 use PHPUnit\Framework\TestCase;
 
 class FileTest extends TestCase
@@ -16,6 +17,20 @@ class FileTest extends TestCase
         $len = $file->write("1234567890\r\n");
         $file->close();
         self::assertGreaterThan(0, $len);
+    }
+
+    public function test___destruct()
+    {
+        $file1 = new File(__DIR__ . '/../temp/stream.txt', 'w+');
+        $file1->open();
+        unset($file1);
+
+        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
+        $file->open();
+        $handler = $file->getStream();
+        $stream = new Stream($handler);
+        unset($stream);
+        self::assertTrue(true);
     }
 
     public function testGetSplFileObject()

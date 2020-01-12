@@ -209,7 +209,7 @@ class File
     public function close()
     {
         $result = false;
-        if ($this->resource) {
+        if ($this->resource && get_resource_type($this->resource) != 'Unknown') {
             if ($this->progress) {
                 $result = pclose($this->resource);
             } else {

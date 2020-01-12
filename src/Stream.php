@@ -15,6 +15,11 @@ class Stream
     protected $context;
 
     /**
+     * @var File 上下文对象
+     */
+    protected $file;
+
+    /**
      * 初始化
      * @param resource $stream_or_context 资源流/数据包/上下文
      */
@@ -39,9 +44,22 @@ class Stream
      * 取回上下文资源流
      * @return resource
      */
-    public function get()
+    public function getResource()
     {
         return $this->context;
+    }
+
+    /**
+     * 返回一个文件对象用于外部操作
+     * @param string $mode 打开模式
+     * @return File
+     */
+    public function getFile($mode = null)
+    {
+        if(empty($this->file)) {
+            $this->file = new File($this->context, $mode);
+        }
+        return $this->file;
     }
 
     /**

@@ -48,7 +48,10 @@ class File
         } else {
             $this->path = $filename;
         }
-        $this->mode = $mode;
+        if ($mode) {
+            $this->mode = $mode;
+            $this->open();
+        }
 
         if ($filename && is_string($filename)) {
             // 协议格式不进行文件自动创建
@@ -497,6 +500,7 @@ class File
      */
     public function open($mode = null, $use_include_path = false, $context = null)
     {
+        $this->close();
         $this->progress = false;
         $mode = $mode ? $mode : $this->mode;
         $this->resource = fopen($this->path, $mode, $use_include_path, $context);

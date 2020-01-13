@@ -48,16 +48,12 @@ class File
             return;
         }
 
-        $this->path = $filename;
-        if ($mode) {
-            $this->mode = $mode;
-            $this->open();
-        }
-
         if ($filename && is_string($filename)) {
-            // 协议格式不进行文件自动创建
+            $this->path = $filename;
+            // 协议格式直接进行fopen操作
             $info = parse_url($filename);
             if (isset($info['scheme'])) {
+                $this->resource = fopen($this->path, $mode);
                 return;
             }
 
@@ -65,6 +61,10 @@ class File
                 $dir = dirname($this->path);
                 Directory::createDirectory($dir, 0777, true);
                 touch($filename);
+            }
+            if ($mode) {
+                $this->mode = $mode;
+                $this->open();
             }
         }
     }

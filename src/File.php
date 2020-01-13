@@ -45,9 +45,10 @@ class File
     {
         if (is_resource($filename)) {
             $this->resource = $filename;
-        } else {
-            $this->path = $filename;
+            return;
         }
+
+        $this->path = $filename;
         if ($mode) {
             $this->mode = $mode;
             $this->open();

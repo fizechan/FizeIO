@@ -17,6 +17,10 @@ class FileTest extends TestCase
         $len = $file->write("1234567890\r\n");
         $file->close();
         self::assertGreaterThan(0, $len);
+
+        $file1 = new File('php://temp', 'r+');
+        $stream = $file1->getStream();
+        var_dump($stream);
     }
 
     public function test___destruct()

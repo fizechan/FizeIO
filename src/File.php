@@ -43,6 +43,7 @@ class File
      */
     public function __construct($filename = null, $mode = null)
     {
+        $this->mode = $mode;
         if (is_resource($filename)) {
             $this->resource = $filename;
             return;
@@ -63,7 +64,6 @@ class File
                 touch($filename);
             }
             if ($mode) {
-                $this->mode = $mode;
                 $this->open();
             }
         }

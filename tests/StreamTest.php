@@ -9,6 +9,15 @@ use PHPUnit\Framework\TestCase;
 class StreamTest extends TestCase
 {
 
+    public function testGetFile()
+    {
+        $file = new File('php://temp', 'r+');
+        $stream = new Stream($file->getStream());
+        $stream->getFile()->write('1234');
+        $stream->getFile()->write('1234');
+        self::assertTrue(true);
+    }
+
     /**
      * @todo 因为PHP文档问题，暂时无法测试
      */

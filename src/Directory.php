@@ -15,7 +15,7 @@ class Directory
      * 当前目录路径
      * @var string
      */
-    private $path = '';
+    private $path;
 
     /**
      * 当前目录句柄

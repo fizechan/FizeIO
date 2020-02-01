@@ -10,7 +10,7 @@ class DirectoryTest extends TestCase
     public function test__construct()
     {
         $dir = new Directory("../temp");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -32,7 +32,7 @@ class DirectoryTest extends TestCase
     public function test__destruct()
     {
         $dir = new Directory("../temp");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -122,7 +122,7 @@ class DirectoryTest extends TestCase
     public function testOpen()
     {
         $dir = new Directory("../temp/temp1");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -144,7 +144,7 @@ class DirectoryTest extends TestCase
     public function testClose()
     {
         $dir = new Directory("../temp/temp1");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -191,13 +191,13 @@ class DirectoryTest extends TestCase
 
     public function testGetcwd()
     {
-        $root = dirname(dirname(__FILE__)). '/temp';
+        $root = dirname(dirname(__FILE__)). '/../temp';
         var_dump($root);
 
         $wd0 = Directory::getcwd();
         var_dump($wd0);
 
-        $dir1 = new Directory("./temp1/dir1/dir2/测试目录3");  //该文件夹不存在，当前工作目录并不转移
+        $dir1 = new Directory("../temp/temp1/dir1/dir2/测试目录3");  //该文件夹不存在，当前工作目录并不转移
         var_dump($dir1);
 
         $wd1 = Directory::getcwd();
@@ -205,7 +205,7 @@ class DirectoryTest extends TestCase
 
         self::assertEquals($wd0, $wd1);
 
-        $dir2 = new Directory("./temp/temp1/dir5/测试目录6", true);  //当前工作目录转移到"测试目录6"
+        $dir2 = new Directory("../temp/temp1/dir5/测试目录6", true);  //当前工作目录转移到"测试目录6"
         var_dump($dir2);
 
         $wd2 = Directory::getcwd();
@@ -219,7 +219,7 @@ class DirectoryTest extends TestCase
         var_dump($wd3);
         self::assertEquals($wd2, $wd3);
 
-        Directory::mk($root . '/temp/temp1/测试目录1/测试目录2');  //绝对路径
+        Directory::mk($root . '/temp1/测试目录1/测试目录2');  //绝对路径
 
         $wd4 = Directory::getcwd();
         var_dump($wd4);
@@ -233,7 +233,7 @@ class DirectoryTest extends TestCase
     public function testRead()
     {
         $dir = new Directory("../temp/temp1");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -255,7 +255,7 @@ class DirectoryTest extends TestCase
     public function testRewind()
     {
         $dir = new Directory("../temp/temp1");
-        $dir->open('.');
+        $dir->open();
 
         echo "---1---<br/>\r\n";
         $dir->read(function ($file) {
@@ -284,7 +284,7 @@ class DirectoryTest extends TestCase
 
     public function testCreateFile()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         $result = Directory::ch(PATH_ROOT . '/temp1/测试目录1');
         var_dump($result);
@@ -308,7 +308,7 @@ class DirectoryTest extends TestCase
 
     public function testCreateDirectory()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         $result = Directory::ch(PATH_ROOT . '/temp1/测试目录1');
         var_dump($result);
@@ -322,7 +322,7 @@ class DirectoryTest extends TestCase
 
     public function testDeleteFile()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         $result = Directory::ch(PATH_ROOT . '/temp1/测试目录1');
         var_dump($result);
@@ -336,7 +336,7 @@ class DirectoryTest extends TestCase
 
     public function testDeleteDirectory()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         $result = Directory::ch(PATH_ROOT . '/temp');
         self::assertTrue($result);
@@ -353,7 +353,7 @@ class DirectoryTest extends TestCase
 
     public function testClear()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         $result = Directory::ch(PATH_ROOT . '/temp/temp1/测试目录1');
         var_dump($result);
@@ -365,7 +365,7 @@ class DirectoryTest extends TestCase
 
     public function testIsDir()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
 
         Directory::ch(PATH_ROOT . "/temp");
 
@@ -381,7 +381,7 @@ class DirectoryTest extends TestCase
 
     public function testGlob()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
         Directory::ch(PATH_ROOT);
 
         $result = Directory::glob('*.txt');
@@ -391,7 +391,7 @@ class DirectoryTest extends TestCase
 
     public function testDiskFreeSpace()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
         $space = Directory::diskFreeSpace(PATH_ROOT);
         var_dump($space);
         self::assertIsFloat($space);
@@ -399,7 +399,7 @@ class DirectoryTest extends TestCase
 
     public function testDiskTotalSpace()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
         $space = Directory::diskTotalSpace(PATH_ROOT);
         var_dump($space);
         self::assertIsFloat($space);
@@ -407,7 +407,7 @@ class DirectoryTest extends TestCase
 
     public function testRealpath()
     {
-        $dir = new Directory("../temp/temp1");
+        $dir = new Directory("../../temp/temp1");
         $realpath = $dir->realpath();
         var_dump($realpath);
         self::assertIsString($realpath);
@@ -415,7 +415,7 @@ class DirectoryTest extends TestCase
 
     public function testTempnam()
     {
-        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
+        define('PATH_ROOT', dirname(dirname(__FILE__)) . '/../temp');
         Directory::ch(PATH_ROOT);
 
         $file_full_name = Directory::tempnam('test');

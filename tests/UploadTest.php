@@ -57,7 +57,7 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
     }
 
     public function testError()
@@ -82,10 +82,10 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
-        
+        self::assertEquals(0, $json['errcode']);
+
         var_dump($json['data']['error2']);
-        
+
         self::assertEmpty($json['data']['error1']);
         self::assertNotEmpty($json['data']['error2']);
     }
@@ -112,7 +112,7 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
 
         var_dump($json['data']['path2']);
 
@@ -138,7 +138,7 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
 
         var_dump($json['data']['path']);
 
@@ -167,7 +167,7 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
 
         var_dump($json['data']['dir1']);
         var_dump($json['data']['dir2']);
@@ -195,7 +195,7 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
 
         var_dump($json['data']['dir']);
         var_dump($json['data']['path']);
@@ -228,13 +228,13 @@ class UploadTest extends TestCase
         $json = json_decode($body, true);
 
         self::assertIsArray($json);
-        self::assertEquals($json['errcode'], 0);
+        self::assertEquals(0, $json['errcode']);
 
         var_dump($json['data']['paths']);
         var_dump($json['data']['errors']);
         $errors = implode('', $json['data']['errors']);
 
-        self::assertEquals($json['data']['count'], 3);
+        self::assertEquals(3, $json['data']['count']);
 
         self::assertNotEmpty($json['data']['paths']);
         self::assertEmpty($errors);

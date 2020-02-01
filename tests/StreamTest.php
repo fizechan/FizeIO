@@ -9,15 +9,6 @@ use PHPUnit\Framework\TestCase;
 class StreamTest extends TestCase
 {
 
-    public function testGetFile()
-    {
-        $file = new File('php://temp', 'r+');
-        $stream = new Stream($file->getStream());
-        $stream->getFile()->write('1234');
-        $stream->getFile()->write('1234');
-        self::assertTrue(true);
-    }
-
     /**
      * @todo 因为PHP文档问题，暂时无法测试
      */
@@ -179,23 +170,20 @@ class StreamTest extends TestCase
 
     public function testCopyToStream()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $dest = new File('../temp/baidu.txt', 'w');
-        $dest->open();
-        $stream = new Stream($src->getStream());
-        $rst = $stream->copyToStream($dest->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
+        $dest = fopen('../temp/baidu.txt', 'w');
+        $rst = $stream->copyToStream($dest);
         var_dump($rst);
         self::assertIsInt($rst);
     }
 
     public function testFilterAppend()
     {
-        $fp = new File('../temp/testStreamFilterAppend.txt', 'w+');
-        $fp->open();
-        $stream = new Stream($fp->getStream());
+
+        $stream = new Stream('../temp/testStreamFilterAppend.txt', 'w+');
         $res = $stream->filterAppend("string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
+        $fp = new File($stream->get());
         $fp->write("This is a test\n");
         $fp->rewind();
         $fp->passthru();
@@ -204,11 +192,11 @@ class StreamTest extends TestCase
 
     public function testFilterPrepend()
     {
-        $fp = new File('../temp/testStreamFilterAppend.txt', 'w+');
-        $fp->open();
-        $stream = new Stream($fp->getStream());
+
+        $stream = new Stream('../temp/testStreamFilterAppend.txt', 'w+');
         $res = $stream->filterPrepend("string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
+        $fp = new File($stream->get());
         $fp->write("This is a test\n");
         $fp->rewind();
         $fp->passthru();
@@ -221,25 +209,25 @@ class StreamTest extends TestCase
         var_dump($rst);
         self::assertTrue($rst);
 
-        $fp = new File('../temp/testStreamFilterRegister.txt', 'w+');
-        $fp->open();
-        $stream = new Stream($fp->getStream());
+        $stream = new Stream('../temp/testStreamFilterRegister.txt', 'w+');
         $stream->filterAppend("strtoupper");
+        $fp = new File($stream->get());
         $fp->write("Line1\n");
         $fp->write("Word - 2\n");
         $fp->write("Easy As 123\n");
+        $fp->rewind();
+        $content = $fp->read(1000);
         $fp->close();
-        $fp->readfile();
+        var_dump($content);
     }
 
     public function testFilterRemove()
     {
-        $fp = new File('../temp/testStreamFilterRemove.txt', 'w+');
-        $fp->open();
-        $stream = new Stream($fp->getStream());
+        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
         $filter = $stream->filterAppend("string.rot13", STREAM_FILTER_WRITE);
         $rst = Stream::filterRemove($filter);
         self::assertTrue($rst);
+        $fp = new File($stream->get());
         $fp->write("This is a test\n");
         $fp->rewind();
         $fp->passthru();
@@ -248,9 +236,7 @@ class StreamTest extends TestCase
 
     public function testGetContents()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $content = $stream->getContents();
         var_dump($content);
         self::assertIsString($content);
@@ -265,9 +251,7 @@ class StreamTest extends TestCase
 
     public function testGetLine()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $line1 = $stream->getLine(100);
         var_dump($line1);
         self::assertIsString($line1);
@@ -278,9 +262,7 @@ class StreamTest extends TestCase
 
     public function testGetMetaData()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $meta = $stream->getMetaData();
         var_dump($meta);
         self::assertIsArray($meta);
@@ -302,9 +284,7 @@ class StreamTest extends TestCase
 
     public function testIsLocal()
     {
-        $src = new File('../temp/testStreamFilterRemove.txt', 'w+');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
         $rst1 = $stream->isLocal();
         var_dump($rst1);
         self::assertTrue($rst1);
@@ -315,9 +295,7 @@ class StreamTest extends TestCase
 
     public function testIsatty()
     {
-        $src = new File('../temp/testStreamFilterRemove.txt', 'w+');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
         $rst = $stream->isatty();
         var_dump($rst);
         self::assertFalse($rst);
@@ -332,9 +310,7 @@ class StreamTest extends TestCase
 
     public function testSelect()
     {
-        $src = new File('../temp/testStreamFilterRemove.txt', 'w+');
-        $src->open();
-        $sock1 = $sock2 = $sock3 = $src->getStream();
+        $sock1 = $sock2 = $sock3 = fopen('../temp/testStreamFilterRemove.txt', 'w+');
         $sockets = ["sock_1" => $sock1, "sock_2" => $sock2, "sock_3" => $sock3];
 
         $read = $write = $error = $sockets;
@@ -345,9 +321,7 @@ class StreamTest extends TestCase
 
     public function testSetBlocking()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->setBlocking(0);
         var_dump($rst);
         self::assertTrue($rst);
@@ -355,9 +329,7 @@ class StreamTest extends TestCase
 
     public function testSetChunkSize()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->setChunkSize(100);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -365,9 +337,7 @@ class StreamTest extends TestCase
 
     public function testSetReadBuffer()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->setReadBuffer(1024);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -375,9 +345,7 @@ class StreamTest extends TestCase
 
     public function testSetTimeout()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->setTimeout(30);
         var_dump($rst);
         self::assertTrue($rst);
@@ -385,9 +353,7 @@ class StreamTest extends TestCase
 
     public function testSetWriteBuffer()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->setWriteBuffer(1024);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -445,15 +411,12 @@ class StreamTest extends TestCase
 
     public function testSocketGetName()
     {
-        $src = new File('https://www.baidu.com', 'r');
-        $src->open();
-        $stream = new Stream($src->getStream());
+        $stream = new Stream('https://www.baidu.com', 'r');
         $rst = $stream->socketGetName(true);
         var_dump($rst);
         $rst = $stream->socketGetName(false);
         var_dump($rst);
         self::assertIsString($rst);
-        $src->close();
     }
 
     public function testSocketPair()
@@ -485,7 +448,7 @@ class StreamTest extends TestCase
 
             /* Get the exact same packet again, but remove it from the buffer this time. */
             echo "Data: '" . $socket->socketRecvfrom(1500) . "'\n";
-            
+
             self::assertIsString($socket->socketRecvfrom(1500));
         }
     }

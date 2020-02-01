@@ -38,21 +38,21 @@ class File
      * 参数 `$filename` :
      *   对于 popen 可以使用null来指定
      *   可以传入上下文流进行流操作
-     * @param string|resource|null $filename 文件名、资源流、null
+     * @param string|resource|null $file 文件路径、资源流、null
      * @param string $mode 打开模式
      */
-    public function __construct($filename = null, $mode = null)
+    public function __construct($file = null, $mode = null)
     {
         $this->mode = $mode;
-        if (is_resource($filename)) {
-            $this->resource = $filename;
+        if (is_resource($file)) {
+            $this->resource = $file;
             return;
         }
 
-        if ($filename && is_string($filename)) {
-            $this->path = $filename;
+        if ($file && is_string($file)) {
+            $this->path = $file;
             // 协议格式直接进行fopen操作
-            $info = parse_url($filename);
+            $info = parse_url($file);
             if (isset($info['scheme'])) {
                 $this->resource = fopen($this->path, $mode);
                 return;
@@ -61,7 +61,7 @@ class File
             if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
                 $dir = dirname($this->path);
                 Directory::createDirectory($dir, 0777, true);
-                touch($filename);
+                touch($file);
             }
             if ($mode) {
                 $this->open();
@@ -76,7 +76,9 @@ class File
      */
     public function __destruct()
     {
-        $this->close();
+        if ($this->resource && get_resource_type($this->resource) == 'stream') {
+            $this->close();
+        }
     }
 
     /**
@@ -86,15 +88,6 @@ class File
     public function getSplFileObject()
     {
         return new SplFileObject($this->path, $this->mode);
-    }
-
-    /**
-     * 获取资源流
-     * @return resource
-     */
-    public function getStream()
-    {
-        return $this->resource;
     }
 
     /**
@@ -212,13 +205,10 @@ class File
      */
     public function close()
     {
-        $result = false;
-        if ($this->resource && get_resource_type($this->resource) != 'Unknown') {
-            if ($this->progress) {
-                $result = pclose($this->resource);
-            } else {
-                $result = fclose($this->resource);
-            }
+        if ($this->progress) {
+            $result = pclose($this->resource);
+        } else {
+            $result = fclose($this->resource);
         }
 
         if ($result) {
@@ -501,7 +491,6 @@ class File
      */
     public function open($mode = null, $use_include_path = false, $context = null)
     {
-        $this->close();
         $this->progress = false;
         $mode = $mode ? $mode : $this->mode;
         $this->resource = fopen($this->path, $mode, $use_include_path, $context);

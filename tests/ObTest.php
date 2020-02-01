@@ -17,7 +17,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getClean();
-        self::assertEquals($ob, '34');
+        self::assertEquals('34', $ob);
     }
 
     public function testEndClean()
@@ -30,7 +30,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getClean();
-        self::assertEquals($ob, '34');
+        self::assertEquals('34', $ob);
     }
 
     public function testEndFlush()
@@ -43,7 +43,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getClean();
-        self::assertEquals($ob, '34');
+        self::assertEquals('34', $ob);
     }
 
     public function testFlush()
@@ -55,7 +55,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getClean();
-        self::assertEquals($ob, '34');
+        self::assertEquals('34', $ob);
     }
 
     public function testGetClean()
@@ -68,7 +68,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getClean();
-        self::assertEquals($ob, '34');
+        self::assertEquals('34', $ob);
     }
 
     public function testGetContents()
@@ -80,7 +80,7 @@ class ObTest extends TestCase
         echo '4';
         $ob = Ob::getContents();
         Ob::endClean();
-        self::assertEquals($ob, '1234');
+        self::assertEquals('1234', $ob);
     }
 
     public function testGetFlush()
@@ -91,7 +91,7 @@ class ObTest extends TestCase
         echo '3';
         echo '4';
         $ob = Ob::getFlush();  //调用后缓冲区自动关闭了
-        self::assertEquals($ob, '1234');
+        self::assertEquals('1234', $ob);
     }
 
     public function testGetLength()
@@ -103,7 +103,7 @@ class ObTest extends TestCase
         echo '4';
         $ob_length = Ob::getLength();
         Ob::endClean();
-        self::assertEquals($ob_length, 4);
+        self::assertEquals(4, $ob_length);
     }
 
     public function testGetLevel()
@@ -115,7 +115,7 @@ class ObTest extends TestCase
         echo '4';
         $ob_level = Ob::getLevel();
         Ob::endClean();
-        self::assertEquals($ob_level, 2);
+        self::assertEquals(2, $ob_level);
     }
 
     public function testGetStatus()
@@ -150,7 +150,7 @@ class ObTest extends TestCase
         $response = $client->get('ob_gzhandler.php');
 
         $body = $response->getBody();
-        self::assertEquals((string)$body, '1234');
+        self::assertEquals('1234', (string)$body);
     }
 
     public function testImplicitFlush()
@@ -192,6 +192,8 @@ class ObTest extends TestCase
         //Ob::start();
 
         Ob::outputAddRewriteVar('var', 'value');
+
+        //Ob::start();
 
         // some links
         echo '<a href="file.php">link</a> <a href="http://example.com">link2</a>';

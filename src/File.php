@@ -51,9 +51,8 @@ class File
 
         if ($file && is_string($file)) {
             $this->path = $file;
-            // 协议格式直接进行fopen操作
-            $info = parse_url($file);
-            if (isset($info['scheme'])) {
+            // "scheme://..." 的格式直接进行fopen操作
+            if (strstr($this->path, '://') !== false && substr($this->path, 0, 4) != 'file') {
                 $this->resource = fopen($this->path, $mode);
                 return;
             }

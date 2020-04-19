@@ -1,10 +1,9 @@
 <?php
-/** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace fize\io;
 
 /**
- * 缓冲区管理类
+ * 缓冲区
  */
 class Ob
 {
@@ -117,7 +116,7 @@ class Ob
      * 使用该方法必须启用 zlib 扩展
      * @notice 未讲过手动调用该方法的情况
      * @param string $buffer 待输出缓冲区内容
-     * @param int $mode 指定模式
+     * @param int    $mode   指定模式
      * @return string 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
      */
     public static function gzhandler($buffer, $mode)
@@ -148,13 +147,13 @@ class Ob
     /**
      * 打开输出控制缓冲
      * @param callable $output_callback 缓冲区内容发生变化时的回调函数
-     * @param int $chunk_size 缓冲区大小，默认0表示函数仅在最后被调用
-     * @param bool $erase 如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
+     * @param int      $chunk_size      缓冲区大小，默认0表示函数仅在最后被调用
+     * @param bool     $erase           如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
      * @return bool
      */
     public static function start(callable $output_callback = null, $chunk_size = 0, $erase = true)
     {
-        if(!$output_callback) {
+        if (!$output_callback) {
             return ob_start();
         }
         return ob_start($output_callback, $chunk_size, $erase);
@@ -162,7 +161,7 @@ class Ob
 
     /**
      * 添加URL重写器的值
-     * @param string $name 变量名。
+     * @param string $name  变量名。
      * @param string $value 变量值。
      * @return bool
      */

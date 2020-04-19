@@ -2,10 +2,7 @@
 require_once "../vendor/autoload.php";
 
 use fize\io\Stream;
-use fize\io\File;
 
-$src = new File('https://www.baidu.com', 'r');
-$src->open();
-$stream = new Stream($src->getStream());
+$stream = new Stream('https://www.baidu.com', 'r');
 $content = $stream->getContents();
 var_dump($content);

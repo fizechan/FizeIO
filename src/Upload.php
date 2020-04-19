@@ -1,13 +1,12 @@
 <?php
-/** @noinspection PhpComposerExtensionStubsInspection */
 
 namespace fize\io;
 
-use Exception;
 use Closure;
+use Exception;
 
 /**
- * 文件上传类
+ * 上传
  */
 class Upload
 {
@@ -39,13 +38,13 @@ class Upload
 
     /**
      * 初始化
-     * @param mixed $file 文件输入框名或者$_FILES数组
+     * @param mixed $file   文件输入框名或者$_FILES数组
      * @param array $config 配置
      */
     public function __construct($file, array $config = [])
     {
         if (is_string($file)) {
-            if(!isset($_FILES[$file])) {
+            if (!isset($_FILES[$file])) {
                 $this->file = [
                     'error' => 4  //没有该上传文件
                 ];
@@ -222,7 +221,10 @@ class Upload
     {
         $extension = strtolower(pathinfo($this->file['name'], PATHINFO_EXTENSION));
         // 对图像文件进行严格检测
-        if (in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf']) && !in_array($this->getImageType($this->file['tmp_name']), [1, 2, 3, 4, 6, 13])) {
+        if (
+            in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf']) &&
+            !in_array($this->getImageType($this->file['tmp_name']), [1, 2, 3, 4, 6, 13])
+        ) {
             $this->error = 'illegal image files';
             return false;
         }
@@ -300,8 +302,8 @@ class Upload
      *
      * 参数 `$savename` :
      *   特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
-     * @param string|bool $savename 保存的文件名
-     * @param bool $auto_append_ext 自动补充扩展名
+     * @param string|bool $savename        保存的文件名
+     * @param bool        $auto_append_ext 自动补充扩展名
      * @return string
      */
     protected function buildSaveName($savename, $auto_append_ext = true)
@@ -387,7 +389,7 @@ class Upload
 
     /**
      * 简易模式下的单文件上传
-     * @param mixed $file 文件输入框名或者$_FILES数组
+     * @param mixed $file   文件输入框名或者$_FILES数组
      * @param array $config 配置
      * @return array [file, path, error]
      */
@@ -416,7 +418,7 @@ class Upload
         $file_count = count($file_post['name']);
         $file_keys = array_keys($file_post);
 
-        for ($i=0; $i<$file_count; $i++) {
+        for ($i = 0; $i < $file_count; $i++) {
             foreach ($file_keys as $key) {
                 $file_ary[$i][$key] = $file_post[$key][$i];
             }
@@ -426,7 +428,7 @@ class Upload
 
     /**
      * 简易模式下的多文件上传
-     * @param mixed $files 多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
+     * @param mixed $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
      * @param array $config 配置
      * @return array
      */

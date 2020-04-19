@@ -4,7 +4,7 @@ require_once "../vendor/autoload.php";
 use fize\io\Directory;
 
 $dir = new Directory("./data/dir0");
-$dir->open('.');
+$dir->open();
 
 echo "---1---<br/>\r\n";
 $dir->read(function($file){

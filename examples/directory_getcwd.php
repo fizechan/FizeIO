@@ -22,12 +22,12 @@ $wd2 = Directory::getcwd();
 var_dump($wd2);
 
 
-Directory::mk('./测试目录7/测试目录8');  //创建文件夹并不会转移当前工作目录
+Directory::mkdir('./测试目录7/测试目录8');  //创建文件夹并不会转移当前工作目录
 
 $wd3 = Directory::getcwd();
 var_dump($wd3);
 
-Directory::mk( $root . '/data/测试目录1/测试目录2');  //绝对路径
+Directory::mkdir( $root . '/data/测试目录1/测试目录2');  //绝对路径
 
 $wd4 = Directory::getcwd();
 var_dump($wd4);

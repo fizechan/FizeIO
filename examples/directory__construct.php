@@ -5,7 +5,7 @@ use fize\io\Directory;
 
 
 $dir = new Directory("./data/dir0");
-$dir->open('.');
+$dir->open();
 
 //遍历文件夹
 echo "---1---<br/>\r\n";

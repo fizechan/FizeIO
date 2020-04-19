@@ -6,7 +6,7 @@ namespace fize\io;
 use SplFileObject;
 
 /**
- * 文件操作类
+ * 文件
  * @todo 未处理函数：parse_ini_file、parse_ini_string
  */
 class File
@@ -39,7 +39,7 @@ class File
      *   对于 popen 可以使用null来指定
      *   可以传入上下文流进行流操作
      * @param string|resource|null $file 文件路径、资源流、null
-     * @param string $mode 打开模式
+     * @param string               $mode 打开模式
      */
     public function __construct($file = null, $mode = null)
     {
@@ -157,9 +157,9 @@ class File
 
     /**
      * 将当前文件拷贝到路径dest
-     * @param string $dir 指定要复制的文件夹路径
-     * @param string $name 指定文件名，不指定则为原文件名
-     * @param bool $cover 如果指定文件存在，是否覆盖
+     * @param string $dir   指定要复制的文件夹路径
+     * @param string $name  指定文件名，不指定则为原文件名
+     * @param bool   $cover 如果指定文件存在，是否覆盖
      * @return bool
      */
     public function copy($dir, $name = null, $cover = false)
@@ -211,7 +211,7 @@ class File
         }
 
         if ($result) {
-            $this->resource = null; //如果正确关闭了则清空当前对象的file_resource
+            $this->resource = null;  // 如果正确关闭了则清空当前对象的file_resource
         }
 
         return $result;
@@ -255,10 +255,10 @@ class File
      *   （只允许一个字符），默认值为双引号。
      * 参数 `$escape` :
      *   （只允许一个字符），默认是一个反斜杠。
-     * @param int $length 规定行的最大长度
+     * @param int    $length    规定行的最大长度
      * @param string $delimiter 设置字段分界符
      * @param string $enclosure 设置字段环绕符
-     * @param string $escape 设置转义字符
+     * @param string $escape    设置转义字符
      * @return array 如果碰到 EOF 则返回 FALSE。
      */
     public function getcsv($length = 0, $delimiter = ",", $enclosure = '"', $escape = "\\")
@@ -292,7 +292,7 @@ class File
      *   默认是 1024 字节
      * 参数 `$allowable_tags` :
      *   形如“<p>,<b>”
-     * @param int $length 规定要读取的字节数
+     * @param int    $length         规定要读取的字节数
      * @param string $allowable_tags 规定不会被删除的标签
      * @return string
      * @deprecated PHP7.3不建议使用该方法
@@ -324,10 +324,10 @@ class File
      *   默认为0表示最开始地方
      * 参数 `$maxlen` :
      *   超过该长度则不读取，默认不指定全部读取
-     * @param bool $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource $context 上下文支持
-     * @param int $offset 插入位置偏移量
-     * @param int $maxlen 指定读取长度
+     * @param bool     $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context          上下文支持
+     * @param int      $offset           插入位置偏移量
+     * @param int      $maxlen           指定读取长度
      * @return string
      */
     public function getContents($use_include_path = false, $context = null, $offset = 0, $maxlen = null)
@@ -346,8 +346,8 @@ class File
      *   类型可以是 string ， array 或者是 stream 资源
      * 参数  `$flags` :
      *   可选值：[FILE_USE_INCLUDE_PATH|FILE_APPEND|LOCK_EX]
-     * @param mixed $data 要写入的数据
-     * @param int $flags 指定配置
+     * @param mixed    $data    要写入的数据
+     * @param int      $flags   指定配置
      * @param resource $context 上下文支持
      * @return int
      */
@@ -362,7 +362,7 @@ class File
      * 参数 `$flags` :
      *   可选值：[FILE_USE_INCLUDE_PATH|FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES]
      * @param int $flags 指定配置
-     * @return array
+     * @return array 一行一个元素
      */
     public function file($flags = 0)
     {
@@ -444,7 +444,7 @@ class File
     /**
      * 文件类型
      *
-     * (可能的值有 fifo，char，dir，block，link，file 和 unknown。)
+     * 可能的值有 fifo，char，dir，block，link，file 和 unknown。
      * @return string
      */
     public function type()
@@ -457,7 +457,7 @@ class File
      *
      * 参数 `$operation` :
      *   可选值：[LOCK_SH|LOCK_EX|LOCK_UN]
-     * @param int $operation 操作
+     * @param int $operation  操作
      * @param int $wouldblock 如果锁定会堵塞的话返回1
      * @return bool
      */
@@ -474,7 +474,7 @@ class File
      * 参数 `$flags` :
      *   可选值：[FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD|FNM_CASEFOLD]
      * @param string $pattern 统配符[shell]
-     * @param int $flags 指定配置
+     * @param int    $flags   指定配置
      * @return bool
      */
     public function nmatch($pattern, $flags = 0)
@@ -485,8 +485,8 @@ class File
     /**
      * 打开文件或者 URL
      * @param string 打开模式，不指定则为当前模式
-     * @param bool $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource $context 上下文支持
+     * @param bool     $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context          上下文支持
      */
     public function open($mode = null, $use_include_path = false, $context = null)
     {
@@ -506,9 +506,9 @@ class File
 
     /**
      * 将行格式化为 CSV 并写入文件指针
-     * @param array $fields 要写入的数组数据
-     * @param string $delimiter 分隔符
-     * @param string $enclosure 界限符
+     * @param array  $fields      要写入的数组数据
+     * @param string $delimiter   分隔符
+     * @param string $enclosure   界限符
      * @param string $escape_char 转义符
      * @return int 如果失败返回false
      */
@@ -520,7 +520,7 @@ class File
     /**
      * 写入文件（可安全用于二进制文件）
      * @param string $string 要写入的字符串
-     * @param int $length 指定写入长度
+     * @param int    $length 指定写入长度
      * @return int 如果失败返回false
      */
     public function puts($string, $length = null)
@@ -610,7 +610,7 @@ class File
     /**
      * 写入文件（可安全用于二进制文件）
      * @param string $string 要写入的字符串
-     * @param int $length 指定写入长度
+     * @param int    $length 指定写入长度
      * @return int 失败时返回false
      */
     public function write($string, $length = null)
@@ -727,8 +727,8 @@ class File
 
     /**
      * 读取文件并写入到输出缓冲。
-     * @param bool $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource $context 上下文支持
+     * @param bool     $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context          上下文支持
      * @return int
      */
     public function readfile($use_include_path = false, $context = null)
@@ -765,7 +765,7 @@ class File
 
     /**
      * 返回规范化的绝对路径名
-     * @return string
+     * @return string 文件不存在时返回 false
      */
     public function realpath()
     {
@@ -774,8 +774,8 @@ class File
 
     /**
      * 重命名一个文件,可用于移动文件
-     * @param string $newname 要移动到的目标位置路径
-     * @param bool $auto_build 如果指定的路径不存在，是否创建
+     * @param string $newname    要移动到的目标位置路径
+     * @param bool   $auto_build 如果指定的路径不存在，是否创建
      * @return bool
      */
     public function rename($newname, $auto_build = true)
@@ -831,7 +831,7 @@ class File
      * 设定文件的访问和修改时间
      *
      * 注意，如果文件不存在则尝试创建
-     * @param int $time 要设定的修改时间
+     * @param int $time  要设定的修改时间
      * @param int $atime 要设定的访问时间
      * @return bool
      */

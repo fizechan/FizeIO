@@ -5,7 +5,7 @@ use fize\io\Directory;
 
 define('PATH_ROOT', dirname(__FILE__));
 
-$result = Directory::ch(PATH_ROOT . '/data/dir0');
+$result = Directory::chdir(PATH_ROOT . '/data/dir0');
 var_dump($result);
 
 $result = Directory::deleteDirectory('test1');

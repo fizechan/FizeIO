@@ -28,10 +28,11 @@ class StrToUpperFilter extends php_user_filter
 $rst = Stream::filterRegister("strtoupper", "StrToUpperFilter");
 var_dump($rst);
 
-$fp = new File('../temp/testStreamFilterRegister.txt', 'w+');
-$fp->open();
-$stream = new Stream($fp->getStream());
+
+$stream = new Stream('../temp/testStreamFilterRegister.txt', 'w+');
 $stream->filterAppend("strtoupper");
+$fp = new File($stream->get());
+$fp->open();
 $fp->write("Line1\n");
 $fp->write("Word - 2\n");
 $fp->write("Easy As 123\n");

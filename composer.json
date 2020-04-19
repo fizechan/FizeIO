@@ -1,27 +1,30 @@
 {
-    "name": "fize/io",
-    "description": "常用的[I/O]类库",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "FizeChan",
-            "email": "chenfengzhan@qq.com"
-        }
-    ],
-    "require": {
-		"php": ">=5.4.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^8.0.0",
-        "guzzlehttp/guzzle": "~6.3"
-    },
-    "suggest": {
-        "ext-exif": "*",
-        "ext-zlib": "*"
-    },
-	"autoload": {
-        "psr-4": {
-            "fize\\io\\": "src"
-        }
+  "name": "fize/io",
+  "description": "常用的[I/O]类库",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "FizeChan",
+      "email": "chenfengzhan@qq.com"
     }
+  ],
+  "require": {
+    "php": ">=5.5"
+  },
+  "require-dev": {
+    "ext-exif": "*",
+    "ext-json": "*",
+    "ext-zlib": "*",
+    "phpunit/phpunit": "~9.1",
+    "guzzlehttp/guzzle": "~6.5"
+  },
+  "suggest": {
+    "ext-exif": "*",
+    "ext-zlib": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "fize\\io\\": "src"
+    }
+  }
 }

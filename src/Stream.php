@@ -4,7 +4,7 @@
 namespace fize\io;
 
 /**
- * Stream 流处理
+ * 流
  */
 class Stream
 {
@@ -17,7 +17,7 @@ class Stream
     /**
      * 初始化
      * @param resource|string $resource 资源流/数据包/上下文/文件路径
-     * @param string $mode 打开模式
+     * @param string          $mode     打开模式
      */
     public function __construct($resource, $mode = null)
     {
@@ -35,7 +35,7 @@ class Stream
      */
     public function __destruct()
     {
-        if($this->context && is_resource($this->context) && get_resource_type($this->context) == 'stream') {
+        if ($this->context && is_resource($this->context) && get_resource_type($this->context) == 'stream') {
             fclose($this->context);
         }
     }
@@ -51,9 +51,9 @@ class Stream
 
     /**
      * 将桶附加到队列
-     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $brigade 队列
-     * @param object $bucket 桶
+     * @param object   $bucket  桶
+     * @todo 本函数还未编写文档，仅有参数列表。
      */
     public static function bucketAppend($brigade, $bucket)
     {
@@ -62,9 +62,9 @@ class Stream
 
     /**
      * 从队列中返回一个bucket对象，用于操作
-     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $brigade 队列
      * @return object
+     * @todo 本函数还未编写文档，仅有参数列表。
      */
     public static function bucketMakeWriteable($brigade)
     {
@@ -73,10 +73,10 @@ class Stream
 
     /**
      * 创建一个用于当前流的新桶
-     * @todo 本函数还未编写文档，仅有参数列表。
      * @param resource $stream 流
-     * @param string $buffer 缓存区
+     * @param string   $buffer 缓存区
      * @return object
+     * @todo 本函数还未编写文档，仅有参数列表。
      */
     public static function bucketNew($stream, $buffer)
     {
@@ -85,9 +85,9 @@ class Stream
 
     /**
      * 为队列准备桶
-     * @todo 官方文档过于复杂，暂时不测试
      * @param resource $brigade 队列
-     * @param resource $bucket 桶
+     * @param resource $bucket  桶
+     * @todo 官方文档过于复杂，暂时不测试
      */
     public static function bucketPrepend($brigade, $bucket)
     {
@@ -103,7 +103,7 @@ class Stream
      *   必须是 $arr['parameter'] = $value 格式的关联数组。
      *   请参考 context parameters 里的标准资源流参数列表。
      * @param array $options 选项，必须是一个二维关联数组。
-     * @param array $params 参数
+     * @param array $params  参数
      * @return resource
      */
     public static function contextCreate(array $options = null, array $params = null)
@@ -171,9 +171,9 @@ class Stream
 
     /**
      * 将数据复制到另一个流
-     * @param resource $dest 目标流
-     * @param int $maxlength 最大长度
-     * @param int $offset 偏移量
+     * @param resource $dest      目标流
+     * @param int      $maxlength 最大长度
+     * @param int      $offset    偏移量
      * @return int 失败时返回false
      */
     public function copyToStream($dest, $maxlength = -1, $offset = 0)
@@ -187,8 +187,8 @@ class Stream
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
      * @param string $filtername 过滤器
-     * @param int $read_write 读写模式
-     * @param mixed $params 相关参数
+     * @param int    $read_write 读写模式
+     * @param mixed  $params     相关参数
      * @return resource
      */
     public function filterAppend($filtername, $read_write = null, $params = null)
@@ -202,8 +202,8 @@ class Stream
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
      * @param string $filtername 过滤器
-     * @param int $read_write 读写模式
-     * @param mixed $params 相关参数
+     * @param int    $read_write 读写模式
+     * @param mixed  $params     相关参数
      * @return resource
      */
     public function filterPrepend($filtername, $read_write = null, $params = null)
@@ -214,7 +214,7 @@ class Stream
     /**
      * 注册用户定义的流过滤器
      * @param string $filtername 过滤器名称
-     * @param string $classname 类全限定名
+     * @param string $classname  类全限定名
      * @return bool
      */
     public static function filterRegister($filtername, $classname)
@@ -240,7 +240,7 @@ class Stream
      * 参数 `$offset` :
      *   如果这个数字是负数，就不进行查找，直接从当前位置开始读取。
      * @param int $maxlength 需要读取的最大的字节数
-     * @param int $offset 在读取数据之前先查找指定的偏移量
+     * @param int $offset    在读取数据之前先查找指定的偏移量
      * @return string 失败时返回false
      */
     public function getContents($maxlength = -1, $offset = -1)
@@ -259,7 +259,7 @@ class Stream
 
     /**
      * 从资源流里读取一行直到给定的定界符
-     * @param int $length 需要从句柄里读取的字节数。
+     * @param int    $length 需要从句柄里读取的字节数。
      * @param string $ending 可选参数，字符串定界符。
      * @return string 如果发生错误，则返回 FALSE.
      */
@@ -302,7 +302,7 @@ class Stream
      */
     public function isLocal($stream_or_url = null)
     {
-        if(is_null($stream_or_url)) {
+        if (is_null($stream_or_url)) {
             $stream_or_url = $this->context;
         }
         return stream_is_local($stream_or_url);
@@ -311,8 +311,7 @@ class Stream
     /**
      * 确定流是否引用有效的终端类型设备
      * @return bool
-     * @since PHP7.2
-     * @noinspection PhpElementIsNotAvailableInCurrentPhpVersionInspection
+     * @since        PHP7.2
      */
     public function isatty()
     {
@@ -331,11 +330,11 @@ class Stream
 
     /**
      * 对流的给定数组运行select()系统调用，超时由tv_sec和tv_usec指定
-     * @param array $read 流组成的数组，以查看是否有字符可读
-     * @param array $write 流组成的数组，以查看是否有字符可写
-     * @param array $except 流组成的数组，以查看是否可导出
-     * @param int $tv_sec 指定秒数
-     * @param int $tv_usec 指定微秒数
+     * @param array $read    流组成的数组，以查看是否有字符可读
+     * @param array $write   流组成的数组，以查看是否有字符可写
+     * @param array $except  流组成的数组，以查看是否可导出
+     * @param int   $tv_sec  指定秒数
+     * @param int   $tv_usec 指定微秒数
      * @return int
      */
     public static function select(array &$read, array &$write, array &$except, $tv_sec, $tv_usec = null)
@@ -360,7 +359,7 @@ class Stream
      */
     public function setChunkSize($chunk_size)
     {
-        return stream_set_chunk_size($this->context , $chunk_size);
+        return stream_set_chunk_size($this->context, $chunk_size);
     }
 
     /**
@@ -375,7 +374,7 @@ class Stream
 
     /**
      * 设置流超时时间
-     * @param int $seconds 指定秒
+     * @param int $seconds      指定秒
      * @param int $microseconds 指定毫秒
      * @return bool
      */
@@ -401,13 +400,13 @@ class Stream
      *   输入的时间需以秒为单位。
      * 参数 `$peername` :
      *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
-     * @param float $timeout 覆盖默认的套接字接受的超时时限
+     * @param float  $timeout  覆盖默认的套接字接受的超时时限
      * @param string $peername 设置给连接中的客户端主机的名称（地址）
      * @return resource 失败时返回false
      */
     public function socketAccept($timeout = null, &$peername = null)
     {
-        if(is_null($timeout)) {
+        if (is_null($timeout)) {
             return stream_socket_accept($this->context);
         }
         return stream_socket_accept($this->context, $timeout, $peername);
@@ -418,12 +417,12 @@ class Stream
      *
      * 参数 `$flags` :
      *   选择仅限于STREAM_CLIENT_CONNECT(默认)、STREAM_CLIENT_ASYNC_CONNECT和STREAM_CLIENT_PERSISTENT。
-     * @param string $remote_socket 要连接到的套接字的地址。
-     * @param int $errno 错误码
-     * @param string $errstr 错误信息
-     * @param float $timeout 超时时限。输入的时间需以秒为单位。
-     * @param int $flags 标识
-     * @param resource $context 使用stream_context_create()创建的有效上下文资源。
+     * @param string   $remote_socket 要连接到的套接字的地址。
+     * @param int      $errno         错误码
+     * @param string   $errstr        错误信息
+     * @param float    $timeout       超时时限。输入的时间需以秒为单位。
+     * @param int      $flags         标识
+     * @param resource $context       使用stream_context_create()创建的有效上下文资源。
      * @return resource 失败时返回false
      */
     public static function socketClient($remote_socket, &$errno = null, &$errstr = null, $timeout = null, $flags = 4, $context = null)
@@ -436,8 +435,8 @@ class Stream
 
     /**
      * 在已连接的套接字上打开/关闭加密
-     * @param bool $enable 是否开启加密
-     * @param int $crypto_type 可选的加密类型
+     * @param bool     $enable         是否开启加密
+     * @param int      $crypto_type    可选的加密类型
      * @param resource $session_stream 用来自session_stream的设置为流。
      * @return mixed 成功true，失败false。没有足够数据时返回0
      */
@@ -471,8 +470,8 @@ class Stream
      *   可选值：STREAM_SOCK_DGRAM, STREAM_SOCK_RAW, STREAM_SOCK_RDM, STREAM_SOCK_SEQPACKET or STREAM_SOCK_STREAM
      * 参数 `$protocol` :
      *   可选值：STREAM_IPPROTO_ICMP, STREAM_IPPROTO_IP, STREAM_IPPROTO_RAW, STREAM_IPPROTO_TCP or STREAM_IPPROTO_UDP
-     * @param int $domain 使用的协议族
-     * @param int $type 通信类型
+     * @param int $domain   使用的协议族
+     * @param int $type     通信类型
      * @param int $protocol 使用的传输协议
      * @return array 数组包括了两个socket资源，失败返回false
      */
@@ -483,8 +482,8 @@ class Stream
 
     /**
      * 从套接字接收数据，无论是否连接
-     * @param int $length 长度
-     * @param int $flags 标识
+     * @param int    $length  长度
+     * @param int    $flags   标识
      * @param string $address 将使用远程套接字的地址填充。
      * @return string 以字符串的形式返回读取的数据
      */
@@ -495,8 +494,8 @@ class Stream
 
     /**
      * 向套接字发送消息，不管它是否连接
-     * @param string $data 消息
-     * @param int $flags 标识
+     * @param string $data    消息
+     * @param int    $flags   标识
      * @param string $address 将使用远程套接字的地址填充。
      * @return int 以整数形式返回结果代码。
      */
@@ -510,16 +509,16 @@ class Stream
      *
      * 参数 `$local_socket` :
      *   创建的套接字类型由使用标准URL格式transport: transport://target指定的传输类型决定。
-     * @param string $local_socket 套接字字符串
-     * @param int $errno 错误码
-     * @param string $errstr 错误描述
-     * @param int $flags 标识
-     * @param resource $context 有效上下文资源。
+     * @param string   $local_socket 套接字字符串
+     * @param int      $errno        错误码
+     * @param string   $errstr       错误描述
+     * @param int      $flags        标识
+     * @param resource $context      有效上下文资源。
      * @return resource 失败时返回false
      */
     public static function socketServer($local_socket, &$errno = null, &$errstr = null, $flags = 12, $context = null)
     {
-        if(is_null($context)) {
+        if (is_null($context)) {
             return stream_socket_server($local_socket, $errno, $errstr, $flags);
         }
         return stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
@@ -554,9 +553,9 @@ class Stream
      *
      * 参数 `$flags` :
      *   如果协议是URL协议，则应设置为STREAM_IS_URL。默认值是0,即本地流。
-     * @param string $protocol 待注册的封装的名字
+     * @param string $protocol  待注册的封装的名字
      * @param string $classname 实现了protocol的类名
-     * @param int $flags 标识
+     * @param int    $flags     标识
      * @return bool
      */
     public static function wrapperRegister($protocol, $classname, $flags = 0)

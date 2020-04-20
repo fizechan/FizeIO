@@ -154,6 +154,15 @@ class Directory
     }
 
     /**
+     * 清空当前文件夹
+     * @return bool
+     */
+    public function clear()
+    {
+        return self::clearDirectory($this->path);
+    }
+
+    /**
      * 列出指定路径中的文件和目录 (含.和..)
      * @param string $path          路径
      * @param int    $sorting_order 排序
@@ -262,14 +271,27 @@ class Directory
     }
 
     /**
-     * 清理当前工作文件夹
-     *
-     * 即删除里面的所有文件及文件夹
+     * 清理指定文件夹
+     * @param string $path 待清空目录路径
      * @return bool
      */
-    public static function clear()
+    public static function clearDirectory($path)
     {
-        return self::deleteDirectoryForce('.');
+        $result = true;
+        $handle = opendir($path);
+        while (false !== ($item = readdir($handle))) {
+            clearstatcache();
+            if ($item != "." && $item != "..") {
+                if (is_dir("{$path}/{$item}")) {
+                    $result = $result && self::clearDirectory("{$path}/{$item}");
+                    $result = $result && self::rmdir("{$path}/{$item}");
+                } else {
+                    $result = $result && unlink("{$path}/{$item}");
+                }
+            }
+        }
+        closedir($handle);
+        return $result;
     }
 
     /**
@@ -344,23 +366,7 @@ class Directory
         if (!is_dir($path)) {
             return true;
         }
-
-        //删除文件夹内的文件及文件夹
-        $handle = opendir($path);
-        while (false !== ($item = readdir($handle))) {
-            clearstatcache();
-            if ($item != "." && $item != "..") {
-                if (is_dir("{$path}/{$item}")) {
-                    self::deleteDirectoryForce("{$path}/{$item}");
-                } else {
-                    unlink("{$path}/{$item}");
-                }
-            }
-        }
-        closedir($handle);
-        if ($path == '.') {
-            return true;
-        }
+        self::clearDirectory($path);
         return self::rmdir($path);
     }
 }

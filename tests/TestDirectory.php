@@ -274,6 +274,14 @@ class TestDirectory extends TestCase
         self::assertTrue(true);
     }
 
+    public function testClear()
+    {
+        $dir = new Directory("../temp/temp1/测试目录1");
+        $result = $dir->clear();
+        var_dump($result);
+        self::assertTrue($result);
+    }
+
     public function testScan()
     {
         $result = Directory::chdir('../temp/temp1/测试目录1');
@@ -401,14 +409,10 @@ class TestDirectory extends TestCase
         self::assertTrue($result);
     }
 
-    public function testClear()
+    public function testClearDirectory()
     {
         define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
-
-        $result = Directory::chdir(PATH_ROOT . '/temp/temp1/测试目录1');
-        var_dump($result);
-
-        $result = Directory::clear();
+        $result = Directory::clearDirectory(PATH_ROOT . '/temp1');
         var_dump($result);
         self::assertTrue($result);
     }

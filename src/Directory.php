@@ -301,7 +301,15 @@ class Directory
      */
     public static function isDir($path)
     {
-        return is_dir($path);
+        if (is_dir($path)) {
+            if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
+                if (basename(realpath($path)) != pathinfo($path)['basename']) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

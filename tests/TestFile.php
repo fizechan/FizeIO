@@ -189,9 +189,6 @@ class TestFile extends TestCase
         $file->close();
     }
 
-    /**
-     * @todo PHP7.3不建议使用该方法
-     */
     public function testGetss()
     {
         $file = new File('../temp/data/test.html', 'r');
@@ -206,6 +203,10 @@ class TestFile extends TestCase
     {
         $rst1 = File::exists('../temp/data/test.html');
         self::assertTrue($rst1);
+        $rst1 = File::exists('../temp/data/Test.html');
+        self::assertFalse($rst1);
+        $rst1 = File::exists('../temp/Data/test.html');
+        self::assertFalse($rst1);
         $rst2 = File::exists('../temp/data/file_not_exists.txt');
         self::assertFalse($rst2);
     }
@@ -452,8 +453,11 @@ class TestFile extends TestCase
     {
         $file = new File('../temp/test.txt', 'w');
         $rst = $file->isFile();
-        var_dump($rst);
         self::assertTrue($rst);
+
+        $file = new File('../temp/tesT.txt');
+        $rst = $file->isFile();
+        self::assertFalse($rst);
     }
 
     public function testIsLink()

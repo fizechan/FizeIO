@@ -314,7 +314,19 @@ class File
      */
     public static function exists($path)
     {
-        return file_exists($path);
+        $pathinfo = pathinfo($path);
+        if (!Directory::isDir($pathinfo['dirname'])) {
+            return false;
+        }
+
+        if (file_exists($path)) {
+            if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
+                if (basename(realpath($path)) != basename($path))
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -638,7 +650,19 @@ class File
      */
     public function isFile()
     {
-        return is_file($this->path);
+        $pathinfo = pathinfo($this->path);
+        if (!Directory::isDir($pathinfo['dirname'])) {
+            return false;
+        }
+
+        if (is_file($this->path)) {
+            if (strstr(PHP_OS, 'WIN')) {
+                if (basename(realpath($this->path)) != basename($this->path))
+                    return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

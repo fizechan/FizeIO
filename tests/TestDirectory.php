@@ -61,10 +61,6 @@ class TestDirectory extends TestCase
 
         echo "---1---<br/>\r\n";
 
-//$wd = Directory::getCwd();
-//var_dump($wd);
-//die();
-
         while ($file = $dir->read()) {
             echo "{$file}<br/>\r\n";
         }
@@ -419,6 +415,7 @@ class TestDirectory extends TestCase
 
     public function testIsDir()
     {
+
         define('PATH_ROOT', dirname(dirname(__FILE__)) . '/temp');
 
         Directory::chdir(PATH_ROOT . "/temp");
@@ -426,11 +423,14 @@ class TestDirectory extends TestCase
         $result = Directory::isDir('temp1');
         self::assertTrue($result);
 
+        $result = Directory::isDir('Temp1');
+        self::assertFalse($result);
+
         $result = Directory::isDir('temp2');
         self::assertFalse($result);
 
         $result = Directory::isDir('./temp1/测试目录1');
-        self::assertTrue($result);
+        self::assertFalse($result);
     }
 
     public function testGlob()

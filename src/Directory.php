@@ -314,6 +314,7 @@ class Directory
 
     /**
      * 寻找与模式匹配的文件路径
+     * @deprecated 请直接使用 glob 函数
      * @param string $pattern 匹配模式
      * @param int    $flags   有效标识
      * @return array
@@ -325,6 +326,7 @@ class Directory
 
     /**
      * 返回目录中的可用空间
+     * @deprecated 请直接使用 disk_free_space 函数
      * @param string $directory 指定目录或盘符
      * @return float 可用的字节数
      */
@@ -335,6 +337,7 @@ class Directory
 
     /**
      * 返回一个目录的磁盘总大小
+     * @deprecated 请直接使用 disk_total_space 函数
      * @param string $directory 指定目录或盘符
      * @return float 字节数
      */
@@ -345,6 +348,7 @@ class Directory
 
     /**
      * 返回规范化的绝对路径名
+     * @deprecated 请直接使用 realpath 函数
      * @return string
      */
     public function realpath()
@@ -354,6 +358,7 @@ class Directory
 
     /**
      * 在当前工作文件夹建立一个具有唯一文件名的文件
+     * @deprecated 请直接使用 tempnam 函数
      * @param string $prefix 产生临时文件的前缀
      * @return string 返回其文件名
      */

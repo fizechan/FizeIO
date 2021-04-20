@@ -191,6 +191,7 @@ class File
 
     /**
      * 返回当前文件路径中的目录部分
+     * @deprecated 请直接使用 dirname 函数
      * @return string
      */
     public function dirname()
@@ -371,6 +372,7 @@ class File
     /**
      * 把整个文件读入一个数组中
      *
+     * @deprecated 请直接使用 file 函数
      * 参数 `$flags` :
      *   可选值：[FILE_USE_INCLUDE_PATH|FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES]
      * @param int $flags 指定配置
@@ -503,7 +505,7 @@ class File
     public function open($mode = null, $use_include_path = false, $context = null)
     {
         $this->progress = false;
-        $mode = $mode ? $mode : $this->mode;
+        $mode = $mode ?: $this->mode;
         $this->resource = fopen($this->path, $mode, $use_include_path, $context);
     }
 
@@ -637,6 +639,7 @@ class File
 
     /**
      * 文件是否可执行
+     * @deprecated 请直接使用 is_executable 函数
      * @return bool
      */
     public function isExecutable()
@@ -667,6 +670,7 @@ class File
 
     /**
      * 判断是否为符号连接
+     * @deprecated 请直接使用 is_link 函数
      * @return bool
      */
     public function isLink()
@@ -676,6 +680,7 @@ class File
 
     /**
      * 判断是否可读
+     * @deprecated 请直接使用 is_readable 函数
      * @return bool
      */
     public function isReadable()
@@ -685,6 +690,7 @@ class File
 
     /**
      * 判断当前文件是否是通过 HTTP POST 上传的
+     * @deprecated 请直接使用 is_uploaded_file 函数
      * @return bool
      */
     public function isUploadedFile()
@@ -694,6 +700,7 @@ class File
 
     /**
      * 判断当前文件是否可写
+     * @deprecated 请直接使用 is_writable 函数
      * @return bool
      */
     public function isWritable()
@@ -703,6 +710,7 @@ class File
 
     /**
      * 建立一个硬连接
+     * @deprecated 请直接使用 link 函数
      * @param string $link 链接的名称
      * @return bool
      */
@@ -713,6 +721,7 @@ class File
 
     /**
      * 获取一个连接的信息
+     * @deprecated 请直接使用 linkinfo 函数
      * @return int
      */
     public function linkinfo()
@@ -723,6 +732,7 @@ class File
     /**
      * 返回文件路径的信息
      *
+     * @deprecated 请直接使用 pathinfo 函数
      * 参数 `$options` :
      *   如果没有传入 options ，将会返回包括以下单元的数组 array ：dirname，basename和 extension（如果有），以 及filename。
      * @param mixed $options 选项
@@ -739,18 +749,21 @@ class File
 
     /**
      * 打开一个指向进程的管道
+     *
+     * @deprecated 请直接使用 popen 函数
      * @param string $command 命令
      * @param string 模式
      */
     public function popen($command, $mode = null)
     {
         $this->progress = true;
-        $mode = $mode ? $mode : $this->mode;
+        $mode = $mode ?: $this->mode;
         $this->resource = popen($command, $mode);
     }
 
     /**
      * 读取文件并写入到输出缓冲。
+     * @deprecated 请直接使用 readfile 函数
      * @param bool     $use_include_path 是否在 include_path 中搜寻文件
      * @param resource $context          上下文支持
      * @return int
@@ -762,6 +775,7 @@ class File
 
     /**
      * 返回符号连接指向的目标
+     * @deprecated 请直接使用 readlink 函数
      * @return string
      */
     public function readlink()
@@ -771,6 +785,7 @@ class File
 
     /**
      * 获取真实目录缓存的详情
+     * @deprecated 请直接使用 realpath_cache_get 函数
      * @return array
      */
     public static function realpathCacheGet()
@@ -780,6 +795,7 @@ class File
 
     /**
      * 获取真实路径缓冲区的大小
+     * @deprecated 请直接使用 realpath_cache_size 函数
      * @return int
      */
     public static function realpathCacheSize()
@@ -789,6 +805,7 @@ class File
 
     /**
      * 返回规范化的绝对路径名
+     * @deprecated 请直接使用 realpath 函数
      * @return string 文件不存在时返回 false
      */
     public function realpath()
@@ -798,6 +815,7 @@ class File
 
     /**
      * 重命名一个文件,可用于移动文件
+     * @deprecated 请直接使用 rename 函数
      * @param string $newname    要移动到的目标位置路径
      * @param bool   $auto_build 如果指定的路径不存在，是否创建
      * @return bool
@@ -834,6 +852,7 @@ class File
      * 建立一个名为 link 的符号连接。
      *
      * 在Windows下该方法需要超级管理员权限
+     * @deprecated 请直接使用 rename 函数
      * @param string $link 链接的名称
      * @return bool
      */
@@ -844,6 +863,7 @@ class File
 
     /**
      * 建立一个临时文件
+     * @deprecated 请直接使用 tmpfile 函数
      * @return resource
      */
     public static function tmpfile()
@@ -855,6 +875,7 @@ class File
      * 设定文件的访问和修改时间
      *
      * 注意，如果文件不存在则尝试创建
+     * @deprecated 请直接使用 touch 函数
      * @param int $time  要设定的修改时间
      * @param int $atime 要设定的访问时间
      * @return bool
@@ -869,6 +890,7 @@ class File
 
     /**
      * 获取或改变当前的umask
+     * @deprecated 请直接使用 umask 函数
      * @param int $mask 指定该值时将改变当前umask
      * @return int
      */
@@ -883,6 +905,7 @@ class File
 
     /**
      * 删除文件
+     * @deprecated 请直接使用 unlink 函数
      * @param resource $context 上下文
      * @return bool
      */

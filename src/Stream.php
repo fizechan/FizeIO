@@ -438,7 +438,7 @@ class Stream
      * @param bool     $enable         是否开启加密
      * @param int      $crypto_type    可选的加密类型
      * @param resource $session_stream 用来自session_stream的设置为流。
-     * @return mixed 成功true，失败false。没有足够数据时返回0
+     * @return bool|int 成功true，失败false。没有足够数据时返回0
      */
     public function socketEnableCrypto($enable, $crypto_type = null, $session_stream = null)
     {

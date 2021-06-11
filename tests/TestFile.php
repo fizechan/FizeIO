@@ -9,41 +9,13 @@ class TestFile extends TestCase
 
     public function test__construct()
     {
-        $file = new File('../temp/test.txt', 'w');
-        $file->open();
-        $len = $file->write("1234567890\r\n");
-        $file->close();
+        $root = dirname(__DIR__);
+        $file = new File($root . '/temp/test.txt', 'a');
+        $len = $file->fwrite("1234567890\r\n");
         self::assertGreaterThan(0, $len);
 
         $file1 = new File('php://temp', 'r+');
         var_dump($file1);
-    }
-
-    public function test__destruct()
-    {
-        $file1 = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file1->open();
-        unset($file1);
-
-        $file = new File(__DIR__ . '/../temp/stream.txt', 'w+');
-        $file->open();
-        self::assertTrue(true);
-    }
-
-    public function testGetSplFileObject()
-    {
-        $file = new File('../../temp/test.txt', 'w');
-        $spl = $file->getSplFileObject();
-        var_dump($spl);
-        self::assertInstanceOf(SplFileObject::class, $spl);
-    }
-
-    public function testBasename()
-    {
-        $file = new File('../../temp/test.txt');
-        $basename = $file->basename();
-        var_dump($basename);
-        self::assertEquals('test.txt', $basename);
     }
 
     /**
@@ -51,9 +23,11 @@ class TestFile extends TestCase
      */
     public function testChgrp()
     {
-        $group = filegroup('../../temp/test.txt');
+        $root = dirname(__DIR__);
+
+        $group = filegroup($root . '/temp/test.txt');
         var_dump($group);
-        $file = new File('../../temp/test.txt', 'r');
+        $file = new File($root . '/temp/test.txt', 'r');
         $result = $file->chgrp(0);
         var_dump($result);
         self::assertTrue($result);

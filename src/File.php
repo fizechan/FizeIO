@@ -19,10 +19,6 @@ class File extends SplFileObject
 
     /**
      * 构造
-     *
-     * 参数 `$filename` :
-     *   对于 popen 可以使用null来指定
-     *   可以传入上下文流进行流操作
      * @param string   $filename       文件路径
      * @param string   $mode           打开模式
      * @param false    $useIncludePath 是否在include目录中寻找该文件
@@ -250,8 +246,7 @@ class File extends SplFileObject
                 $path = preg_replace('/([.\/]\/)+/', '/', $path);
             }
             $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-            $path = rtrim($path, DIRECTORY_SEPARATOR);
-            return $path;
+            return rtrim($path, DIRECTORY_SEPARATOR);
         }
     }
 

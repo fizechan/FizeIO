@@ -8,6 +8,11 @@
       "email": "chenfengzhan@qq.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "fize\\io\\": "src"
+    }
+  },
   "require": {
     "php": ">=7.0"
   },
@@ -20,10 +25,5 @@
   "suggest": {
     "ext-exif": "*",
     "ext-zlib": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "fize\\io\\": "src"
-    }
   }
 }

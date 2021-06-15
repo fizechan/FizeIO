@@ -173,8 +173,7 @@ class Directory
                 $path = preg_replace('/([.\/]\/)+/', '/', $path);
             }
             $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-            $path = rtrim($path, DIRECTORY_SEPARATOR);
-            return $path;
+            return rtrim($path, DIRECTORY_SEPARATOR);
         }
     }
 

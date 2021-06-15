@@ -71,6 +71,15 @@ class PFile
     }
 
     /**
+     * 输出文件指针处的所有剩余数据
+     * @return int 返回剩余数据字节数
+     */
+    public function passthru(): int
+    {
+        return fpassthru($this->handle);
+    }
+
+    /**
      * 读取
      *
      * 可安全用于二进制文件

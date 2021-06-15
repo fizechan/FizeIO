@@ -35,8 +35,7 @@ class File extends SplFileObject
             }
         }
         parent::__construct($filename, $mode, $useIncludePath, $context);
-        $this->path = $filename;
-        $this->path = $this->realpath(false);
+        $this->path = self::realpath($filename);
     }
 
     /**
@@ -106,11 +105,13 @@ class File extends SplFileObject
         if (is_null($name)) {
             $name = $this->getBasename();
         }
-        $dest = $dir . "/" . $name;
+        $dest = $dir . DIRECTORY_SEPARATOR . $name;
         if (!$cover && is_file($dest)) {  // 文件已存在，且不允许覆盖
             return false;
         }
-        mkdir($dir, 0777, true);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
         return copy($this->path, $dest);
     }
 
@@ -218,39 +219,6 @@ class File extends SplFileObject
     }
 
     /**
-     * 返回规范化的绝对路径名
-     * @param bool $check 是否检测路径真实有效
-     * @return string
-     */
-    public function realpath(bool $check = true): string
-    {
-        if ($check) {
-            if (!self::exists($this->path)) {
-                throw new RuntimeException('path is not exists: ' . $this->path);
-            }
-            return realpath($this->path);
-        } else {
-            if (self::exists($this->path)) {
-                return realpath($this->path);
-            }
-            $path = $this->path;
-            $path = str_replace('\\', '/', $path);
-            $last = '';
-            while ($path != $last) {
-                $last = $path;
-                $path = preg_replace('/\/[^\/]+\/\.\.\//', '/', $path);
-            }
-            $last = '';
-            while ($path != $last) {
-                $last = $path;
-                $path = preg_replace('/([.\/]\/)+/', '/', $path);
-            }
-            $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-            return rtrim($path, DIRECTORY_SEPARATOR);
-        }
-    }
-
-    /**
      * 重命名
      * @param string $newname    要移动到的目标位置路径
      * @param bool   $auto_build 如果指定的路径不存在，是否创建
@@ -260,7 +228,9 @@ class File extends SplFileObject
     {
         if ($auto_build) {
             $dir = dirname($newname);
-            mkdir($dir, 0777, true);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
         }
         return rename($this->path, $newname);
     }
@@ -317,11 +287,38 @@ class File extends SplFileObject
 
         if (file_exists($path)) {
             if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
-                if (basename(realpath($path)) != basename($path))
+                $dir = new Directory(dirname($path));
+                if (dirname(realpath($path)) != $dir->realpath(false)) {
                     return false;
+                }
+                if (basename(realpath($path)) != $pathinfo['basename']) {
+                    return false;
+                }
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * 返回规范化的绝对路径名
+     * @param string $path  路径
+     * @param bool   $check 是否检测路径真实有效
+     * @return string
+     */
+    public static function realpath(string $path, bool $check = true): string
+    {
+        if ($check) {
+            if (!self::exists($path)) {
+                throw new RuntimeException('path is not exists: ' . $path);
+            }
+            return realpath($path);
+        } else {
+            if (self::exists($path)) {
+                return realpath($path);
+            }
+            $dir = new Directory(dirname($path));
+            return $dir->realpath(false) . DIRECTORY_SEPARATOR . basename($path);
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace fize\io;
 /**
  * 磁盘
  */
-class Disk
+class Disk extends Directory
 {
 
     /**
@@ -20,6 +20,7 @@ class Disk
     public function __construct(string $directory)
     {
         $this->directory = $directory;
+        parent::__construct($directory);
     }
 
     /**

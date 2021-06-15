@@ -135,7 +135,7 @@ class Directory
         $path = $this->path;
         if (is_dir($path)) {
             if (strstr(PHP_OS, 'WIN')) {
-                if (basename(realpath($path)) != pathinfo($path)['basename']) {
+                if (basename(realpath($path)) != pathinfo($path, PATHINFO_BASENAME)) {
                     return false;
                 }
             }

@@ -13,6 +13,11 @@ class PFile
      */
     private $handle;
 
+    /**
+     * 构造
+     * @param string $command 命令
+     * @param string $mode    模式
+     */
     public function __construct(string $command, string $mode)
     {
         $this->handle = popen($command, $mode);
@@ -24,24 +29,9 @@ class PFile
     public function __destruct()
     {
         if ($this->handle) {
-            $this->close();
+            pclose($this->handle);
+            $this->handle = null;
         }
-    }
-
-    /**
-     * 关闭
-     */
-    public function close()
-    {
-        pclose($this->handle);
-    }
-
-    /**
-     * @return bool 指针是否到了文件结束的位置
-     */
-    public function eof(): bool
-    {
-        return feof($this->handle);
     }
 
     /**
@@ -51,23 +41,6 @@ class PFile
     public function gets()
     {
         return fgets($this->handle);
-    }
-
-    /**
-     * 从文件指针中读取一行并过滤掉HTML和PHP标记。
-     *
-     * 参数 `$length` :
-     *   默认是 1024 字节
-     * 参数 `$allowable_tags` :
-     *   形如“<p>,<b>”
-     * @param int         $length         规定要读取的字节数
-     * @param string|null $allowable_tags 规定不会被删除的标签
-     * @return string
-     * @deprecated PHP7.3不建议使用该方法
-     */
-    public function getss(int $length = null, string $allowable_tags = null): string
-    {
-        return fgetss($this->handle, $length, $allowable_tags);
     }
 
     /**

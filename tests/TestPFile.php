@@ -14,70 +14,73 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new File();
-        $progress->popen($cmd, 'r');
+        $progress = new PFile($cmd, 'r');
         $content = $progress->gets();
         var_dump($content);
         self::assertIsString($content);
-        $progress->close();
     }
 
-    public function testClose()
+    public function test__destruct()
     {
-
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version";
+        } else {
+            $cmd = "bash php --version";
+        }
+        $progress = new PFile($cmd, 'r');
+        $line_content = $progress->gets();
+        var_dump($line_content);
+        self::assertIsString($line_content);
+        unset($progress);
     }
 
-    public function testGetss()
+    public function testGets()
     {
-
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version";
+        } else {
+            $cmd = "bash php --version";
+        }
+        $progress = new PFile($cmd, 'r');
+        $content = $progress->gets();
+        var_dump($content);
+        self::assertIsString($content);
     }
 
     public function testPassthru()
     {
-        $file = new File();
-
         if (substr(php_uname(), 0, 7) == "Windows"){
             $cmd = "start /B php --version";
         } else {
             $cmd = "bash php --version";  //@todo 待验证
         }
-        $file->popen($cmd, 'r');
+        $file = new PFile($cmd, 'r');
         $len = $file->passthru();
-        $file->close();
         self::assertIsInt($len);
-    }
-
-    public function test__destruct()
-    {
-
-    }
-
-    public function testGets()
-    {
-
-    }
-
-    public function testWrite()
-    {
-        $file = new File('../temp/test.txt', 'w');
-        $file->open();
-        $len = $file->write("1234567890\r\n");
-        $file->close();
-        self::assertGreaterThan(0, $len);
     }
 
     public function testRead()
     {
-        $file = new File('../temp/test.txt', 'r');
-        $file->open();
-        $content = $file->read(1024);
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version";
+        } else {
+            $cmd = "bash php --version";
+        }
+        $progress = new PFile($cmd, 'r');
+        $content = $progress->read(1024);
         var_dump($content);
         self::assertIsString($content);
-        $file->close();
     }
 
-    public function testEof()
+    public function testWrite()
     {
-
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version > cfztest.txt";
+        } else {
+            $cmd = "bash php --version > cfztest.txt";
+        }
+        $progress = new PFile($cmd, 'w');
+        $len = $progress->write($cmd);
+        self::assertGreaterThan(0, $len);
     }
 }

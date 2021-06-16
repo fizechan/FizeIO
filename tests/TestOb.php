@@ -182,38 +182,4 @@ class TestOb extends TestCase
         Ob::endClean();
         self::assertTrue($result);
     }
-
-    /**
-     * @todo file.php并没有如文档缩写的变为file.php?var=value
-     */
-    public function testOutputAddRewriteVar()
-    {
-        //Ob::start();
-
-        Ob::outputAddRewriteVar('var', 'value');
-
-        //Ob::start();
-
-        // some links
-        echo '<a href="file.php">link</a> <a href="http://example.com">link2</a>';
-
-        // a form
-        echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';
-
-        Ob::endFlush();
-
-        self::assertTrue(true);
-
-    }
-
-    public function testOutputResetRewriteVars()
-    {
-        Ob::outputAddRewriteVar('var1', 'value1');
-        echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';
-        Ob::flush();
-        Ob::outputResetRewriteVars();
-        echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';
-        Ob::endFlush();
-        self::assertTrue(true);
-    }
 }

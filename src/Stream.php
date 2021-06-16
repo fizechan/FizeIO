@@ -4,7 +4,7 @@
 namespace fize\io;
 
 /**
- * 流
+ * 流处理
  */
 class Stream
 {

@@ -2,6 +2,9 @@
 
 namespace fize\io;
 
+/**
+ * 用于流处理的桶
+ */
 class StreamBucket
 {
 
@@ -34,7 +37,7 @@ class StreamBucket
      * @return object
      * @todo 本函数还未编写文档，仅有参数列表。
      */
-    public static function bucketNew($stream, $buffer)
+    public static function bucketNew($stream, string $buffer)
     {
         return stream_bucket_new($stream, $buffer);
     }
@@ -42,7 +45,7 @@ class StreamBucket
     /**
      * 为队列准备桶
      * @param resource $brigade 队列
-     * @param resource $bucket  桶
+     * @param object   $bucket  桶
      * @todo 官方文档过于复杂，暂时不测试
      */
     public static function prepend($brigade, $bucket)

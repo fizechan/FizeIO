@@ -33,9 +33,11 @@ class File extends SplFileObject
                     mkdir($dir, 0777, true);
                 }
             }
+            $this->path = self::realpath($filename);
+        } else {
+            $this->path = $filename;
         }
         parent::__construct($filename, $mode, $useIncludePath, $context);
-        $this->path = self::realpath($filename);
     }
 
     /**

@@ -30,17 +30,17 @@ class TestDirectory extends TestCase
 
         self::assertTrue(true);
 
-        $dir1 = new Directory( $root . "/temp/temp/temp1", true);  // 已存在的文件夹
-        self::assertTrue($dir1->exists());
+        new Directory( $root . "/temp/temp/temp1", true);  // 已存在的文件夹
+        self::assertTrue(Directory::exists($root . "/temp/temp/temp1"));
 
-        $dir2 = new Directory( $root . "/temp/temp/temp2", true);  // 不存在的文件夹，自动建立
-        self::assertTrue($dir2->exists());
+        new Directory( $root . "/temp/temp/temp2", true);  // 不存在的文件夹，自动建立
+        self::assertTrue(Directory::exists($root . "/temp/temp/temp2"));
 
-        $dir3 = new Directory( $root . "/temp/temp/temp3/temp33/temp333", true);  // 不存在的文件夹，自动建立(递归)
-        self::assertTrue($dir3->exists());
+        new Directory( $root . "/temp/temp/temp3/temp33/temp333", true);  // 不存在的文件夹，自动建立(递归)
+        self::assertTrue(Directory::exists($root . "/temp/temp/temp3/temp33/temp333"));
 
-        $dir4 = new Directory( $root . "/temp/temp/temp4");  // 不存在的文件夹，不创建
-        self::assertFalse($dir4->exists());
+        new Directory( $root . "/temp/temp/temp4");  // 不存在的文件夹，不创建
+        self::assertFalse(Directory::exists($root . "/temp/temp/temp4"));
     }
 
     public function test__destruct()
@@ -174,42 +174,6 @@ class TestDirectory extends TestCase
         self::assertIsArray($list);
     }
 
-    public function testExists()
-    {
-        $root = dirname(__DIR__);
-
-        $dir = new Directory( $root . "/temp/data");
-        self::assertTrue($dir->exists());
-
-        $dir = new Directory( $root . "/temp/data2");
-        self::assertFalse($dir->exists());
-    }
-
-    public function testRealpath()
-    {
-        $root = dirname(__DIR__);
-
-        $dir = new Directory( $root . "/temp/data/");
-        $realpath1 = $dir->realpath();
-        var_dump($realpath1);
-
-        $dir = new Directory( $root . "//temp//data");
-        $realpath2 = $dir->realpath();
-        var_dump($realpath2);
-
-        self::assertEquals($realpath1, $realpath2);
-
-        $dir = new Directory( $root . "//temp//data2");
-        $realpath3 = $dir->realpath(false);
-        var_dump($realpath3);
-
-        $dir = new Directory( $root . "//temp//data2/test/../");
-        $realpath4 = $dir->realpath(false);
-        var_dump($realpath4);
-
-        self::assertEquals($realpath3, $realpath4);
-    }
-
     public function testTempnam()
     {
         $root = dirname(__DIR__);
@@ -240,5 +204,34 @@ class TestDirectory extends TestCase
         $dir = new Directory( $root . "/temp/temp3");
         $result = $dir->delete();
         self::assertTrue($result);
+    }
+
+    public function testExists()
+    {
+        $root = dirname(__DIR__);
+
+        self::assertTrue(Directory::exists($root . "/temp/data"));
+        self::assertFalse(Directory::exists($root . "/temp/data2"));
+    }
+
+    public function testRealpath()
+    {
+        $root = dirname(__DIR__);
+
+        $realpath1 = Directory::realpath($root . "/temp/data/");
+        var_dump($realpath1);
+
+        $realpath2 = Directory::realpath($root . "//temp//data");
+        var_dump($realpath2);
+
+        self::assertEquals($realpath1, $realpath2);
+
+        $realpath3 = Directory::realpath($root . "//temp//data2", false);
+        var_dump($realpath3);
+
+        $realpath4 = Directory::realpath($root . "//temp//data2/test/../", false);
+        var_dump($realpath4);
+
+        self::assertEquals($realpath3, $realpath4);
     }
 }

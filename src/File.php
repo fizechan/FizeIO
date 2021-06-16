@@ -287,8 +287,7 @@ class File extends SplFileObject
 
         if (file_exists($path)) {
             if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
-                $dir = new Directory(dirname($path));
-                if (dirname(realpath($path)) != $dir->realpath(false)) {
+                if (dirname(realpath($path)) != Directory::realpath(dirname($path), false)) {
                     return false;
                 }
                 if (basename(realpath($path)) != $pathinfo['basename']) {
@@ -317,8 +316,7 @@ class File extends SplFileObject
             if (self::exists($path)) {
                 return realpath($path);
             }
-            $dir = new Directory(dirname($path));
-            return $dir->realpath(false) . DIRECTORY_SEPARATOR . basename($path);
+            return Directory::realpath(dirname($path), false) . DIRECTORY_SEPARATOR . basename($path);
         }
     }
 }

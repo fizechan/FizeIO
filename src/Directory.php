@@ -27,8 +27,7 @@ class Directory
      */
     public function __construct(string $path, bool $auto_build = false)
     {
-        $this->path = $path;
-        $this->path = $this->realpath(false);
+        $this->path = self::realpath($path, false);
         if ($auto_build) {
             $this->mkdirIfNotExists();
         }
@@ -125,59 +124,6 @@ class Directory
     }
 
     /**
-     * 判断当前目录是否存在
-     *
-     * 该方法在Windows下也严格遵守大小写
-     * @return bool
-     */
-    public function exists(): bool
-    {
-        $path = $this->path;
-        if (is_dir($path)) {
-            if (strstr(PHP_OS, 'WIN')) {
-                if (basename(realpath($path)) != pathinfo($path, PATHINFO_BASENAME)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 返回规范化的绝对路径名
-     * @param bool $check 是否检测路径真实有效
-     * @return string
-     */
-    public function realpath(bool $check = true): string
-    {
-        if ($check) {
-            if (!$this->exists()) {
-                throw new RuntimeException('path is not exists: ' . $this->path);
-            }
-            return realpath($this->path);
-        } else {
-            if ($this->exists()) {
-                return realpath($this->path);
-            }
-            $path = $this->path;
-            $path = str_replace('\\', '/', $path);
-            $last = '';
-            while ($path != $last) {
-                $last = $path;
-                $path = preg_replace('/\/[^\/]+\/\.\.\//', '/', $path);
-            }
-            $last = '';
-            while ($path != $last) {
-                $last = $path;
-                $path = preg_replace('/([.\/]\/)+/', '/', $path);
-            }
-            $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-            return rtrim($path, DIRECTORY_SEPARATOR);
-        }
-    }
-
-    /**
      * 在当前文件夹建立一个具有唯一文件名的文件
      * @param string $prefix 产生临时文件的前缀
      * @return string 返回完整文件路径
@@ -206,11 +152,11 @@ class Directory
      */
     public function delete(bool $force = false): bool
     {
-        if (!$this->exists()) {
+        if (!self::exists($this->path)) {
             return true;
         }
         if ($force) {
-            self::clear();
+            $this->clear();
         }
         return rmdir($this->path);
     }
@@ -222,9 +168,62 @@ class Directory
      */
     private function mkdirIfNotExists()
     {
-        if ($this->exists()) {
+        if (self::exists($this->path)) {
             return;
         }
         mkdir($this->path, 0777, true);
+    }
+
+    /**
+     * 判断目录是否存在
+     *
+     * 该方法在Windows下也严格遵守大小写
+     * @param string $path 路径
+     * @return bool
+     */
+    public static function exists(string $path): bool
+    {
+        if (is_dir($path)) {
+            if (strstr(PHP_OS, 'WIN')) {
+                if (basename(realpath($path)) != pathinfo($path, PATHINFO_BASENAME)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 返回规范化的绝对路径名
+     * @param string $path  路径
+     * @param bool   $check 是否检测路径真实有效
+     * @return string
+     */
+    public static function realpath(string $path, bool $check = true): string
+    {
+        if ($check) {
+            if (!self::exists($path)) {
+                throw new RuntimeException('path is not exists: ' . $path);
+            }
+            return realpath($path);
+        } else {
+            if (self::exists($path)) {
+                return realpath($path);
+            }
+            $path = str_replace('\\', '/', $path);
+            $last = '';
+            while ($path != $last) {
+                $last = $path;
+                $path = preg_replace('/\/[^\/]+\/\.\.\//', '/', $path);
+            }
+            $last = '';
+            while ($path != $last) {
+                $last = $path;
+                $path = preg_replace('/([.\/]\/)+/', '/', $path);
+            }
+            $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+            return rtrim($path, DIRECTORY_SEPARATOR);
+        }
     }
 }

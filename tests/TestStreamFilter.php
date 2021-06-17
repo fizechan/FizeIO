@@ -1,6 +1,6 @@
 <?php
 
-
+use fize\io\FFile;
 use fize\io\StreamFilter;
 use PHPUnit\Framework\TestCase;
 
@@ -9,57 +9,76 @@ class TestStreamFilter extends TestCase
 
     public function testAppend()
     {
-        $res = StreamFilter::append("string.rot13", STREAM_FILTER_WRITE);
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
+        $res = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $fp = new File($stream->get());
-        $fp->write("This is a test\n");
-        $fp->rewind();
-        $fp->passthru();
-        $fp->close();
+        $ff = new FFile($fp);
+        $ff->write("This is a test\n");
+        $ff->rewind();
+        $ff->passthru();
+        $ff->close();
     }
 
-    public function testFilterPrepend()
+    public function testPrepend()
     {
-
-        $stream = new Stream('../temp/testStreamFilterAppend.txt', 'w+');
-        $res = $stream->filterPrepend("string.rot13", STREAM_FILTER_WRITE);
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
+        $res = StreamFilter::prepend($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $fp = new File($stream->get());
-        $fp->write("This is a test\n");
-        $fp->rewind();
-        $fp->passthru();
-        $fp->close();
+        $ff = new FFile($fp);
+        $ff->write("This is a test\n");
+        $ff->rewind();
+        $ff->passthru();
+        $ff->close();
     }
 
-    public function testFilterRegister()
+    public function testRegister()
     {
-        $rst = Stream::filterRegister("strtoupper", "strtoupper_filter");
+        $rst = StreamFilter::register("strtoupper", strtoupper_filter::class);
         var_dump($rst);
         self::assertTrue($rst);
 
-        $stream = new Stream('../temp/testStreamFilterRegister.txt', 'w+');
-        $stream->filterAppend("strtoupper");
-        $fp = new File($stream->get());
-        $fp->write("Line1\n");
-        $fp->write("Word - 2\n");
-        $fp->write("Easy As 123\n");
-        $fp->rewind();
-        $content = $fp->read(1000);
-        $fp->close();
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
+        StreamFilter::append($fp, "strtoupper");
+        $ff = new FFile($fp);
+        $ff->write("Line1\n");
+        $ff->write("Word - 2\n");
+        $ff->write("Easy As 123\n");
+        $ff->rewind();
+        $content = $ff->read(1000);
+        $ff->close();
         var_dump($content);
     }
 
     public function testFilterRemove()
     {
-        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
-        $filter = $stream->filterAppend("string.rot13", STREAM_FILTER_WRITE);
-        $rst = Stream::filterRemove($filter);
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
+        $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
+        $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);
-        $fp = new File($stream->get());
-        $fp->write("This is a test\n");
-        $fp->rewind();
-        $fp->passthru();
-        $fp->close();
+        $ff = new FFile($fp);
+        $ff->write("This is a test\n");
+        $ff->rewind();
+        $ff->passthru();
+        $ff->close();
     }
 
+}
+
+
+/**
+ * 自定义过滤器
+ *
+ * 该过滤器功能为使所有字符串改为大写
+ */
+class strtoupper_filter extends php_user_filter
+{
+    public function filter($in, $out, &$consumed, $closing): int
+    {
+        while ($bucket = stream_bucket_make_writeable($in)) {
+            $bucket->data = strtoupper($bucket->data);
+            $consumed += $bucket->datalen;
+            stream_bucket_append($out, $bucket);
+        }
+        return PSFS_PASS_ON;
+    }
 }

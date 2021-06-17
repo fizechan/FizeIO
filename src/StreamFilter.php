@@ -2,6 +2,9 @@
 
 namespace fize\io;
 
+/**
+ * 流过滤器
+ */
 class StreamFilter
 {
 
@@ -10,14 +13,14 @@ class StreamFilter
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
-     * @param string $filtername 过滤器
-     * @param int    $read_write 读写模式
-     * @param mixed  $params     相关参数
+     * @param string   $filtername 过滤器
+     * @param int|null $read_write 读写模式
+     * @param mixed    $params     相关参数
      * @return resource
      */
-    public function append($filtername, $read_write = null, $params = null)
+    public static function append($stream, string $filtername, int $read_write = null, $params = null)
     {
-        return stream_filter_append($this->context, $filtername, $read_write, $params);
+        return stream_filter_append($stream, $filtername, $read_write, $params);
     }
 
     /**
@@ -25,14 +28,14 @@ class StreamFilter
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
-     * @param string $filtername 过滤器
-     * @param int    $read_write 读写模式
-     * @param mixed  $params     相关参数
+     * @param string   $filtername 过滤器
+     * @param int|null $read_write 读写模式
+     * @param mixed    $params     相关参数
      * @return resource
      */
-    public function prepend($filtername, $read_write = null, $params = null)
+    public static function prepend($stream, string $filtername, int $read_write = null, $params = null)
     {
-        return stream_filter_prepend($this->context, $filtername, $read_write, $params);
+        return stream_filter_prepend($stream, $filtername, $read_write, $params);
     }
 
     /**
@@ -41,7 +44,7 @@ class StreamFilter
      * @param string $classname  类全限定名
      * @return bool
      */
-    public static function register($filtername, $classname)
+    public static function register(string $filtername, string $classname): bool
     {
         return stream_filter_register($filtername, $classname);
     }
@@ -51,7 +54,7 @@ class StreamFilter
      * @param resource $stream_filter 需要被移除的资源流过滤器
      * @return bool
      */
-    public static function remove($stream_filter)
+    public static function remove($stream_filter): bool
     {
         return stream_filter_remove($stream_filter);
     }

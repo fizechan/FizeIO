@@ -11,26 +11,12 @@ class FFile
 
     /**
      * 构造
-     *
-     * 参数 `$filename` :
-     *   可以传入上下文流进行流操作
-     * @param string|resource $file 文件路径、资源流
-     * @param string|null     $mode 打开模式
+     * @param resource $stream 资源流
      */
-    public function __construct($file, string $mode = null)
+    public function __construct($stream = null)
     {
-        if (is_resource($file)) {
-            $this->stream = $file;
-        } else {
-            if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
-                if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
-                    $dir = dirname($file);
-                    if (!is_dir($dir)) {
-                        mkdir($dir, 0777, true);
-                    }
-                }
-            }
-            $this->stream = fopen($file, $mode);
+        if (!is_null($stream)) {
+            $this->stream = $stream;
         }
     }
 
@@ -44,6 +30,24 @@ class FFile
         if ($this->stream && get_resource_type($this->stream) == 'stream') {
             $this->close();
         }
+    }
+
+    /**
+     * 打开文件
+     * @param string      $file 文件路径
+     * @param string|null $mode 打开模式
+     */
+    public function open(string $file, string $mode = null)
+    {
+        if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
+            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
+                $dir = dirname($file);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+            }
+        }
+        $this->stream = fopen($file, $mode);
     }
 
     /**

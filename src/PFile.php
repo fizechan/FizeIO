@@ -8,10 +8,7 @@ namespace fize\io;
 class PFile
 {
 
-    /**
-     * @var resource 文件句柄
-     */
-    private $handle;
+    use FileTrait;
 
     /**
      * 构造
@@ -20,7 +17,7 @@ class PFile
      */
     public function __construct(string $command, string $mode)
     {
-        $this->handle = popen($command, $mode);
+        $this->stream = popen($command, $mode);
     }
 
     /**
@@ -28,53 +25,21 @@ class PFile
      */
     public function __destruct()
     {
-        if ($this->handle) {
-            pclose($this->handle);
-            $this->handle = null;
+        if ($this->stream && get_resource_type($this->stream) == 'stream') {
+            $this->close();
         }
     }
 
     /**
-     * 读取一行
-     * @return false|string EOF时返回false
+     * 关闭文件
+     * @return int
      */
-    public function gets()
+    public function close(): int
     {
-        return fgets($this->handle);
+        $result = pclose($this->stream);
+        if ($result) {
+            $this->stream = null;  // 如果正确关闭了则清空当前对象的file_resource
+        }
+        return $result;
     }
-
-    /**
-     * 输出文件指针处的所有剩余数据
-     * @return int 返回剩余数据字节数
-     */
-    public function passthru(): int
-    {
-        return fpassthru($this->handle);
-    }
-
-    /**
-     * 读取
-     *
-     * 可安全用于二进制文件
-     * @param int $length 最多读取length个字节
-     * @return false|string
-     */
-    public function read(int $length)
-    {
-        return fread($this->handle, $length);
-    }
-
-    /**
-     * 写入文件
-     *
-     * 可安全用于二进制文件
-     * @param string   $string 要写入字符串
-     * @param int|null $length 最多写入length个字节
-     * @return false|int 返回写入的字符数，出现错误时则返回 false 。
-     */
-    public function write(string $string, int $length = null)
-    {
-        return fwrite($this->handle, $string, $length);
-    }
-
 }

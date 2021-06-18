@@ -71,7 +71,7 @@ class Upload
      * 错误信息
      * @return string
      */
-    public function error()
+    public function error(): string
     {
         return $this->error;
     }
@@ -80,7 +80,7 @@ class Upload
      * 文件路径
      * @return string
      */
-    public function path()
+    public function path(): string
     {
         $path = $this->path;
         $path = str_replace('\\', '/', $path);
@@ -126,7 +126,7 @@ class Upload
 
         // 不覆盖同名文件
         if (!$replace && is_file($filename)) {
-            $this->error = "has the same filename: {$filename}";
+            $this->error = "has the same filename: $filename";
             return false;
         }
 
@@ -145,7 +145,7 @@ class Upload
      * @param int $error_no 错误号
      * @return string
      */
-    private function errorForUpload($error_no)
+    private function errorForUpload(int $error_no): string
     {
         switch ($error_no) {
             case 1:
@@ -174,7 +174,7 @@ class Upload
      * 检测上传文件
      * @return bool
      */
-    protected function check()
+    protected function check(): bool
     {
         if ($this->config['size'] && !$this->checkSize($this->config['size'])) {
             return false;
@@ -197,7 +197,7 @@ class Upload
      * @param mixed $ext 允许后缀
      * @return bool
      */
-    protected function checkExt($ext)
+    protected function checkExt($ext): bool
     {
         if (is_string($ext)) {
             $ext = explode(',', $ext);
@@ -217,7 +217,7 @@ class Upload
      * 检测图像文件
      * @return bool
      */
-    protected function checkImg()
+    protected function checkImg(): bool
     {
         $extension = strtolower(pathinfo($this->file['name'], PATHINFO_EXTENSION));
         // 对图像文件进行严格检测
@@ -237,7 +237,7 @@ class Upload
      * @param string $image 图片文件路径
      * @return int 失败时返回false
      */
-    protected function getImageType($image)
+    protected function getImageType(string $image)
     {
         if (function_exists('exif_imagetype')) {
             return exif_imagetype($image);
@@ -256,7 +256,7 @@ class Upload
      * @param int $size 最大大小
      * @return bool
      */
-    protected function checkSize($size)
+    protected function checkSize(int $size): bool
     {
         if ($this->file['size'] > $size) {
             $this->error = 'filesize not match';
@@ -271,7 +271,7 @@ class Upload
      * @param mixed $mime 允许类型
      * @return bool
      */
-    protected function checkMime($mime)
+    protected function checkMime($mime): bool
     {
         if (is_string($mime)) {
             $mime = explode(',', $mime);
@@ -289,7 +289,7 @@ class Upload
      * 检测是否合法的上传文件
      * @return bool
      */
-    protected function isValid()
+    protected function isValid(): bool
     {
         $file = new File($this->file['tmp_name']);
         $bool = $file->isUploadedFile();
@@ -306,7 +306,7 @@ class Upload
      * @param bool        $auto_append_ext 自动补充扩展名
      * @return string
      */
-    protected function buildSaveName($savename, $auto_append_ext = true)
+    protected function buildSaveName($savename, bool $auto_append_ext = true)
     {
         if (true === $savename) {  // 自动生成文件名
             $savename = $this->autoBuildName();
@@ -325,7 +325,7 @@ class Upload
      * 自动生成文件名
      * @return string
      */
-    protected function autoBuildName()
+    protected function autoBuildName(): string
     {
         if ($this->config['rule'] instanceof Closure) {
             $savename = call_user_func_array($this->config['rule'], [$this->file]);
@@ -354,7 +354,7 @@ class Upload
      * @param string $type
      * @return string
      */
-    protected function hash($type = 'sha1')
+    protected function hash(string $type = 'sha1'): string
     {
         return hash_file($type, $this->file['tmp_name']);
     }
@@ -364,7 +364,7 @@ class Upload
      * @param string $path 目录
      * @return bool
      */
-    protected function checkPath($path)
+    protected function checkPath(string $path): bool
     {
         if (is_dir($path)) {
             return true;
@@ -374,7 +374,7 @@ class Upload
             return true;
         }
 
-        $this->error = "directory `{$path}` creation failed";
+        $this->error = "directory `$path` creation failed";
         return false;
     }
 
@@ -393,7 +393,7 @@ class Upload
      * @param array $config 配置
      * @return array [file, path, error]
      */
-    public static function single($file, array $config = [])
+    public static function single($file, array $config = []): array
     {
         $config = array_merge(self::$staticConfig, $config);
         $upload = new static($file, $config);
@@ -412,7 +412,7 @@ class Upload
      * @param array $file_post 原生的$_FILES多文件数组
      * @return array
      */
-    protected static function reArrayFiles($file_post)
+    protected static function reArrayFiles(array $file_post): array
     {
         $file_ary = [];
         $file_count = count($file_post['name']);
@@ -432,7 +432,7 @@ class Upload
      * @param array $config 配置
      * @return array
      */
-    public static function multiple($files, array $config = [])
+    public static function multiple($files, array $config = []): array
     {
         if (is_string($files)) {
             $files = self::reArrayFiles($_FILES[$files]);

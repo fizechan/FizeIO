@@ -13,11 +13,9 @@ class FFile
      * 构造
      * @param resource $stream 资源流
      */
-    public function __construct($stream = null)
+    public function __construct($stream)
     {
-        if (!is_null($stream)) {
-            $this->stream = $stream;
-        }
+        $this->stream = $stream;
     }
 
     /**
@@ -30,24 +28,6 @@ class FFile
         if ($this->stream && get_resource_type($this->stream) == 'stream') {
             $this->close();
         }
-    }
-
-    /**
-     * 打开文件
-     * @param string      $file 文件路径
-     * @param string|null $mode 打开模式
-     */
-    public function open(string $file, string $mode = null)
-    {
-        if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
-            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
-                $dir = dirname($file);
-                if (!is_dir($dir)) {
-                    mkdir($dir, 0777, true);
-                }
-            }
-        }
-        $this->stream = fopen($file, $mode);
     }
 
     /**
@@ -96,5 +76,26 @@ class FFile
     public function putcsv(array $fields, string $delimiter = ",", string $enclosure = '"', string $escape_char = "\\"): int
     {
         return fputcsv($this->stream, $fields, $delimiter, $enclosure, $escape_char);
+    }
+
+    /**
+     * 打开文件
+     * @param string      $file             文件路径
+     * @param string|null $mode             打开模式
+     * @param bool        $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource    $context          上下文支持
+     * @return resource 返回文件操作句柄
+     */
+    public static function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
+    {
+        if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
+            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
+                $dir = dirname($file);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+            }
+        }
+        return fopen($file, $mode, $use_include_path, $context);
     }
 }

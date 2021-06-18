@@ -1,7 +1,6 @@
 <?php
 
 use fize\io\Stream;
-use fize\io\File;
 use PHPUnit\Framework\TestCase;
 
 class TestStream extends TestCase

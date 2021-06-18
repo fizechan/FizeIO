@@ -17,7 +17,7 @@ class PFile
      */
     public function __construct(string $command, string $mode)
     {
-        $this->stream = popen($command, $mode);
+        $this->stream = self::open($command, $mode);
     }
 
     /**
@@ -41,5 +41,16 @@ class PFile
             $this->stream = null;  // 如果正确关闭了则清空当前对象的file_resource
         }
         return $result;
+    }
+
+    /**
+     * 打开进程文件
+     * @param string $command 命令
+     * @param string $mode    模式
+     * @return resource 返回操作句柄
+     */
+    public static function open(string $command, string $mode)
+    {
+        return popen($command, $mode);
     }
 }

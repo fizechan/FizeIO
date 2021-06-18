@@ -9,7 +9,7 @@ class TestStreamFilter extends TestCase
 
     public function testAppend()
     {
-        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
+        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
         $res = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
         $ff = new FFile($fp);
@@ -21,7 +21,7 @@ class TestStreamFilter extends TestCase
 
     public function testPrepend()
     {
-        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
+        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
         $res = StreamFilter::prepend($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
         $ff = new FFile($fp);
@@ -37,7 +37,7 @@ class TestStreamFilter extends TestCase
         var_dump($rst);
         self::assertTrue($rst);
 
-        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
+        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
         StreamFilter::append($fp, "strtoupper");
         $ff = new FFile($fp);
         $ff->write("Line1\n");
@@ -51,7 +51,7 @@ class TestStreamFilter extends TestCase
 
     public function testFilterRemove()
     {
-        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
+        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
         $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);

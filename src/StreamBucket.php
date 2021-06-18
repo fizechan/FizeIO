@@ -3,7 +3,7 @@
 namespace fize\io;
 
 /**
- * 用于流处理的桶
+ * 流处理桶
  */
 class StreamBucket
 {

@@ -2,6 +2,9 @@
 
 namespace fize\io;
 
+/**
+ * 流封装协议
+ */
 class StreamWrapper
 {
     /**

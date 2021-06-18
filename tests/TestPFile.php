@@ -75,12 +75,24 @@ class TestPFile extends TestCase
     public function testWrite()
     {
         if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version > cfztest.txt";
+            $cmd = "start /B php --version > ../temp/cfztest.txt";
         } else {
-            $cmd = "bash php --version > cfztest.txt";
+            $cmd = "bash php --version > ../temp/cfztest.txt";
         }
         $progress = new PFile($cmd, 'w');
         $len = $progress->write($cmd);
         self::assertGreaterThan(0, $len);
+    }
+
+    public function testOpen()
+    {
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        } else {
+            $cmd = "bash php --version > ../temp/cfztest.txt";
+        }
+        $resource = PFile::open($cmd, 'w');
+        var_dump($resource);
+        self::assertIsResource($resource);
     }
 }

@@ -2,61 +2,49 @@
 
 namespace fize\io;
 
+/**
+ * 流套接字
+ */
 class StreamSocket
 {
+
     /**
-     * 接受由 Stream::socketServer() 创建的套接字连接
-     *
-     * 参数 `$timeout` :
-     *   输入的时间需以秒为单位。
-     * 参数 `$peername` :
-     *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
-     * @param float  $timeout  覆盖默认的套接字接受的超时时限
-     * @param string $peername 设置给连接中的客户端主机的名称（地址）
-     * @return resource 失败时返回false
+     * @var resource 流
      */
-    public function accept($timeout = null, &$peername = null)
+    protected $stream;
+
+    /**
+     * 构造
+     * @param resource $stream 流
+     */
+    public function __construct($stream)
     {
-        if (is_null($timeout)) {
-            return stream_socket_accept($this->context);
-        }
-        return stream_socket_accept($this->context, $timeout, $peername);
+        $this->stream = $stream;
     }
 
     /**
-     * 打开Internet或Unix域套接字连接
-     *
-     * 参数 `$flags` :
-     *   选择仅限于STREAM_CLIENT_CONNECT(默认)、STREAM_CLIENT_ASYNC_CONNECT和STREAM_CLIENT_PERSISTENT。
-     * @param string   $remote_socket 要连接到的套接字的地址。
-     * @param int      $errno         错误码
-     * @param string   $errstr        错误信息
-     * @param float    $timeout       超时时限。输入的时间需以秒为单位。
-     * @param int      $flags         标识
-     * @param resource $context       使用stream_context_create()创建的有效上下文资源。
-     * @return resource 失败时返回false
+     * 析构
      */
-    public static function client($remote_socket, &$errno = null, &$errstr = null, $timeout = null, $flags = 4, $context = null)
+    public function __destruct()
     {
-        if (is_null($context)) {
-            return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
+        if ($this->stream && get_resource_type($this->stream) == 'stream') {
+            fclose($this->stream);
         }
-        return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
     }
 
     /**
      * 在已连接的套接字上打开/关闭加密
      * @param bool     $enable         是否开启加密
-     * @param int      $crypto_type    可选的加密类型
+     * @param int|null $crypto_type    可选的加密类型
      * @param resource $session_stream 用来自session_stream的设置为流。
      * @return bool|int 成功true，失败false。没有足够数据时返回0
      */
-    public function enableCrypto($enable, $crypto_type = null, $session_stream = null)
+    public function enableCrypto(bool $enable, int $crypto_type = null, $session_stream = null)
     {
         if (is_null($session_stream)) {
-            return stream_socket_enable_crypto($this->context, $enable, $crypto_type);
+            return stream_socket_enable_crypto($this->stream, $enable, $crypto_type);
         }
-        return stream_socket_enable_crypto($this->context, $enable, $crypto_type, $session_stream);
+        return stream_socket_enable_crypto($this->stream, $enable, $crypto_type, $session_stream);
     }
 
     /**
@@ -67,9 +55,9 @@ class StreamSocket
      * @param int $want_peer 是否远程套接字
      * @return string
      */
-    public function getName($want_peer)
+    public function getName(int $want_peer): string
     {
-        return stream_socket_get_name($this->context, $want_peer);
+        return stream_socket_get_name($this->stream, $want_peer);
     }
 
     /**
@@ -86,53 +74,33 @@ class StreamSocket
      * @param int $protocol 使用的传输协议
      * @return array 数组包括了两个socket资源，失败返回false
      */
-    public static function pair($domain, $type, $protocol)
+    public static function pair(int $domain, int $type, int $protocol): array
     {
         return stream_socket_pair($domain, $type, $protocol);
     }
 
     /**
      * 从套接字接收数据，无论是否连接
-     * @param int    $length  长度
-     * @param int    $flags   标识
-     * @param string $address 将使用远程套接字的地址填充。
+     * @param int         $length  长度
+     * @param int         $flags   标识
+     * @param string|null $address 将使用远程套接字的地址填充。
      * @return string 以字符串的形式返回读取的数据
      */
-    public function recvfrom($length, $flags = 0, &$address = null)
+    public function recvfrom(int $length, int $flags = 0, string &$address = null): string
     {
-        return stream_socket_recvfrom($this->context, $length, $flags, $address);
+        return stream_socket_recvfrom($this->stream, $length, $flags, $address);
     }
 
     /**
      * 向套接字发送消息，不管它是否连接
-     * @param string $data    消息
-     * @param int    $flags   标识
-     * @param string $address 将使用远程套接字的地址填充。
+     * @param string      $data    消息
+     * @param int         $flags   标识
+     * @param string|null $address 将使用远程套接字的地址填充。
      * @return int 以整数形式返回结果代码。
      */
-    public function sendto($data, $flags = 0, $address = null)
+    public function sendto(string $data, int $flags = 0, string $address = null): int
     {
-        return stream_socket_sendto($this->context, $data, $flags, $address);
-    }
-
-    /**
-     * 创建Internet或Unix域服务器套接字
-     *
-     * 参数 `$local_socket` :
-     *   创建的套接字类型由使用标准URL格式transport: transport://target指定的传输类型决定。
-     * @param string   $local_socket 套接字字符串
-     * @param int      $errno        错误码
-     * @param string   $errstr       错误描述
-     * @param int      $flags        标识
-     * @param resource $context      有效上下文资源。
-     * @return resource 失败时返回false
-     */
-    public static function server($local_socket, &$errno = null, &$errstr = null, $flags = 12, $context = null)
-    {
-        if (is_null($context)) {
-            return stream_socket_server($local_socket, $errno, $errstr, $flags);
-        }
-        return stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
+        return stream_socket_sendto($this->stream, $data, $flags, $address);
     }
 
     /**
@@ -145,8 +113,69 @@ class StreamSocket
      * @param int $how 定义如何处理
      * @return bool
      */
-    public function shutdown($how)
+    public function shutdown(int $how): bool
     {
-        return stream_socket_shutdown($this->context, $how);
+        return stream_socket_shutdown($this->stream, $how);
+    }
+
+    /**
+     * 接受由 Stream::socketServer() 创建的套接字连接
+     *
+     * 参数 `$timeout` :
+     *   输入的时间需以秒为单位。
+     * 参数 `$peername` :
+     *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
+     * @param resource    $socket   套接字连接
+     * @param float|null  $timeout  覆盖默认的套接字接受的超时时限
+     * @param string|null $peername 设置给连接中的客户端主机的名称（地址）
+     * @return resource 失败时返回false
+     */
+    public static function accept($socket, float $timeout = null, string &$peername = null)
+    {
+        if (is_null($timeout)) {
+            return stream_socket_accept($socket);
+        }
+        return stream_socket_accept($socket, $timeout, $peername);
+    }
+
+    /**
+     * 打开Internet或Unix域套接字连接
+     *
+     * 参数 `$flags` :
+     *   选择仅限于STREAM_CLIENT_CONNECT(默认)、STREAM_CLIENT_ASYNC_CONNECT和STREAM_CLIENT_PERSISTENT。
+     * @param string      $remote_socket 要连接到的套接字的地址。
+     * @param int|null    $errno         错误码
+     * @param string|null $errstr        错误信息
+     * @param float|null  $timeout       超时时限。输入的时间需以秒为单位。
+     * @param int         $flags         标识
+     * @param resource    $context       使用stream_context_create()创建的有效上下文资源。
+     * @return resource 失败时返回false
+     */
+    public static function client(string $remote_socket, int &$errno = null, string &$errstr = null, float $timeout = null, int $flags = 4, $context = null)
+    {
+        if (is_null($context)) {
+            return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
+        }
+        return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
+    }
+
+    /**
+     * 创建Internet或Unix域服务器套接字
+     *
+     * 参数 `$local_socket` :
+     *   创建的套接字类型由使用标准URL格式transport: transport://target指定的传输类型决定。
+     * @param string      $local_socket 套接字字符串
+     * @param int|null    $errno        错误码
+     * @param string|null $errstr       错误描述
+     * @param int         $flags        标识
+     * @param resource    $context      有效上下文资源。
+     * @return resource 失败时返回false
+     */
+    public static function server(string $local_socket, int &$errno = null, string &$errstr = null, int $flags = 12, $context = null)
+    {
+        if (is_null($context)) {
+            return stream_socket_server($local_socket, $errno, $errstr, $flags);
+        }
+        return stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
     }
 }

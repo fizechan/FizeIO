@@ -1,26 +1,26 @@
 <?php
 
-
+use fize\io\Stream;
 use fize\io\StreamWrapper;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamWrapper extends TestCase
 {
 
-    public function testWrapperRegister()
+    public function testRegister()
     {
-        $rst = Stream::wrapperRegister('txt', 'TxtStreamWrapper');
+        $rst = StreamWrapper::register('txt', TxtStreamWrapper::class);
         var_dump($rst);
         self::assertTrue($rst);
     }
 
-    public function testWrapperRestore()
+    public function testRestore()
     {
         $existed = in_array("http", Stream::getWrappers());
         if ($existed) {
-            Stream::wrapperUnregister("http");
+            StreamWrapper::unregister("http");
         }
-        $rst = Stream::wrapperRegister("http", "TxtStreamWrapper");
+        $rst = StreamWrapper::register("http", TxtStreamWrapper::class);
         self::assertTrue($rst);
         $myvar = "";
 
@@ -39,19 +39,19 @@ class TestStreamWrapper extends TestCase
 
         $existed = in_array("http", Stream::getWrappers());
         if ($existed) {
-            $rst = Stream::wrapperRestore("http");
+            $rst = StreamWrapper::restore("http");
             var_dump($rst);
             self::assertTrue($rst);
         }
-        $rst = Stream::wrapperRestore("http");
+        $rst = StreamWrapper::restore("http");
         var_dump($rst);
         self::assertTrue($rst);
     }
 
-    public function testWrapperUnregister()
+    public function testUnregister()
     {
-        Stream::wrapperRegister("var", "TxtStreamWrapper");
-        $rst = Stream::wrapperUnregister("var");
+        StreamWrapper::register("var", TxtStreamWrapper::class);
+        $rst = StreamWrapper::unregister("var");
         var_dump($rst);
         self::assertTrue($rst);
     }
@@ -93,7 +93,7 @@ class TxtStreamWrapper
     public function stream_read($count)
     {
         $this->seek = $this->seek + $count;
-        if($this->seek > 10 ) {
+        if ($this->seek > 10) {
             $this->_eof = true;
         }
         return (string)$this->seek;
@@ -104,7 +104,7 @@ class TxtStreamWrapper
         return strlen($data);
     }
 
-    public function stream_seek($offset, $whence  = 0)
+    public function stream_seek($offset, $whence = 0)
     {
         return true;
     }

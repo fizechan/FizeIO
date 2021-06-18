@@ -17,7 +17,7 @@ class StreamWrapper
      * @param int    $flags     标识
      * @return bool
      */
-    public static function register($protocol, $classname, $flags = 0)
+    public static function register(string $protocol, string $classname, int $flags = 0): bool
     {
         return stream_wrapper_register($protocol, $classname, $flags);
     }
@@ -27,7 +27,7 @@ class StreamWrapper
      * @param string $protocol 待恢复的封装的名字
      * @return bool
      */
-    public static function restore($protocol)
+    public static function restore(string $protocol): bool
     {
         return stream_wrapper_restore($protocol);
     }
@@ -37,7 +37,7 @@ class StreamWrapper
      * @param string $protocol 待卸载的封装的名字
      * @return bool
      */
-    public static function unregister($protocol)
+    public static function unregister(string $protocol): bool
     {
         return stream_wrapper_unregister($protocol);
     }

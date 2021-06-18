@@ -1,6 +1,8 @@
 <?php
 
+use fize\io\FFile;
 use fize\io\Stream;
+use fize\io\StreamSocket;
 use PHPUnit\Framework\TestCase;
 
 class TestStream extends TestCase
@@ -8,8 +10,9 @@ class TestStream extends TestCase
 
     public function testCopyToStream()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
-        $dest = fopen('../temp/baidu.txt', 'w');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
+        $dest = FFile::open('../temp/baidu.txt', 'w');
         $rst = $stream->copyToStream($dest);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -17,7 +20,8 @@ class TestStream extends TestCase
 
     public function testGetContents()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $content = $stream->getContents();
         var_dump($content);
         self::assertIsString($content);
@@ -32,7 +36,8 @@ class TestStream extends TestCase
 
     public function testGetLine()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $line1 = $stream->getLine(100);
         var_dump($line1);
         self::assertIsString($line1);
@@ -43,7 +48,8 @@ class TestStream extends TestCase
 
     public function testGetMetaData()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $meta = $stream->getMetaData();
         var_dump($meta);
         self::assertIsArray($meta);
@@ -65,7 +71,8 @@ class TestStream extends TestCase
 
     public function testIsLocal()
     {
-        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
+        $ff = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
+        $stream = new Stream($ff);
         $rst1 = $stream->isLocal();
         var_dump($rst1);
         self::assertTrue($rst1);
@@ -76,7 +83,8 @@ class TestStream extends TestCase
 
     public function testIsatty()
     {
-        $stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
+        $ff = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
+        $stream = new Stream($ff);
         $rst = $stream->isatty();
         var_dump($rst);
         self::assertFalse($rst);
@@ -91,7 +99,7 @@ class TestStream extends TestCase
 
     public function testSelect()
     {
-        $sock1 = $sock2 = $sock3 = fopen('../temp/testStreamFilterRemove.txt', 'w+');
+        $sock1 = $sock2 = $sock3 = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
         $sockets = ["sock_1" => $sock1, "sock_2" => $sock2, "sock_3" => $sock3];
 
         $read = $write = $error = $sockets;
@@ -102,7 +110,8 @@ class TestStream extends TestCase
 
     public function testSetBlocking()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $rst = $stream->setBlocking(0);
         var_dump($rst);
         self::assertTrue($rst);
@@ -110,7 +119,8 @@ class TestStream extends TestCase
 
     public function testSetChunkSize()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $rst = $stream->setChunkSize(100);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -118,7 +128,8 @@ class TestStream extends TestCase
 
     public function testSetReadBuffer()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $rst = $stream->setReadBuffer(1024);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -126,7 +137,8 @@ class TestStream extends TestCase
 
     public function testSetTimeout()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $rst = $stream->setTimeout(30);
         var_dump($rst);
         self::assertTrue($rst);
@@ -134,17 +146,16 @@ class TestStream extends TestCase
 
     public function testSetWriteBuffer()
     {
-        $stream = new Stream('https://www.baidu.com', 'r');
+        $ff = FFile::open('https://www.baidu.com', 'r');
+        $stream = new Stream($ff);
         $rst = $stream->setWriteBuffer(1024);
         var_dump($rst);
         self::assertIsInt($rst);
     }
 
-
-
     public function testSupportsLock()
     {
-        $socket = Stream::socketServer("tcp://0.0.0.0:8000", $errno, $errstr);
+        $socket = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
         $stream = new Stream($socket);
         $rst = $stream->supportsLock();
         var_dump($rst);

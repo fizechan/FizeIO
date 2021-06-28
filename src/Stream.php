@@ -37,6 +37,7 @@ class Stream
 
     /**
      * 返回当前上下文
+     * @notice 请谨慎使用该方法
      * @return resource
      */
     public function get()

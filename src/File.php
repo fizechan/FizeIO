@@ -118,6 +118,16 @@ class File extends SplFileObject
     }
 
     /**
+     * 删除文件
+     * @param resource $context 上下文
+     * @return bool
+     */
+    public function delete($context = null): bool
+    {
+        return $this->unlink($context);
+    }
+
+    /**
      * 将整个文件读入一个字符串
      *
      * 参数 `$offset` :

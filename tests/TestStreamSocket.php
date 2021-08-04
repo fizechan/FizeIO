@@ -1,6 +1,6 @@
 <?php
 
-use fize\io\FFile;
+use fize\io\FileF;
 use fize\io\StreamSocket;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +26,7 @@ class TestStreamSocket extends TestCase
 
     public function testGetName()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $socket = new StreamSocket($ff);
         $rst = $socket->getName(true);
         var_dump($rst);
@@ -98,7 +98,7 @@ class TestStreamSocket extends TestCase
         }
 
         while ($conn = StreamSocket::accept($server, 100)) {
-            $fpconn = new FFile($conn);
+            $fpconn = new FileF($conn);
             $fpconn->write('The local time is ' . date('Y-m-d H:i:s') . "\n");
             $fpconn->close();
         }

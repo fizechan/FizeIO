@@ -2,20 +2,26 @@
 
 namespace fize\io;
 
+use RuntimeException;
+
 /**
  * 原生文件
  */
-class FFile
+class FileF extends FileAbstract
 {
-    use FileTrait;
 
     /**
      * 构造
-     * @param resource $stream 资源流
+     * @param string $file 文件路径
+     * @param string|null $mode 打开模式
+     * @param bool $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context 上下文支持
      */
-    public function __construct($stream)
+    public function __construct(string $file = null, string $mode = null, bool $use_include_path = false, $context = null)
     {
-        $this->stream = $stream;
+        if ($file) {
+            $this->open($file, $mode, $use_include_path, $context);
+        }
     }
 
     /**
@@ -54,10 +60,10 @@ class FFile
      *   （只允许一个字符），默认值为双引号。
      * 参数 `$escape` :
      *   （只允许一个字符），默认是一个反斜杠。
-     * @param int    $length    规定行的最大长度
+     * @param int $length 规定行的最大长度
      * @param string $delimiter 设置字段分界符
      * @param string $enclosure 设置字段环绕符
-     * @param string $escape    设置转义字符
+     * @param string $escape 设置转义字符
      * @return array 如果碰到 EOF 则返回 FALSE。
      */
     public function getcsv(int $length = 0, string $delimiter = ",", string $enclosure = '"', string $escape = "\\"): array
@@ -67,9 +73,9 @@ class FFile
 
     /**
      * 将行格式化为 CSV 并写入文件指针
-     * @param array  $fields      要写入的数组数据
-     * @param string $delimiter   分隔符
-     * @param string $enclosure   界限符
+     * @param array $fields 要写入的数组数据
+     * @param string $delimiter 分隔符
+     * @param string $enclosure 界限符
      * @param string $escape_char 转义符
      * @return int 如果失败返回false
      */
@@ -80,14 +86,16 @@ class FFile
 
     /**
      * 打开文件
-     * @param string      $file             文件路径
-     * @param string|null $mode             打开模式
-     * @param bool        $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource    $context          上下文支持
-     * @return resource 返回文件操作句柄
+     * @param string $file 文件路径
+     * @param string|null $mode 打开模式
+     * @param bool $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource $context 上下文支持
      */
-    public static function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
+    public function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
     {
+        if ($this->stream) {
+            throw new RuntimeException('The original stream has not been closed');
+        }
         if (strstr($file, '://') === false || substr($file, 0, 4) == 'file') {
             if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
                 $dir = dirname($file);
@@ -96,6 +104,6 @@ class FFile
                 }
             }
         }
-        return fopen($file, $mode, $use_include_path, $context);
+        $this->stream = fopen($file, $mode, $use_include_path, $context);
     }
 }

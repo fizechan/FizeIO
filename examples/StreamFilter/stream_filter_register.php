@@ -1,9 +1,9 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
 use fize\io\File;
-
+use fize\io\Stream;
+use fize\io\StreamFilter;
 
 /**
  * 自定义过滤器
@@ -12,7 +12,7 @@ use fize\io\File;
  */
 class StrToUpperFilter extends php_user_filter
 {
-    function filter($in, $out, &$consumed, $closing)
+    function filter($in, $out, &$consumed, $closing): int
     {
         while ($bucket = stream_bucket_make_writeable($in)) {
             $bucket->data = strtoupper($bucket->data);
@@ -25,9 +25,10 @@ class StrToUpperFilter extends php_user_filter
 
 
 
-$rst = Stream::filterRegister("strtoupper", "StrToUpperFilter");
+$rst = StreamFilter::register("strtoupper", "StrToUpperFilter");
 var_dump($rst);
 
+StreamFilter::append("strtoupper");
 
 $stream = new Stream('../temp/testStreamFilterRegister.txt', 'w+');
 $stream->filterAppend("strtoupper");

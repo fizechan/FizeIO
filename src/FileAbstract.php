@@ -3,14 +3,23 @@
 namespace fize\io;
 
 /**
- * 文件Trait
+ * 文件
  */
-trait FileTrait
+abstract class FileAbstract
 {
     /**
      * @var resource 文件流
      */
     protected $stream;
+
+    /**
+     * 设置流
+     * @param resource $stream 流
+     */
+    public function set($stream)
+    {
+        $this->stream = $stream;
+    }
 
     /**
      * 测试文件指针是否到了文件结束的位置

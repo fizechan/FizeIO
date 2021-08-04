@@ -1,10 +1,9 @@
 <?php
 
-
-use fize\io\FFile;
+use fize\io\FileF;
 use PHPUnit\Framework\TestCase;
 
-class TestFFile extends TestCase
+class TestFileF extends TestCase
 {
 
     public function testOpen()

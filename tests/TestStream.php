@@ -1,6 +1,6 @@
 <?php
 
-use fize\io\FFile;
+use fize\io\FileF;
 use fize\io\Stream;
 use fize\io\StreamSocket;
 use PHPUnit\Framework\TestCase;
@@ -10,9 +10,9 @@ class TestStream extends TestCase
 
     public function testCopyToStream()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
-        $dest = FFile::open('../temp/baidu.txt', 'w');
+        $dest = FileF::open('../temp/baidu.txt', 'w');
         $rst = $stream->copyToStream($dest);
         var_dump($rst);
         self::assertIsInt($rst);
@@ -20,7 +20,7 @@ class TestStream extends TestCase
 
     public function testGetContents()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $content = $stream->getContents();
         var_dump($content);
@@ -36,7 +36,7 @@ class TestStream extends TestCase
 
     public function testGetLine()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $line1 = $stream->getLine(100);
         var_dump($line1);
@@ -48,7 +48,7 @@ class TestStream extends TestCase
 
     public function testGetMetaData()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $meta = $stream->getMetaData();
         var_dump($meta);
@@ -71,7 +71,7 @@ class TestStream extends TestCase
 
     public function testIsLocal()
     {
-        $ff = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
+        $ff = FileF::open('../temp/testStreamFilterRemove.txt', 'w+');
         $stream = new Stream($ff);
         $rst1 = $stream->isLocal();
         var_dump($rst1);
@@ -83,7 +83,7 @@ class TestStream extends TestCase
 
     public function testIsatty()
     {
-        $ff = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
+        $ff = FileF::open('../temp/testStreamFilterRemove.txt', 'w+');
         $stream = new Stream($ff);
         $rst = $stream->isatty();
         var_dump($rst);
@@ -99,7 +99,7 @@ class TestStream extends TestCase
 
     public function testSelect()
     {
-        $sock1 = $sock2 = $sock3 = FFile::open('../temp/testStreamFilterRemove.txt', 'w+');
+        $sock1 = $sock2 = $sock3 = FileF::open('../temp/testStreamFilterRemove.txt', 'w+');
         $sockets = ["sock_1" => $sock1, "sock_2" => $sock2, "sock_3" => $sock3];
 
         $read = $write = $error = $sockets;
@@ -110,7 +110,7 @@ class TestStream extends TestCase
 
     public function testSetBlocking()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $rst = $stream->setBlocking(0);
         var_dump($rst);
@@ -119,7 +119,7 @@ class TestStream extends TestCase
 
     public function testSetChunkSize()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $rst = $stream->setChunkSize(100);
         var_dump($rst);
@@ -128,7 +128,7 @@ class TestStream extends TestCase
 
     public function testSetReadBuffer()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $rst = $stream->setReadBuffer(1024);
         var_dump($rst);
@@ -137,7 +137,7 @@ class TestStream extends TestCase
 
     public function testSetTimeout()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $rst = $stream->setTimeout(30);
         var_dump($rst);
@@ -146,7 +146,7 @@ class TestStream extends TestCase
 
     public function testSetWriteBuffer()
     {
-        $ff = FFile::open('https://www.baidu.com', 'r');
+        $ff = FileF::open('https://www.baidu.com', 'r');
         $stream = new Stream($ff);
         $rst = $stream->setWriteBuffer(1024);
         var_dump($rst);

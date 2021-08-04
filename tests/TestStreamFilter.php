@@ -1,6 +1,6 @@
 <?php
 
-use fize\io\FFile;
+use fize\io\FileF;
 use fize\io\StreamFilter;
 use PHPUnit\Framework\TestCase;
 
@@ -9,10 +9,11 @@ class TestStreamFilter extends TestCase
 
     public function testAppend()
     {
-        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
         $res = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $ff = new FFile($fp);
+        $ff = new FileF();
+        $ff->set($fp);
         $ff->write("This is a test\n");
         $ff->rewind();
         $ff->passthru();
@@ -21,10 +22,11 @@ class TestStreamFilter extends TestCase
 
     public function testPrepend()
     {
-        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
         $res = StreamFilter::prepend($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $ff = new FFile($fp);
+        $ff = new FileF();
+        $ff->set($fp);
         $ff->write("This is a test\n");
         $ff->rewind();
         $ff->passthru();
@@ -37,9 +39,9 @@ class TestStreamFilter extends TestCase
         var_dump($rst);
         self::assertTrue($rst);
 
-        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
+        $fp = FileF::open(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
         StreamFilter::append($fp, "strtoupper");
-        $ff = new FFile($fp);
+        $ff = new FileF($fp);
         $ff->write("Line1\n");
         $ff->write("Word - 2\n");
         $ff->write("Easy As 123\n");
@@ -51,11 +53,11 @@ class TestStreamFilter extends TestCase
 
     public function testFilterRemove()
     {
-        $fp = FFile::open(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
+        $fp = FileF::open(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
         $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);
-        $ff = new FFile($fp);
+        $ff = new FileF($fp);
         $ff->write("This is a test\n");
         $ff->rewind();
         $ff->passthru();

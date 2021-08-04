@@ -83,8 +83,7 @@ class Upload
     public function path(): string
     {
         $path = $this->path;
-        $path = str_replace('\\', '/', $path);
-        return $path;
+        return str_replace('\\', '/', $path);
     }
 
     /**

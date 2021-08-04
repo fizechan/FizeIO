@@ -1,10 +1,9 @@
 <?php
 
-
-use fize\io\PFile;
+use fize\io\FileP;
 use PHPUnit\Framework\TestCase;
 
-class TestPFile extends TestCase
+class TestFileP extends TestCase
 {
 
     public function test__construct()
@@ -14,7 +13,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new PFile($cmd, 'r');
+        $progress = new FileP($cmd, 'r');
         $content = $progress->gets();
         var_dump($content);
         self::assertIsString($content);
@@ -27,7 +26,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new PFile($cmd, 'r');
+        $progress = new FileP($cmd, 'r');
         $line_content = $progress->gets();
         var_dump($line_content);
         self::assertIsString($line_content);
@@ -41,7 +40,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new PFile($cmd, 'r');
+        $progress = new FileP($cmd, 'r');
         $content = $progress->gets();
         var_dump($content);
         self::assertIsString($content);
@@ -54,7 +53,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";  //@todo 待验证
         }
-        $file = new PFile($cmd, 'r');
+        $file = new FileP($cmd, 'r');
         $len = $file->passthru();
         self::assertIsInt($len);
     }
@@ -66,7 +65,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new PFile($cmd, 'r');
+        $progress = new FileP($cmd, 'r');
         $content = $progress->read(1024);
         var_dump($content);
         self::assertIsString($content);
@@ -79,7 +78,7 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version > ../temp/cfztest.txt";
         }
-        $progress = new PFile($cmd, 'w');
+        $progress = new FileP($cmd, 'w');
         $len = $progress->write($cmd);
         self::assertGreaterThan(0, $len);
     }
@@ -91,8 +90,8 @@ class TestPFile extends TestCase
         } else {
             $cmd = "bash php --version > ../temp/cfztest.txt";
         }
-        $resource = PFile::open($cmd, 'w');
-        var_dump($resource);
-        self::assertIsResource($resource);
+        $fp = new FileP($cmd, 'w');
+        $fp->close();
+        $fp->open($cmd, 'w');
     }
 }

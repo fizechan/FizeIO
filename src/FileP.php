@@ -2,22 +2,24 @@
 
 namespace fize\io;
 
+use RuntimeException;
+
 /**
  * 进程文件
  */
-class PFile
+class FileP extends FileAbstract
 {
-
-    use FileTrait;
 
     /**
      * 构造
      * @param string $command 命令
-     * @param string $mode    模式
+     * @param string $mode 模式
      */
-    public function __construct(string $command, string $mode)
+    public function __construct(string $command = null, string $mode = null)
     {
-        $this->stream = self::open($command, $mode);
+        if ($command) {
+            $this->open($command, $mode);
+        }
     }
 
     /**
@@ -46,11 +48,13 @@ class PFile
     /**
      * 打开进程文件
      * @param string $command 命令
-     * @param string $mode    模式
-     * @return resource 返回操作句柄
+     * @param string $mode 模式
      */
-    public static function open(string $command, string $mode)
+    public function open(string $command, string $mode)
     {
-        return popen($command, $mode);
+        if ($this->stream) {
+            throw new RuntimeException('The original stream has not been closed');
+        }
+        $this->stream = popen($command, $mode);
     }
 }

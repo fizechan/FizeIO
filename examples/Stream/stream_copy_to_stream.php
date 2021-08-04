@@ -1,10 +1,10 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
 use fize\io\File;
+use fize\io\Stream;
 
-$stream = new Stream('https://www.baidu.com', 'r');
+$stream = new Stream(fopen('https://www.baidu.com', 'r'));
 $fso = fopen('../temp/baidu.txt', 'w');
 $rst = $stream->copyToStream($fso);
 var_dump($rst);

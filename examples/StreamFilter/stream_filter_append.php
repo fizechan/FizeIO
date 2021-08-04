@@ -1,10 +1,12 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
+use fize\io\FileF;
+use fize\io\StreamFilter;
 
-$stream = new Stream('../temp/testStreamFilterAppend.txt', 'w+');
-$stream->filterAppend("string.rot13", STREAM_FILTER_WRITE);
+
+StreamFilter::append("string.rot13", STREAM_FILTER_WRITE);
+$fp = new FileF('../temp/testStreamFilterAppend.txt', 'w+');
 $fp->write("This is a test\n");
 $fp->rewind();
 $fp->passthru();

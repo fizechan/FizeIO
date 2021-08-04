@@ -1,6 +1,5 @@
 <?php
 
-
 use fize\io\Directory;
 use PHPUnit\Framework\TestCase;
 

@@ -8,14 +8,14 @@ $dir->open();
 
 echo "---1---<br/>\r\n";
 $dir->read(function($file){
-    echo "{$file}<br/>\r\n";
+    echo "$file<br/>\r\n";
 });
 
 $dir->rewind();
 
 echo "---2---<br/>\r\n";
 $dir->read(function($file){
-    echo "{$file}<br/>\r\n";
+    echo "$file<br/>\r\n";
 });
 
 $dir->close();

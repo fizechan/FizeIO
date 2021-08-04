@@ -4,6 +4,7 @@ require_once "../../vendor/autoload.php";
 use fize\io\FileF;
 
 $file = new FileF('../temp/test.txt', 'r');
-$info = $file->scanf('%s');
-var_dump($info);
+$content = $file->gets(11);
+var_dump($content);
+echo strlen($content);  //10
 $file->close();

@@ -9,13 +9,6 @@ class Ob
 {
 
     /**
-     * 禁止实例化
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * 丢弃输出缓冲区中的内容
      *
      * 此方法不会销毁输出缓冲区

@@ -1,10 +1,9 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\File;
+use fize\io\FileF;
 
-$file = new File('../temp/test.txt');
-$file->open('r');
+$file = new FileF('../temp/test.txt', 'r');
 $content = $file->read(1024);
 var_dump($content);
 $file->close();

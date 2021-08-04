@@ -1,14 +1,14 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
-use fize\io\File;
+use fize\io\FileF;
+use fize\io\StreamSocket;
 
-$fp = Stream::socketClient("tcp://www.baidu.com:80", $errno, $errstr, 30);
+$fp = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
 if (!$fp) {
     echo "$errstr ($errno)<br />\n";
 } else {
-    $ffp = new File($fp);
+    $ffp = new FileF($fp);
     $ffp->write("GET / HTTP/1.0\r\nHost: www.baidu.com\r\nAccept: */*\r\n\r\n");
     while (!$ffp->eof()) {
         echo $ffp->gets(1024);

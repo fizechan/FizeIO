@@ -1,15 +1,16 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use fize\io\Ob;
+use fize\io\Output;
 
 
 Ob::start();
 
-Ob::outputAddRewriteVar('var1', 'value1');
+Output::addRewriteVar('var1', 'value1');
 
 // some links
-echo '<a href="ob_output_add_rewrite_var.php">link</a> <a href="http://example.com">link2</a>';
+echo '<a href="ob_output_add_rewrite_var.php">link</a> <a href="https://example.com">link2</a>';
 
 // a form
 echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';

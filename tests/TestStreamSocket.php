@@ -26,7 +26,7 @@ class TestStreamSocket extends TestCase
 
     public function testGetName()
     {
-        $ff = FileF::open('https://www.baidu.com', 'r');
+        $ff = new FileF('https://www.baidu.com', 'r');
         $socket = new StreamSocket($ff);
         $rst = $socket->getName(true);
         var_dump($rst);

@@ -1,8 +1,8 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
 use fize\io\File;
+use fize\io\StreamContext;
 
 $default_opts = [
     'http' => [
@@ -10,7 +10,6 @@ $default_opts = [
         'header' => "Accept-language: en\r\n" . "Cookie: foo=bar",
     ]
 ];
-
 
 $alternate_opts = [
     'http' => [
@@ -21,8 +20,8 @@ $alternate_opts = [
     ]
 ];
 
-Stream::contextGetDefault($default_opts);
-$alternate = Stream::contextCreate($alternate_opts);
+StreamContext::getDefault($default_opts);
+$alternate = StreamContext::create($alternate_opts);
 
 $fp = new File('https://www.baidu.com');
 

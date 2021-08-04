@@ -1,7 +1,8 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use fize\io\Stream;
+use fize\io\StreamContext;
 
 $opts = [
     'http' => [
@@ -10,6 +11,6 @@ $opts = [
             "Cookie: foo=bar\r\n"
     ]
 ];
-$stream = new Stream(Stream::contextGetDefault($opts));
+$stream = new StreamContext(StreamContext::GetDefault($opts));
 $options = $stream->contextGetOptions();
 var_dump($options);

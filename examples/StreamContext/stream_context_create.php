@@ -1,8 +1,8 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
-use fize\io\File;
+use fize\io\FileF;
+use fize\io\StreamContext;
 
 $opts = [
     'http' => [
@@ -12,10 +12,9 @@ $opts = [
     ]
 ];
 
-$context = Stream::contextCreate($opts);
+$context = StreamContext::create($opts);
 var_dump($context);
 
-$fp = new File('https://www.baidu.com');
-$fp->open('r', false, $context);
+$fp = new FileF('https://www.baidu.com', 'r', false, $context);
 $fp->passthru();
 $fp->close();

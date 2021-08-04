@@ -20,7 +20,7 @@ class TestOutput extends TestCase
         //Ob::start();
 
         // some links
-        echo '<a href="file.php">link</a> <a href="http://example.com">link2</a>';
+        echo '<a href="file.php">link</a> <a href="https://example.com">link2</a>';
 
         // a form
         echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';

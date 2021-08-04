@@ -39,7 +39,7 @@ class TestStreamFilter extends TestCase
         var_dump($rst);
         self::assertTrue($rst);
 
-        $fp = FileF::open(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
+        $fp = new FileF(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
         StreamFilter::append($fp, "strtoupper");
         $ff = new FileF($fp);
         $ff->write("Line1\n");
@@ -53,7 +53,7 @@ class TestStreamFilter extends TestCase
 
     public function testFilterRemove()
     {
-        $fp = FileF::open(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
+        $fp = new FileF(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
         $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);

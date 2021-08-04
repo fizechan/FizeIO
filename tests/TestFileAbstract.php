@@ -8,10 +8,9 @@ use PHPUnit\Framework\TestCase;
 class TestFileAbstract extends TestCase
 {
 
-    public function testSet()
+    public function test__construct()
     {
-        $ff = new FileF();
-        $ff->set(fopen(dirname(__DIR__) . '/temp/testSet.txt', 'w'));
+        $ff = new FileF(fopen(dirname(__DIR__) . '/temp/testSet.txt', 'w'));
         $ff->write('测试一下啦');
         $ff->close();
         self::assertInstanceOf(FileAbstract::class, $ff);
@@ -19,7 +18,8 @@ class TestFileAbstract extends TestCase
 
     public function testEof()
     {
-        $ff = new FileF(dirname(__DIR__) . '/temp/testSet.txt', 'r');
+        $ff = new FileF();
+        $ff->open(dirname(__DIR__) . '/temp/testSet.txt', 'r');
         $rst = $ff->eof();
         self::assertFalse($rst);
         $ff->read(100);
@@ -29,7 +29,29 @@ class TestFileAbstract extends TestCase
 
     public function testFlush()
     {
+        $ff = new FileF();
+        $ff->open(dirname(__DIR__) . '/temp/testFlush.txt', 'w');
+        $ff->write("测试一下啦1\r\n");
+        $ff->write("测试一下啦2\r\n");
+        $ff->write("测试一下啦3\r\n");
+        $rst = $ff->flush();
+        self::assertTrue($rst);
+        $ff->close();
+    }
 
+    public function testGetc()
+    {
+        $ff = new FileF();
+        $ff->open(dirname(__DIR__) . '/temp/testGetc.txt', 'r');
+        $c = $ff->getc();
+        var_dump($c);
+        self::assertEquals('A', $c);
+        $ff->read(1000);
+        $e = $ff->eof();
+        self::assertTrue($e);
+        $c = $ff->getc();
+        var_dump($c);
+        self::assertFalse($c);
     }
 
     public function testGetss()
@@ -71,10 +93,7 @@ class TestFileAbstract extends TestCase
 
     }
 
-    public function testGetc()
-    {
 
-    }
 
     public function testTruncate()
     {

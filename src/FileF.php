@@ -11,20 +11,6 @@ class FileF extends FileAbstract
 {
 
     /**
-     * 构造
-     * @param string $file 文件路径
-     * @param string|null $mode 打开模式
-     * @param bool $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource $context 上下文支持
-     */
-    public function __construct(string $file = null, string $mode = null, bool $use_include_path = false, $context = null)
-    {
-        if ($file) {
-            $this->open($file, $mode, $use_include_path, $context);
-        }
-    }
-
-    /**
      * 析构
      *
      * 清理资源对象，防止内存泄漏
@@ -60,10 +46,10 @@ class FileF extends FileAbstract
      *   （只允许一个字符），默认值为双引号。
      * 参数 `$escape` :
      *   （只允许一个字符），默认是一个反斜杠。
-     * @param int $length 规定行的最大长度
+     * @param int    $length    规定行的最大长度
      * @param string $delimiter 设置字段分界符
      * @param string $enclosure 设置字段环绕符
-     * @param string $escape 设置转义字符
+     * @param string $escape    设置转义字符
      * @return array 如果碰到 EOF 则返回 FALSE。
      */
     public function getcsv(int $length = 0, string $delimiter = ",", string $enclosure = '"', string $escape = "\\"): array
@@ -73,9 +59,9 @@ class FileF extends FileAbstract
 
     /**
      * 将行格式化为 CSV 并写入文件指针
-     * @param array $fields 要写入的数组数据
-     * @param string $delimiter 分隔符
-     * @param string $enclosure 界限符
+     * @param array  $fields      要写入的数组数据
+     * @param string $delimiter   分隔符
+     * @param string $enclosure   界限符
      * @param string $escape_char 转义符
      * @return int 如果失败返回false
      */
@@ -86,10 +72,10 @@ class FileF extends FileAbstract
 
     /**
      * 打开文件
-     * @param string $file 文件路径
-     * @param string|null $mode 打开模式
-     * @param bool $use_include_path 是否在 include_path 中搜寻文件
-     * @param resource $context 上下文支持
+     * @param string      $file             文件路径
+     * @param string|null $mode             打开模式
+     * @param bool        $use_include_path 是否在 include_path 中搜寻文件
+     * @param resource    $context          上下文支持
      */
     public function open(string $file, string $mode = null, bool $use_include_path = false, $context = null)
     {

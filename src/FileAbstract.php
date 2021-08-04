@@ -13,10 +13,10 @@ abstract class FileAbstract
     protected $stream;
 
     /**
-     * 设置流
+     * 构造
      * @param resource $stream 流
      */
-    public function set($stream)
+    public function __construct($stream = null)
     {
         $this->stream = $stream;
     }
@@ -41,7 +41,7 @@ abstract class FileAbstract
 
     /**
      * 从文件指针中读取一个字符。 碰到 EOF 则返回 FALSE 。
-     * @return string 如果碰到 EOF 则返回 FALSE。
+     * @return string|false 如果碰到 EOF 则返回 FALSE。
      */
     public function getc(): string
     {

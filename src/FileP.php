@@ -11,18 +11,6 @@ class FileP extends FileAbstract
 {
 
     /**
-     * 构造
-     * @param string $command 命令
-     * @param string $mode 模式
-     */
-    public function __construct(string $command = null, string $mode = null)
-    {
-        if ($command) {
-            $this->open($command, $mode);
-        }
-    }
-
-    /**
      * 析构
      */
     public function __destruct()

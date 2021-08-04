@@ -59,11 +59,12 @@ abstract class FileAbstract
      */
     public function gets(int $length = null): string
     {
-        if (is_null($length)) {
-            $rst = fgets($this->stream);
-        } else {
-            $rst = fgets($this->stream, $length);
-        }
+//        if (is_null($length)) {
+//            $rst = fgets($this->stream);
+//        } else {
+//            $rst = fgets($this->stream, $length);
+//        }
+        $rst = fgets($this->stream, $length);
         return $rst;
     }
 

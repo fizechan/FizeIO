@@ -16,11 +16,11 @@ class Stream
 
     /**
      * 初始化
-     * @param resource $resource 资源流/数据包/上下文
+     * @param resource $stream 资源流/数据包/上下文
      */
-    public function __construct($resource)
+    public function __construct($stream)
     {
-        $this->stream = $resource;
+        $this->stream = $stream;
     }
 
     /**

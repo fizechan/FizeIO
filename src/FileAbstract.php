@@ -41,7 +41,7 @@ abstract class FileAbstract
 
     /**
      * 从文件指针中读取一个字符。 碰到 EOF 则返回 FALSE 。
-     * @return string|false 如果碰到 EOF 则返回 FALSE。
+     * @return string 如果碰到 EOF 则返回 FALSE。
      */
     public function getc(): string
     {
@@ -59,12 +59,11 @@ abstract class FileAbstract
      */
     public function gets(int $length = null): string
     {
-//        if (is_null($length)) {
-//            $rst = fgets($this->stream);
-//        } else {
-//            $rst = fgets($this->stream, $length);
-//        }
-        $rst = fgets($this->stream, $length);
+        if (is_null($length)) {
+            $rst = fgets($this->stream);
+        } else {
+            $rst = fgets($this->stream, $length);
+        }
         return $rst;
     }
 
@@ -142,9 +141,9 @@ abstract class FileAbstract
     /**
      * 从文件中格式化输入
      * @param string $format
-     * @return array
+     * @return array|int|false|null
      */
-    public function scanf(string $format): array
+    public function scanf(string $format)
     {
         return fscanf($this->stream, $format);
     }

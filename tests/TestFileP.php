@@ -13,7 +13,8 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new FileP($cmd, 'r');
+        $progress = new FileP();
+        $progress->open($cmd, 'r');
         $content = $progress->gets();
         var_dump($content);
         self::assertIsString($content);
@@ -26,11 +27,39 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new FileP($cmd, 'r');
+        $progress = new FileP();
+        $progress->open($cmd, 'r');
         $line_content = $progress->gets();
         var_dump($line_content);
         self::assertIsString($line_content);
         unset($progress);
+    }
+
+    public function testClose()
+    {
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        } else {
+            $cmd = "bash php --version > ../temp/cfztest.txt";
+        }
+        $fp = new FileP();
+        $fp->open($cmd, 'w');
+        $rst = $fp->close();
+        self::assertNotEquals(-1, $rst);
+    }
+
+    public function testOpen()
+    {
+        if (substr(php_uname(), 0, 7) == "Windows"){
+            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        } else {
+            $cmd = "bash php --version > ../temp/cfztest.txt";
+        }
+        $fp = new FileP();
+        $fp->open($cmd, 'w');
+        $fp->close();
+        $fp->open($cmd, 'w');
+        self::assertTrue(true);
     }
 
     public function testGets()
@@ -40,7 +69,8 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new FileP($cmd, 'r');
+        $progress = new FileP();
+        $progress->open($cmd, 'r');
         $content = $progress->gets();
         var_dump($content);
         self::assertIsString($content);
@@ -81,17 +111,5 @@ class TestFileP extends TestCase
         $progress = new FileP($cmd, 'w');
         $len = $progress->write($cmd);
         self::assertGreaterThan(0, $len);
-    }
-
-    public function testOpen()
-    {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version > ../temp/cfztest.txt";
-        } else {
-            $cmd = "bash php --version > ../temp/cfztest.txt";
-        }
-        $fp = new FileP($cmd, 'w');
-        $fp->close();
-        $fp->open($cmd, 'w');
     }
 }

@@ -27,7 +27,7 @@ class FileP extends FileAbstract
     public function close(): int
     {
         $result = pclose($this->stream);
-        if ($result) {
+        if ($result != -1) {
             $this->stream = null;  // 如果正确关闭了则清空当前对象的file_resource
         }
         return $result;

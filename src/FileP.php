@@ -36,7 +36,7 @@ class FileP extends FileAbstract
     /**
      * 打开进程文件
      * @param string $command 命令
-     * @param string $mode 模式
+     * @param string $mode    模式
      */
     public function open(string $command, string $mode)
     {

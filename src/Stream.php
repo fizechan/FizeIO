@@ -6,44 +6,8 @@ namespace fize\io;
 /**
  * 流处理
  */
-class Stream
+class Stream extends FileF
 {
-
-    /**
-     * @var resource 资源流上下文
-     */
-    protected $stream;
-
-    /**
-     * 初始化
-     * @param resource $stream 资源流/数据包/上下文
-     */
-    public function __construct($stream)
-    {
-        $this->stream = $stream;
-    }
-
-    /**
-     * 析构
-     *
-     * 清理资源对象，防止内存泄漏
-     */
-    public function __destruct()
-    {
-        if ($this->stream && is_resource($this->stream) && get_resource_type($this->stream) == 'stream') {
-            fclose($this->stream);
-        }
-    }
-
-    /**
-     * 返回当前上下文
-     * @notice 请谨慎使用该方法
-     * @return resource
-     */
-    public function get()
-    {
-        return $this->stream;
-    }
 
     /**
      * 将数据复制到另一个流
@@ -76,6 +40,7 @@ class Stream
     /**
      * 获取已注册的数据流过滤器列表
      * @return array
+     * @deprecated 请使用 StreamFilter::gets() 方法
      */
     public static function getFilters(): array
     {
@@ -114,6 +79,7 @@ class Stream
     /**
      * 获取已注册的流类型
      * @return array
+     * @deprecated 请使用 StreamWrapper::gets() 方法
      */
     public static function getWrappers(): array
     {

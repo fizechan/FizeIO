@@ -1,6 +1,5 @@
 <?php
 
-
 use fize\io\StreamBucket;
 use PHPUnit\Framework\TestCase;
 
@@ -12,6 +11,9 @@ class TestStreamBucket extends TestCase
      */
     public function testAppend()
     {
+        $brigade = fopen('https://www.baidu.com', 'r');
+        $bucket = new stdClass();
+        StreamBucket::append($brigade, $bucket);
         self::assertTrue(true);
     }
 
@@ -20,6 +22,8 @@ class TestStreamBucket extends TestCase
      */
     public function testMakeWriteable()
     {
+        $brigade = fopen('https://www.baidu.com', 'r');
+        StreamBucket::makeWriteable($brigade);
         self::assertTrue(true);
     }
 
@@ -28,6 +32,9 @@ class TestStreamBucket extends TestCase
      */
     public function testBucketNew()
     {
+        $stream = fopen('https://www.baidu.com', 'r');
+        $buffer = 'test';
+        StreamBucket::bucketNew($stream, $buffer);
         self::assertTrue(true);
     }
 
@@ -36,6 +43,10 @@ class TestStreamBucket extends TestCase
      */
     public function testPrepend()
     {
+        $brigade = fopen('https://www.baidu.com', 'r');
+        $bucket = new stdClass();
+        StreamBucket::prepend($brigade, $bucket);
+        self::assertTrue(true);
         self::assertTrue(true);
     }
 

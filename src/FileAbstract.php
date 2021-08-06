@@ -22,6 +22,16 @@ abstract class FileAbstract
     }
 
     /**
+     * 返回当前上下文
+     * @notice 请谨慎使用该方法
+     * @return resource 不存在时返回 null
+     */
+    public function getStream()
+    {
+        return $this->stream;
+    }
+
+    /**
      * 测试文件指针是否到了文件结束的位置
      * @return bool
      */
@@ -74,7 +84,7 @@ abstract class FileAbstract
      *   默认是 1024 字节
      * 参数 `$allowable_tags` :
      *   形如“<p>,<b>”
-     * @param int|null    $length         规定要读取的字节数
+     * @param int|null $length 规定要读取的字节数
      * @param string|null $allowable_tags 规定不会被删除的标签
      * @return string
      * @deprecated PHP7.3不建议使用该方法
@@ -94,7 +104,7 @@ abstract class FileAbstract
      *
      * 参数 `$operation` :
      *   可选值：[LOCK_SH|LOCK_EX|LOCK_UN]
-     * @param int      $operation  操作
+     * @param int $operation 操作
      * @param int|null $wouldblock 如果锁定会堵塞的话返回1
      * @return bool
      */
@@ -114,7 +124,7 @@ abstract class FileAbstract
 
     /**
      * 写入文件（可安全用于二进制文件）
-     * @param string   $string 要写入的字符串
+     * @param string $string 要写入的字符串
      * @param int|null $length 指定写入长度
      * @return int 如果失败返回false
      */
@@ -187,7 +197,7 @@ abstract class FileAbstract
 
     /**
      * 写入文件（可安全用于二进制文件）
-     * @param string   $string 要写入的字符串
+     * @param string $string 要写入的字符串
      * @param int|null $length 指定写入长度
      * @return int 失败时返回false
      */

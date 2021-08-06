@@ -16,6 +16,15 @@ class TestFileAbstract extends TestCase
         self::assertInstanceOf(FileAbstract::class, $ff);
     }
 
+    public function testGetStream()
+    {
+        $ff = new FileF();
+        $ff->open(dirname(__DIR__) . '/temp/cfztest.txt', 'r');
+        $stream = $ff->getStream();
+        var_dump($stream);
+        self::assertIsResource($stream);
+    }
+
     public function testEof()
     {
         $ff = new FileF();

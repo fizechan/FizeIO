@@ -1,11 +1,17 @@
 <?php
 
-use fize\io\Stream;
 use fize\io\StreamWrapper;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamWrapper extends TestCase
 {
+
+    public function testGets()
+    {
+        $wrappers = StreamWrapper::gets();
+        var_dump($wrappers);
+        self::assertIsArray($wrappers);
+    }
 
     public function testRegister()
     {
@@ -16,7 +22,7 @@ class TestStreamWrapper extends TestCase
 
     public function testRestore()
     {
-        $existed = in_array("http", Stream::getWrappers());
+        $existed = in_array("http", StreamWrapper::gets());
         if ($existed) {
             StreamWrapper::unregister("http");
         }
@@ -37,7 +43,7 @@ class TestStreamWrapper extends TestCase
         fclose($fp);
         var_dump($myvar);
 
-        $existed = in_array("http", Stream::getWrappers());
+        $existed = in_array("http", StreamWrapper::gets());
         if ($existed) {
             $rst = StreamWrapper::restore("http");
             var_dump($rst);
@@ -67,11 +73,11 @@ class TxtStreamWrapper
 
     public $context;
 
-    private $_cb;
+    private $cb;
 
     private $seek = 0;
 
-    private $_eof = false;
+    private $eof = false;
 
     private static $_isRegistered = false;
 
@@ -94,7 +100,7 @@ class TxtStreamWrapper
     {
         $this->seek = $this->seek + $count;
         if ($this->seek > 10) {
-            $this->_eof = true;
+            $this->eof = true;
         }
         return (string)$this->seek;
     }
@@ -116,6 +122,6 @@ class TxtStreamWrapper
 
     public function stream_eof()
     {
-        return $this->_eof;
+        return $this->eof;
     }
 }

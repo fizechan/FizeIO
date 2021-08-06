@@ -8,6 +8,15 @@ namespace fize\io;
 class StreamWrapper
 {
     /**
+     * 获取已注册的流类型
+     * @return array
+     */
+    public static function gets(): array
+    {
+        return stream_get_wrappers();
+    }
+
+    /**
      * 注册一个用 PHP 类实现的 URL 封装协议
      *
      * 参数 `$flags` :

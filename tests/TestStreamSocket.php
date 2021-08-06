@@ -1,6 +1,5 @@
 <?php
 
-use fize\io\FileF;
 use fize\io\StreamSocket;
 use PHPUnit\Framework\TestCase;
 
@@ -12,22 +11,21 @@ class TestStreamSocket extends TestCase
      */
     public function testEnableCrypto()
     {
-        $client = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
+        $client = StreamSocket::client("tcp://127.0.0.1:1935", $errno, $errstr, 30);
         if (!$client) {
             echo "$errstr ($errno)<br />\n";
             return;
         }
-        $socket = new StreamSocket($client);
-        $rst = $socket->enableCrypto(true, STREAM_CRYPTO_METHOD_TLSv1_0_SERVER);
+        $rst = $client->enableCrypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
         self::assertTrue($rst);
-        $rst = $socket->enableCrypto(false);
+        $rst = $client->enableCrypto(false);
         self::assertTrue($rst);
     }
 
     public function testGetName()
     {
-        $ff = new FileF('https://www.baidu.com', 'r');
-        $socket = new StreamSocket($ff);
+        $socket = new StreamSocket();
+        $socket->open('https://www.baidu.com', 'r');
         $rst = $socket->getName(true);
         var_dump($rst);
         $rst = $socket->getName(false);
@@ -47,41 +45,38 @@ class TestStreamSocket extends TestCase
      */
     public function testRecvfrom()
     {
-        $server = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
+        $server = StreamSocket::server("tcp://127.0.0.1:1935", $errno, $errstr);
         if (!$server) {
             echo "$errstr ($errno)<br />\n";
             return;
         }
 
-        $socket = StreamSocket::accept($server);
-        $socket = new StreamSocket($socket);
+        $client = $server->accept();
 
         /* Grab a packet (1500 is a typical MTU size) of OOB data */
-        echo "Received Out-Of-Band: '" . $socket->recvfrom(1500, STREAM_OOB) . "'\n";
+        echo "Received Out-Of-Band: '" . $client->recvfrom(1500, STREAM_OOB) . "'\n";
 
         /* Take a peek at the normal in-band data, but don't consume it. */
-        echo "Data: '" . $socket->recvfrom(1500, STREAM_PEEK) . "'\n";
+        echo "Data: '" . $client->recvfrom(1500, STREAM_PEEK) . "'\n";
 
         /* Get the exact same packet again, but remove it from the buffer this time. */
-        echo "Data: '" . $socket->recvfrom(1500) . "'\n";
+        echo "Data: '" . $client->recvfrom(1500) . "'\n";
 
-        self::assertIsString($socket->recvfrom(1500));
+        self::assertIsString($client->recvfrom(1500));
     }
 
     public function testSendto()
     {
-        $socket = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
-        $stream = new StreamSocket($socket);
-        $rst = $stream->sendto("Out of Band data.", STREAM_OOB);
+        $client = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
+        $rst = $client->sendto("Out of Band data.", STREAM_OOB);
         var_dump($rst);
         self::assertIsInt($rst);
     }
 
     public function testShutdown()
     {
-        $socket = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
-        $stream = new StreamSocket($socket);
-        $rst = $stream->shutdown(STREAM_SHUT_WR);
+        $client = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
+        $rst = $client->shutdown(STREAM_SHUT_WR);
         var_dump($rst);
         self::assertTrue($rst);
     }
@@ -97,10 +92,9 @@ class TestStreamSocket extends TestCase
             return;
         }
 
-        while ($conn = StreamSocket::accept($server, 100)) {
-            $fpconn = new FileF($conn);
-            $fpconn->write('The local time is ' . date('Y-m-d H:i:s') . "\n");
-            $fpconn->close();
+        while ($conn = $server->accept(100)) {
+            $conn->write('The local time is ' . date('Y-m-d H:i:s') . "\n");
+            $conn->close();
         }
         unset($socket);
     }
@@ -109,13 +103,13 @@ class TestStreamSocket extends TestCase
     {
         $fp = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
         var_dump($fp);
-        self::assertIsResource($fp);
+        self::assertInstanceOf(StreamSocket::class, $fp);
     }
 
     public function testSocketServer()
     {
         $socket = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
         var_dump($socket);
-        self::assertIsResource($socket);
+        self::assertInstanceOf(StreamSocket::class, $socket);
     }
 }

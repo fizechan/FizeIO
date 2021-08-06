@@ -5,32 +5,8 @@ namespace fize\io;
 /**
  * 流套接字
  */
-class StreamSocket
+class StreamSocket extends Stream
 {
-
-    /**
-     * @var resource 流
-     */
-    protected $stream;
-
-    /**
-     * 构造
-     * @param resource $stream 流
-     */
-    public function __construct($stream)
-    {
-        $this->stream = $stream;
-    }
-
-    /**
-     * 析构
-     */
-    public function __destruct()
-    {
-        if ($this->stream && get_resource_type($this->stream) == 'stream') {
-            fclose($this->stream);
-        }
-    }
 
     /**
      * 在已连接的套接字上打开/关闭加密
@@ -125,17 +101,21 @@ class StreamSocket
      *   输入的时间需以秒为单位。
      * 参数 `$peername` :
      *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
-     * @param resource    $socket   套接字连接
      * @param float|null  $timeout  覆盖默认的套接字接受的超时时限
      * @param string|null $peername 设置给连接中的客户端主机的名称（地址）
-     * @return resource 失败时返回false
+     * @return StreamSocket|false 失败时返回false
      */
-    public static function accept($socket, float $timeout = null, string &$peername = null)
+    public function accept(float $timeout = null, string &$peername = null)
     {
         if (is_null($timeout)) {
-            return stream_socket_accept($socket);
+            $stream = stream_socket_accept($this->stream);
+        } else {
+            $stream = stream_socket_accept($this->stream, $timeout, $peername);
         }
-        return stream_socket_accept($socket, $timeout, $peername);
+        if ($stream === false) {
+            return false;
+        }
+        return new StreamSocket($stream);
     }
 
     /**
@@ -149,14 +129,19 @@ class StreamSocket
      * @param float|null  $timeout       超时时限。输入的时间需以秒为单位。
      * @param int         $flags         标识
      * @param resource    $context       使用stream_context_create()创建的有效上下文资源。
-     * @return resource 失败时返回false
+     * @return StreamSocket|false 失败时返回false
      */
     public static function client(string $remote_socket, int &$errno = null, string &$errstr = null, float $timeout = null, int $flags = 4, $context = null)
     {
         if (is_null($context)) {
-            return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
+            $stream = stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
+        } else {
+            $stream = stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
         }
-        return stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
+        if ($stream === false) {
+            return false;
+        }
+        return new StreamSocket($stream);
     }
 
     /**
@@ -169,13 +154,18 @@ class StreamSocket
      * @param string|null $errstr       错误描述
      * @param int         $flags        标识
      * @param resource    $context      有效上下文资源。
-     * @return resource 失败时返回false
+     * @return StreamSocket|false 失败时返回false
      */
     public static function server(string $local_socket, int &$errno = null, string &$errstr = null, int $flags = 12, $context = null)
     {
         if (is_null($context)) {
-            return stream_socket_server($local_socket, $errno, $errstr, $flags);
+            $stream = stream_socket_server($local_socket, $errno, $errstr, $flags);
+        } else {
+            $stream = stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
         }
-        return stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
+        if ($stream === false) {
+            return false;
+        }
+        return new StreamSocket($stream);
     }
 }

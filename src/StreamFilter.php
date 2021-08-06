@@ -9,6 +9,15 @@ class StreamFilter
 {
 
     /**
+     * 获取已注册的数据流过滤器列表
+     * @return array
+     */
+    public static function gets(): array
+    {
+        return stream_get_filters();
+    }
+
+    /**
      * 将后置过滤器附加到流
      *
      * 参数 `$read_write` :

@@ -7,13 +7,19 @@ use PHPUnit\Framework\TestCase;
 class TestStreamFilter extends TestCase
 {
 
+    public function testGetFilters()
+    {
+        $filters = StreamFilter::gets();
+        var_dump($filters);
+        self::assertIsArray($filters);
+    }
+
     public function testAppend()
     {
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
         $res = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $ff = new FileF();
-        $ff->set($fp);
+        $ff = new FileF($fp);
         $ff->write("This is a test\n");
         $ff->rewind();
         $ff->passthru();
@@ -25,8 +31,7 @@ class TestStreamFilter extends TestCase
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
         $res = StreamFilter::prepend($fp, "string.rot13", STREAM_FILTER_WRITE);
         self::assertIsResource($res);
-        $ff = new FileF();
-        $ff->set($fp);
+        $ff = new FileF($fp);
         $ff->write("This is a test\n");
         $ff->rewind();
         $ff->passthru();
@@ -39,7 +44,7 @@ class TestStreamFilter extends TestCase
         var_dump($rst);
         self::assertTrue($rst);
 
-        $fp = new FileF(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
         StreamFilter::append($fp, "strtoupper");
         $ff = new FileF($fp);
         $ff->write("Line1\n");
@@ -53,7 +58,7 @@ class TestStreamFilter extends TestCase
 
     public function testFilterRemove()
     {
-        $fp = new FileF(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
+        $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
         $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
         $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);

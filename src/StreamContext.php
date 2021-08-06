@@ -31,6 +31,7 @@ class StreamContext
 
     /**
      * 返回当前上下文
+     * @notice 请谨慎使用
      * @return resource
      */
     public function get()

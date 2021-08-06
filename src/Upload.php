@@ -4,6 +4,8 @@ namespace fize\io;
 
 use Closure;
 use Exception;
+use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * 上传
@@ -38,30 +40,27 @@ class Upload
 
     /**
      * 初始化
-     * @param mixed $file   文件输入框名或者$_FILES数组
+     * @param mixed $file 文件输入框名或者$_FILES数组
      * @param array $config 配置
      */
     public function __construct($file, array $config = [])
     {
         if (is_string($file)) {
             if (!isset($_FILES[$file])) {
-                $this->file = [
-                    'error' => 4  //没有该上传文件
-                ];
-                return;
+                throw new OutOfBoundsException($this->errorForUpload(4));  // 没有该上传文件
             }
             $file = $_FILES[$file];
         }
         $this->file = $file;
         $default_config = [
-            'size'    => 2 * 1024 * 1024,  //单个上传文件的最大字节
-            'ext'     => null,  //文件后缀，多个用逗号分割或者数组
-            'type'    => null,  //文件MIME类型，多个用逗号分割或者数组
-            'rule'    => 'date',  //上传文件保存规则
-            'dir'     => './upload',  //上传文件保存目录
-            'name'    => true,  //保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
-            'replace' => true,  //同名文件是否覆盖
-            'autoext' => true,  //自动补充扩展名
+            'size' => 2 * 1024 * 1024,  // 单个上传文件的最大字节
+            'ext' => null,  // 文件后缀，多个用逗号分割或者数组
+            'type' => null,  // 文件MIME类型，多个用逗号分割或者数组
+            'rule' => 'date',  // 上传文件保存规则
+            'dir' => './upload',  // 上传文件保存目录
+            'name' => true,  // 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
+            'replace' => true,  // 同名文件是否覆盖
+            'autoext' => true,  // 自动补充扩展名
         ];
         $config = array_merge($default_config, $config);
         $this->config = $config;
@@ -88,13 +87,12 @@ class Upload
 
     /**
      * 保存文件
-     * @return false|File false-失败 否则返回File实例
+     * @return File 返回File实例
      */
     public function save()
     {
         if (!empty($this->file['error'])) {
-            $this->error = $this->errorForUpload($this->file['error']);
-            return false;
+            throw new RuntimeException($this->errorForUpload($this->file['error']));
         }
 
         $dir = $this->config['dir'];
@@ -102,16 +100,8 @@ class Upload
         $replace = $this->config['replace'];
         $auto_append_ext = $this->config['autoext'];
 
-        // 检测合法性
-        if (!$this->isValid()) {
-            $this->error = 'upload illegal files';
-            return false;
-        }
-
         // 验证上传
-        if (!$this->check()) {
-            return false;
-        }
+        $this->check();
 
         $dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $saveName = $this->buildSaveName($savename, $auto_append_ext);  // 文件保存命名规则
@@ -171,10 +161,12 @@ class Upload
 
     /**
      * 检测上传文件
-     * @return bool
      */
-    protected function check(): bool
+    protected function check()
     {
+        // 检测合法性
+        $this->checkIsUpload();
+
         if ($this->config['size'] && !$this->checkSize($this->config['size'])) {
             return false;
         }
@@ -194,9 +186,8 @@ class Upload
     /**
      * 检测上传文件后缀
      * @param mixed $ext 允许后缀
-     * @return bool
      */
-    protected function checkExt($ext): bool
+    protected function checkExt($ext)
     {
         if (is_string($ext)) {
             $ext = explode(',', $ext);
@@ -214,9 +205,8 @@ class Upload
 
     /**
      * 检测图像文件
-     * @return bool
      */
-    protected function checkImg(): bool
+    protected function checkImg()
     {
         $extension = strtolower(pathinfo($this->file['name'], PATHINFO_EXTENSION));
         // 对图像文件进行严格检测
@@ -286,14 +276,15 @@ class Upload
 
     /**
      * 检测是否合法的上传文件
-     * @return bool
      */
-    protected function isValid(): bool
+    protected function checkIsUpload()
     {
         $file = new File($this->file['tmp_name']);
         $bool = $file->isUploadedFile();
         unset($file);
-        return $bool;
+        if (!$bool) {
+            throw new RuntimeException('upload illegal files');
+        }
     }
 
     /**
@@ -301,8 +292,8 @@ class Upload
      *
      * 参数 `$savename` :
      *   特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
-     * @param string|bool $savename        保存的文件名
-     * @param bool        $auto_append_ext 自动补充扩展名
+     * @param string|bool $savename 保存的文件名
+     * @param bool $auto_append_ext 自动补充扩展名
      * @return string
      */
     protected function buildSaveName($savename, bool $auto_append_ext = true)
@@ -388,7 +379,7 @@ class Upload
 
     /**
      * 简易模式下的单文件上传
-     * @param mixed $file   文件输入框名或者$_FILES数组
+     * @param mixed $file 文件输入框名或者$_FILES数组
      * @param array $config 配置
      * @return array [file, path, error]
      */
@@ -400,8 +391,8 @@ class Upload
         $path = $upload->path();
         $error = $upload->error();
         return [
-            'file'  => $file,
-            'path'  => $path,
+            'file' => $file,
+            'path' => $path,
             'error' => $error
         ];
     }
@@ -427,7 +418,7 @@ class Upload
 
     /**
      * 简易模式下的多文件上传
-     * @param mixed $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
+     * @param mixed $files 多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
      * @param array $config 配置
      * @return array
      */

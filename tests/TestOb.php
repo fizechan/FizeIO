@@ -151,7 +151,7 @@ class TestOb extends TestCase
             'base_uri' => 'http://localhost:8123'
         ]);
 
-        $response = $client->get('ob_gzhandler.php');
+        $response = $client->get('gzhandler.php');
 
         $body = $response->getBody();
         self::assertEquals('1234', (string)$body);

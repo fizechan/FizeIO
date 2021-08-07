@@ -10,7 +10,7 @@ Ob::start();
 Output::addRewriteVar('var1', 'value1');
 
 // some links
-echo '<a href="ob_output_add_rewrite_var.php">link</a> <a href="https://example.com">link2</a>';
+echo '<a href="addRewriteVar.php">link</a> <a href="https://example.com">link2</a>';
 
 // a form
 echo '<form action="#" method="post"> <input type="text" name="var2" /> </form>';

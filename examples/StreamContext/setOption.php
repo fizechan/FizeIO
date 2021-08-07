@@ -18,6 +18,6 @@ $rst = $context->setOption($opts);
 var_dump($rst);
 
 $fp = new FileF();
-$fp->open('https://www.baidu.com', 'r', false, $context->create($opts));
+$fp->open('https://www.baidu.com', 'r', false, StreamContext::create($opts));
 $fp->passthru();
 $fp->close();

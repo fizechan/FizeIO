@@ -19,6 +19,9 @@ class StreamContext
      */
     public function __construct($context = null)
     {
+        if (is_null($context)) {
+            $context = self::getDefault();
+        }
         $this->context = $context;
     }
 
@@ -82,10 +85,9 @@ class StreamContext
      * @param array $params  参数
      * @return resource 返回资源流上下文，可直接使用
      */
-    public function create(array $options = null, array $params = null)
+    public static function create(array $options = null, array $params = null)
     {
-        $this->context = stream_context_create($options, $params);
-        return $this->context;
+        return stream_context_create($options, $params);
     }
 
     /**

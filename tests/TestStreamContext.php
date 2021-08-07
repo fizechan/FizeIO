@@ -16,10 +16,9 @@ class TestStreamContext extends TestCase
                     "Cookie: foo=bar\r\n"
             ]
         ];
-        $sc = new StreamContext();
-        $sc->create($opts);
+        $sc = StreamContext::create($opts);
         var_dump($sc);
-        self::assertIsObject($sc);
+        self::assertIsResource($sc);
     }
 
     public function testGet()
@@ -31,8 +30,7 @@ class TestStreamContext extends TestCase
                     "Cookie: foo=bar\r\n"
             ]
         ];
-        $sc = new StreamContext();
-        $sc->create($opts);
+        $sc = new StreamContext(StreamContext::create($opts));
         var_dump($sc->get());
         self::assertIsResource($sc->get());
     }
@@ -46,8 +44,7 @@ class TestStreamContext extends TestCase
                     "Cookie: foo=bar\r\n"
             ]
         ];
-        $sc = new StreamContext();
-        $sc->create($opts);
+        $sc = new StreamContext(StreamContext::create($opts));
         $options = $sc->getOptions();
         var_dump($options);
         self::assertIsArray($options);
@@ -57,7 +54,7 @@ class TestStreamContext extends TestCase
     {
         $params = ["notification" => "stream_notification_callback"];
         $sc = new StreamContext();
-        $sc->create(null, $params);
+        $sc->setParams($params);
         $params = $sc->getParams();
         var_dump($params);
         self::assertIsArray($params);
@@ -66,7 +63,6 @@ class TestStreamContext extends TestCase
     public function testSetOption()
     {
         $sc = new StreamContext();
-        $sc->create();
         $opts = [
             'http' => [
                 'method' => "GET",
@@ -84,7 +80,6 @@ class TestStreamContext extends TestCase
     public function testSetParams()
     {
         $sc = new StreamContext();
-        $sc->create();
         $params = ["notification" => "stream_notification_callback"];
         $sc->setParams($params);
 
@@ -103,7 +98,8 @@ class TestStreamContext extends TestCase
             ]
         ];
         $sc = new StreamContext();
-        $context = $sc->create($opts);
+        $sc->setOption($opts);
+        $context = $sc->get();
         self::assertIsResource($context);
 
         $fp = new File('https://www.baidu.com', 'r', false, $context);
@@ -146,14 +142,13 @@ class TestStreamContext extends TestCase
         ];
 
         StreamContext::getDefault($default_opts);
-        $sc = new StreamContext();
-        $alternate = $sc->create($alternate_opts);
+        $alternate = StreamContext::create($alternate_opts);
 
         $fp = new File('https://www.baidu.com');
 
         $fp->readfile();  // 使用了默认上下文
 
-        $fp->readfile(false, $alternate);  //使用指定上下文
+        $fp->readfile(false, $alternate);  // 使用指定上下文
 
         self::assertTrue(true);
     }

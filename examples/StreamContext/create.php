@@ -12,7 +12,7 @@ $opts = [
     ]
 ];
 
-$context = (new StreamContext())->create($opts);
+$context = StreamContext::create($opts);
 var_dump($context);
 
 $fp = new FileF();

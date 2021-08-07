@@ -25,6 +25,6 @@ $alternate = StreamContext::create($alternate_opts);
 
 $fp = new File('https://www.baidu.com');
 
-$fp->readfile();  //使用了默认上下文
+$fp->readfile();  // 使用了默认上下文
 
-$fp->readfile(false, $alternate);  //使用指定上下文
+$fp->readfile(false, $alternate);  // 使用指定上下文

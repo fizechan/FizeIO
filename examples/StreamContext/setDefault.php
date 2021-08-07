@@ -13,4 +13,4 @@ $default_opts = [
 
 $context = StreamContext::setDefault($default_opts);
 
-readfile('https://www.baidu.com');  //使用了以上的默认上下文
+readfile('https://www.baidu.com');  // 使用了以上的默认上下文

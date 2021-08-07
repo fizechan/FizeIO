@@ -1,9 +1,10 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
 use fize\io\Stream;
 
-$stream = new Stream('../temp/testStreamFilterRemove.txt', 'w+');
+$stream = new Stream();
+$stream->open('../temp/testStreamFilterRemove.txt', 'w+');
 $rst1 = $stream->isLocal();
 var_dump($rst1);
 

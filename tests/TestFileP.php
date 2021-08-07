@@ -83,7 +83,8 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version";  //@todo 待验证
         }
-        $file = new FileP($cmd, 'r');
+        $file = new FileP();
+        $file->open($cmd, 'r');
         $len = $file->passthru();
         self::assertIsInt($len);
     }
@@ -95,7 +96,8 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version";
         }
-        $progress = new FileP($cmd, 'r');
+        $progress = new FileP();
+        $progress->open($cmd, 'r');
         $content = $progress->read(1024);
         var_dump($content);
         self::assertIsString($content);
@@ -108,7 +110,8 @@ class TestFileP extends TestCase
         } else {
             $cmd = "bash php --version > ../temp/cfztest.txt";
         }
-        $progress = new FileP($cmd, 'w');
+        $progress = new FileP();
+        $progress->open($cmd, 'w');
         $len = $progress->write($cmd);
         self::assertGreaterThan(0, $len);
     }

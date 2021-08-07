@@ -1,14 +1,15 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
+use fize\io\StreamSocket;
 
-$stream = new Stream('https://www.baidu.com', 'r');
+$socket = new StreamSocket();
+$socket->open('https://www.baidu.com', 'r');
 
-//远程
-$rst = $stream->socketGetName(true);
+// 远程
+$rst = $socket->getName(true);
 var_dump($rst);
 
-//本地
-$rst = $stream->socketGetName(false);
+// 本地
+$rst = $socket->getName(false);
 var_dump($rst);

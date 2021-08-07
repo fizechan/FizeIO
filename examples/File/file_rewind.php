@@ -3,7 +3,8 @@ require_once "../../vendor/autoload.php";
 
 use fize\io\FileF;
 
-$file = new FileF('../temp/test.txt', 'r');
+$file = new FileF();
+$file->open('../temp/test.txt', 'r');
 $content1 = $file->gets();
 var_dump($content1);
 $file->rewind();

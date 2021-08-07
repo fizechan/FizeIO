@@ -93,6 +93,10 @@ class TxtStreamWrapper
 
     public function stream_open($path, $mode, $options, &$opened_path)
     {
+        var_dump($path);
+        var_dump($mode);
+        var_dump($options);
+        var_dump($opened_path);
         return true;
     }
 
@@ -112,6 +116,8 @@ class TxtStreamWrapper
 
     public function stream_seek($offset, $whence = 0)
     {
+        var_dump($offset);
+        var_dump($whence);
         return true;
     }
 

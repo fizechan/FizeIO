@@ -9,7 +9,7 @@ if (!$server) {
     echo "$errstr ($errno)<br />\n";
 } else {
     $server2 = new StreamSocket($server);
-    $socket = $server2->accept($server);
+    $socket = $server2->accept();
     $socket = new StreamSocket($socket);
 
     /* Grab a packet (1500 is a typical MTU size) of OOB data */

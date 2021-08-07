@@ -12,9 +12,10 @@ $opts = [
     ]
 ];
 
-$context = StreamContext::create($opts);
+$context = (new StreamContext())->create($opts);
 var_dump($context);
 
-$fp = new FileF('https://www.baidu.com', 'r', false, $context);
+$fp = new FileF();
+$fp->open('https://www.baidu.com', 'r', false, $context);
 $fp->passthru();
 $fp->close();

@@ -84,6 +84,14 @@ class TestFile extends TestCase
         self::assertTrue($result1);
     }
 
+    public function testDelete()
+    {
+        $file = new File(dirname(__DIR__) . '/temp/test3.txt');
+        $result = $file->delete();
+        var_dump($result);
+        self::assertTrue($result);
+    }
+
     public function testGetContents()
     {
         $file = new File(dirname(__DIR__) . '/temp/data/test.html');

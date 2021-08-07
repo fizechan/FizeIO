@@ -9,6 +9,20 @@ class StreamFilter
 {
 
     /**
+     * @var resource 文件流
+     */
+    protected $stream;
+
+    /**
+     * 构造
+     * @param resource $stream 流
+     */
+    public function __construct($stream)
+    {
+        $this->stream = $stream;
+    }
+
+    /**
      * 获取已注册的数据流过滤器列表
      * @return array
      */
@@ -22,6 +36,7 @@ class StreamFilter
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
+     * @param resource $stream     流
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数
@@ -37,6 +52,7 @@ class StreamFilter
      *
      * 参数 `$read_write` :
      *   可选值：STREAM_FILTER_READ、STREAM_FILTER_WRITE和/或STREAM_FILTER_ALL
+     * @param resource $stream     流
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数

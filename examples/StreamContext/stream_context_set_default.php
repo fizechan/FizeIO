@@ -1,7 +1,7 @@
 <?php
-require_once "../vendor/autoload.php";
+require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
+use fize\io\StreamContext;
 
 $default_opts = [
     'http'=>[
@@ -11,6 +11,6 @@ $default_opts = [
     ]
 ];
 
-$context = Stream::contextSetDefault($default_opts);
+$context = StreamContext::setDefault($default_opts);
 
 readfile('https://www.baidu.com');  //使用了以上的默认上下文

@@ -1,11 +1,12 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
+use fize\io\StreamContext;
 
-$stream = new Stream(Stream::contextCreate());
+$context = new StreamContext();
+$context->create();
 $params = ["notification" => "stream_notification_callback"];
-$stream->contextSetParams($params);
+$context->setParams($params);
 
-$params = $stream->contextGetParams();
+$params = $context->getParams();
 var_dump($params);

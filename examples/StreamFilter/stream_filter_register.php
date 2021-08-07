@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\File;
+use fize\io\FileF;
 use fize\io\Stream;
 use fize\io\StreamFilter;
 
@@ -25,15 +25,15 @@ class StrToUpperFilter extends php_user_filter
 
 
 
-$rst = StreamFilter::register("strtoupper", "StrToUpperFilter");
+$rst = StreamFilter::register("strtoupper", StrToUpperFilter::class);
 var_dump($rst);
 
 StreamFilter::append("strtoupper");
 
-$stream = new Stream('../temp/testStreamFilterRegister.txt', 'w+');
+$stream = new Stream();
+$stream->open('../temp/testStreamFilterRegister.txt', 'w+');
 $stream->filterAppend("strtoupper");
-$fp = new File($stream->get());
-$fp->open();
+$fp = new FileF($stream->get());
 $fp->write("Line1\n");
 $fp->write("Word - 2\n");
 $fp->write("Easy As 123\n");

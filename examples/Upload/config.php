@@ -1,6 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
+use fize\crypt\Json;
 use fize\io\Upload;
 
 $info1 = Upload::single('upfile1');
@@ -23,4 +24,4 @@ $result = [
     ]
 ];
 
-echo json_encode($result);
+echo Json::encode($result);

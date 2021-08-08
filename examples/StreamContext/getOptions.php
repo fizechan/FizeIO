@@ -10,6 +10,6 @@ $opts = [
             "Cookie: foo=bar\r\n"
     ]
 ];
-$context = new StreamContext(StreamContext::GetDefault($opts));
+$context = new StreamContext(StreamContext::getDefault($opts));
 $options = $context->getOptions();
 var_dump($options);

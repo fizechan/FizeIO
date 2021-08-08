@@ -12,7 +12,7 @@ $result = [
     'errcode' => 0,
     'errmsg'  => '',
     'data' => [
-        'path' => $file->realpath()
+        'path' => $file->getRealPath()
     ]
 ];
 

@@ -140,7 +140,6 @@ class TestOb extends TestCase
         $str = Ob::gzhandler('测试看看', 1);
         var_dump($str);
         self::assertIsString($str);
-        return;
 
         $cmd = 'start cmd /k "cd /d %cd%/../examples &&php -S localhost:8123"';
         $pid = popen($cmd, 'r');

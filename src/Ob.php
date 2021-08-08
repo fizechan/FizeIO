@@ -139,9 +139,9 @@ class Ob
 
     /**
      * 打开输出控制缓冲
-     * @param callable $output_callback 缓冲区内容发生变化时的回调函数
-     * @param int      $chunk_size      缓冲区大小，默认0表示函数仅在最后被调用
-     * @param bool     $erase           如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
+     * @param callable|null $output_callback 缓冲区内容发生变化时的回调函数
+     * @param int           $chunk_size      缓冲区大小，默认0表示函数仅在最后被调用
+     * @param bool          $erase           如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
      * @return bool
      */
     public static function start(callable $output_callback = null, int $chunk_size = 0, bool $erase = true): bool

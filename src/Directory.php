@@ -88,7 +88,7 @@ class Directory
 
     /**
      * 清理指定文件夹
-     * @param string $path 目录路径,不指定则为当前文件夹
+     * @param string|null $path 目录路径,不指定则为当前文件夹
      * @return bool
      */
     public function clear(string $path = null): bool

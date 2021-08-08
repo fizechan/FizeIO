@@ -81,8 +81,8 @@ class StreamContext
      * 参数 `$params` :
      *   必须是 $arr['parameter'] = $value 格式的关联数组。
      *   请参考 context parameters 里的标准资源流参数列表。
-     * @param array $options 选项，必须是一个二维关联数组。
-     * @param array $params  参数
+     * @param array|null $options 选项，必须是一个二维关联数组。
+     * @param array|null $params  参数
      * @return resource 返回资源流上下文，可直接使用
      */
     public static function create(array $options = null, array $params = null)

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 class TestStreamFilter extends TestCase
 {
 
-    public function testGetFilters()
+    public function testGets()
     {
         $filters = StreamFilter::gets();
         var_dump($filters);

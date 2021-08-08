@@ -47,12 +47,12 @@ class Upload
         }
         $this->file = $file;
         $default_config = [
-            'size'    => 2 * 1024 * 1024,  // 单个上传文件的最大字节
-            'ext'     => null,  // 文件后缀，多个用逗号分割或者数组
-            'type'    => null,  // 文件MIME类型，多个用逗号分割或者数组
-            'rule'    => 'date',  // 上传文件保存规则
-            'dir'     => './upload',  // 上传文件保存目录
-            'name'    => true,  // 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
+            'size' => 2 * 1024 * 1024,  // 单个上传文件的最大字节
+            'ext' => null,  // 文件后缀，多个用逗号分割或者数组
+            'type' => null,  // 文件MIME类型，多个用逗号分割或者数组
+            'rule' => 'date',  // 上传文件保存规则
+            'dir' => './upload',  // 上传文件保存目录
+            'name' => true,  // 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
             'replace' => true,  // 同名文件是否覆盖
             'autoext' => true,  // 自动补充扩展名
         ];
@@ -344,8 +344,8 @@ class Upload
         $file = $upload->save();
         $path = $upload->path();
         return [
-            'file'  => $file,
-            'path'  => $path
+            'file' => $file,
+            'path' => $path
         ];
     }
 

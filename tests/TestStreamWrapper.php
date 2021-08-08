@@ -91,7 +91,7 @@ class TxtStreamWrapper
         return stream_context_create([self::WRAPPER_NAME => ['cb' => $cb]]);
     }
 
-    public function stream_open($path, $mode, $options, &$opened_path)
+    public function stream_open($path, $mode, $options, &$opened_path): bool
     {
         var_dump($path);
         var_dump($mode);
@@ -100,7 +100,7 @@ class TxtStreamWrapper
         return true;
     }
 
-    public function stream_read($count)
+    public function stream_read($count): string
     {
         $this->seek = $this->seek + $count;
         if ($this->seek > 10) {
@@ -109,24 +109,24 @@ class TxtStreamWrapper
         return (string)$this->seek;
     }
 
-    public function stream_write($data)
+    public function stream_write($data): int
     {
         return strlen($data);
     }
 
-    public function stream_seek($offset, $whence = 0)
+    public function stream_seek($offset, $whence = 0): bool
     {
         var_dump($offset);
         var_dump($whence);
         return true;
     }
 
-    public function stream_tell()
+    public function stream_tell(): int
     {
         return 1;
     }
 
-    public function stream_eof()
+    public function stream_eof(): bool
     {
         return $this->eof;
     }

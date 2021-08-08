@@ -73,8 +73,6 @@ class TxtStreamWrapper
 
     public $context;
 
-    private $cb;
-
     private $seek = 0;
 
     private $eof = false;
@@ -84,7 +82,7 @@ class TxtStreamWrapper
     /**
      * 获取上下文
      * @param $cb
-     * @return false|resource
+     * @return resource
      */
     public static function getContext($cb)
     {
@@ -93,7 +91,7 @@ class TxtStreamWrapper
             self::$isRegistered = true;
         }
         if (!is_callable($cb)) {
-            return false;
+            throw new Exception('error on getContext');
         }
         return stream_context_create([self::WRAPPER_NAME => ['cb' => $cb]]);
     }
@@ -103,6 +101,7 @@ class TxtStreamWrapper
         var_dump($path);
         var_dump($mode);
         var_dump($options);
+        $opened_path = '';
         var_dump($opened_path);
         return true;
     }

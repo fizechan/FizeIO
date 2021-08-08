@@ -79,15 +79,22 @@ class TxtStreamWrapper
 
     private $eof = false;
 
-    private static $_isRegistered = false;
+    private static $isRegistered = false;
 
+    /**
+     * 获取上下文
+     * @param $cb
+     * @return false|resource
+     */
     public static function getContext($cb)
     {
-        if (!self::$_isRegistered) {
+        if (!self::$isRegistered) {
             stream_wrapper_register(self::WRAPPER_NAME, get_class());
-            self::$_isRegistered = true;
+            self::$isRegistered = true;
         }
-        if (!is_callable($cb)) return false;
+        if (!is_callable($cb)) {
+            return false;
+        }
         return stream_context_create([self::WRAPPER_NAME => ['cb' => $cb]]);
     }
 

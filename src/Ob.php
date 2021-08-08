@@ -111,6 +111,7 @@ class Ob
      * @param string $buffer 待输出缓冲区内容
      * @param int    $mode   指定模式
      * @return string 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
+     * @noinspection PhpComposerExtensionStubsInspection
      */
     public static function gzhandler(string $buffer, int $mode): string
     {

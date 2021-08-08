@@ -9,20 +9,6 @@ class StreamFilter
 {
 
     /**
-     * @var resource 文件流
-     */
-    protected $stream;
-
-    /**
-     * 构造
-     * @param resource $stream 流
-     */
-    public function __construct($stream)
-    {
-        $this->stream = $stream;
-    }
-
-    /**
      * 获取已注册的数据流过滤器列表
      * @return array
      */

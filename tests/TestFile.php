@@ -194,6 +194,22 @@ class TestFile extends TestCase
         self::assertTrue($result);
     }
 
+    public function testgetMime()
+    {
+        $file = new File(dirname(__DIR__) . '/temp/test_docx');
+        $mime = $file->getMime();
+        var_dump($mime);
+        self::assertIsString($mime);
+    }
+
+    public function testgetExtensionPossible()
+    {
+        $file = new File(dirname(__DIR__) . '/temp/test_docx');
+        $ext = $file->getExtensionPossible();
+        var_dump($ext);
+        self::assertIsString($ext);
+    }
+
     public function testExists()
     {
         $root = dirname(__DIR__);

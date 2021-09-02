@@ -286,6 +286,82 @@ class File extends SplFileObject
     }
 
     /**
+     * 返回文件MIME
+     * @return string
+     */
+    public function getMime(): string
+    {
+        if (extension_loaded('fileinfo')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimetype = finfo_file($finfo, $this->path);
+            finfo_close($finfo);
+            return $mimetype;
+        } elseif (function_exists('mime_content_type')) {
+            return mime_content_type($this->path);
+        } else {
+            return 'application/octet-stream';
+        }
+    }
+
+    /**
+     * 尽可能的返回文件后缀名
+     *
+     * 对于已有后缀名的文件则直接返回，无后缀名文件通过MIME猜测其后缀名，并不能保证准确性！
+     * @return string|null
+     */
+    public function getExtensionPossible(): ?string
+    {
+        $ext = $this->getExtension();
+        if (!empty($ext)) {
+            return $ext;
+        }
+        $mime_exts = [  // 常见MIME对应的后缀名
+//            'application/postscript'                         => 'ai',
+            'image/bmp'                                                               => 'bmp',
+            'application/vnd.ms-cab-compressed'                                       => 'cab',
+            'text/css'                                                                => 'css',
+//            'application/postscript'                         => 'eps',
+//            'application/x-msdownload'                       => 'exe',
+            'application/msword'                                                      => 'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+            'video/x-flv'                                                             => 'flv',
+            'image/gif'                                                               => 'gif',
+//            'text/html'                                      => 'htm',
+            'text/html'                                                               => 'html',
+            'image/vnd.microsoft.icon'                                                => 'ico',
+//            'image/jpeg'                                     => 'jpe',
+//            'image/jpeg'                                     => 'jpeg',
+            'image/jpeg'                                                              => 'jpg',
+            'application/javascript'                                                  => 'js',
+            'application/json'                                                        => 'json',
+            'video/quicktime'                                                         => 'mov',
+            'audio/mpeg'                                                              => 'mp3',
+            'application/x-msdownload'                                                => 'msi',
+            'application/vnd.oasis.opendocument.spreadsheet'                          => 'ods',
+            'application/vnd.oasis.opendocument.text'                                 => 'odt',
+            'application/pdf'                                                         => 'pdf',
+//            'text/html'                                      => 'php',
+            'image/png'                                                               => 'png',
+            'application/vnd.ms-powerpoint'                                           => 'ppt',
+            'application/postscript'                                                  => 'ps',
+            'image/vnd.adobe.photoshop'                                               => 'psd',
+//            'video/quicktime'                                => 'qt',
+            'application/x-rar-compressed'                                            => 'rar',
+            'application/rtf'                                                         => 'rtf',
+            'image/svg+xml'                                                           => 'svg',
+//            'image/svg+xml'                                  => 'svgz',
+            'application/x-shockwave-flash'                                           => 'swf',
+//            'image/tiff'                                     => 'tif',
+            'image/tiff'                                                              => 'tiff',
+            'text/plain'                                                              => 'txt',
+            'application/vnd.ms-excel'                                                => 'xls',
+            'application/xml'                                                         => 'xml',
+            'application/zip'                                                         => 'zip',
+        ];
+        return $mime_exts[$this->getMime()] ?? null;
+    }
+
+    /**
      * 检查文件是否存在
      * @param string $path 路径
      * @return bool

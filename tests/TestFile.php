@@ -233,4 +233,10 @@ class TestFile extends TestCase
 
         self::assertIsString($realpath);
     }
+
+    public function testGetExtensionFromMime()
+    {
+        $ext = File::getExtensionFromMime('application/pdf');
+        self::assertEquals('pdf', $ext);
+    }
 }

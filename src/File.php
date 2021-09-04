@@ -315,6 +315,63 @@ class File extends SplFileObject
         if (!empty($ext)) {
             return $ext;
         }
+        return self::getExtensionFromMime($this->getMime());
+    }
+
+    /**
+     * 检查文件是否存在
+     * @param string $path 路径
+     * @return bool
+     */
+    public static function exists(string $path): bool
+    {
+        $pathinfo = pathinfo($path);
+        if (!is_dir($pathinfo['dirname'])) {
+            return false;
+        }
+
+        if (file_exists($path)) {
+            if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
+                if (dirname(realpath($path)) != Directory::realpath(dirname($path), false)) {
+                    return false;
+                }
+                if (basename(realpath($path)) != $pathinfo['basename']) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 返回规范化的绝对路径名
+     * @param string $path  路径
+     * @param bool   $check 是否检测路径真实有效
+     * @return string
+     */
+    public static function realpath(string $path, bool $check = true): string
+    {
+        if ($check) {
+            if (!self::exists($path)) {
+                throw new RuntimeException('path is not exists: ' . $path);
+            }
+            return realpath($path);
+        } else {
+            if (self::exists($path)) {
+                return realpath($path);
+            }
+            return Directory::realpath(dirname($path), false) . DIRECTORY_SEPARATOR . basename($path);
+        }
+    }
+
+    /**
+     * 通过MIME返回对应后缀名
+     * @param string $mime 文件MIME
+     * @return string|null 获取不到返回null
+     */
+    public static function getExtensionFromMime(string $mime): ?string
+    {
         $mime_exts = [  // 常见MIME对应的后缀名
             'video/3gp'                                                                 => '3gp',
             'application/x-7z-compressed'                                               => '7z',
@@ -425,53 +482,6 @@ class File extends SplFileObject
             'text/yaml'                                                                 => 'yaml',
             'application/zip'                                                           => 'zip',
         ];
-        return $mime_exts[$this->getMime()] ?? null;
-    }
-
-    /**
-     * 检查文件是否存在
-     * @param string $path 路径
-     * @return bool
-     */
-    public static function exists(string $path): bool
-    {
-        $pathinfo = pathinfo($path);
-        if (!is_dir($pathinfo['dirname'])) {
-            return false;
-        }
-
-        if (file_exists($path)) {
-            if (strstr(PHP_OS, 'WIN')) {  // Windows下严格遵守大小写
-                if (dirname(realpath($path)) != Directory::realpath(dirname($path), false)) {
-                    return false;
-                }
-                if (basename(realpath($path)) != $pathinfo['basename']) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 返回规范化的绝对路径名
-     * @param string $path  路径
-     * @param bool   $check 是否检测路径真实有效
-     * @return string
-     */
-    public static function realpath(string $path, bool $check = true): string
-    {
-        if ($check) {
-            if (!self::exists($path)) {
-                throw new RuntimeException('path is not exists: ' . $path);
-            }
-            return realpath($path);
-        } else {
-            if (self::exists($path)) {
-                return realpath($path);
-            }
-            return Directory::realpath(dirname($path), false) . DIRECTORY_SEPARATOR . basename($path);
-        }
+        return $mime_exts[$mime] ?? null;
     }
 }

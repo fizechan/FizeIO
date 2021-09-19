@@ -47,12 +47,12 @@ class Upload
         }
         $this->file = $file;
         $default_config = [
-            'size' => 2 * 1024 * 1024,  // 单个上传文件的最大字节
-            'ext' => null,  // 文件后缀，多个用逗号分割或者数组
-            'type' => null,  // 文件MIME类型，多个用逗号分割或者数组
-            'rule' => 'date',  // 上传文件保存规则
-            'dir' => './upload',  // 上传文件保存目录
-            'name' => true,  // 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
+            'size'    => 2 * 1024 * 1024,  // 单个上传文件的最大字节
+            'ext'     => null,  // 文件后缀，多个用逗号分割或者数组
+            'type'    => null,  // 文件MIME类型，多个用逗号分割或者数组
+            'rule'    => 'date',  // 上传文件保存规则
+            'dir'     => './upload',  // 上传文件保存目录
+            'name'    => true,  // 保存的文件名。特殊值：true：自动生成（默认）；false(或者'')：保留原文件名
             'replace' => true,  // 同名文件是否覆盖
             'autoext' => true,  // 自动补充扩展名
         ];
@@ -350,6 +350,24 @@ class Upload
     }
 
     /**
+     * 简易模式下的多文件上传
+     * @param mixed $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
+     * @param array $config 配置
+     * @return array
+     */
+    public static function multiple($files, array $config = []): array
+    {
+        if (is_string($files)) {
+            $files = self::reArrayFiles($_FILES[$files]);
+        }
+        $results = [];
+        foreach ($files as $file) {
+            $results[] = self::single($file, $config);
+        }
+        return $results;
+    }
+
+    /**
      * 将原生的$_FILES多文件数组转化为方便读取的多文件数组
      * @param array $file_post 原生的$_FILES多文件数组
      * @return array
@@ -366,23 +384,5 @@ class Upload
             }
         }
         return $file_ary;
-    }
-
-    /**
-     * 简易模式下的多文件上传
-     * @param mixed $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
-     * @param array $config 配置
-     * @return array
-     */
-    public static function multiple($files, array $config = []): array
-    {
-        if (is_string($files)) {
-            $files = self::reArrayFiles($_FILES[$files]);
-        }
-        $results = [];
-        foreach ($files as $file) {
-            $results[] = self::single($file, $config);
-        }
-        return $results;
     }
 }

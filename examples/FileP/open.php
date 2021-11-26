@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileP;
+use Fize\IO\FileP;
 
 // 可以使用open方法打开进程文件指针
 

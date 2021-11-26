@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\Stream;
+use Fize\IO\Stream;
 
 $stream = new Stream();
 $stream->open('https://www.baidu.com', 'r');

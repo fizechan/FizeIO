@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\File;
+use Fize\IO\File;
 
 $file = new File('../temp/data/test.html');
 $file->putContents("\n<h2>很好很强大</h2>");  //覆盖

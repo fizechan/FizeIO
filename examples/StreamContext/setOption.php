@@ -1,8 +1,8 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileF;
-use fize\io\StreamContext;
+use Fize\IO\FileF;
+use Fize\IO\StreamContext;
 
 $opts = [
     'http' => [

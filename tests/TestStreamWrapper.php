@@ -1,6 +1,9 @@
 <?php
 
-use fize\io\StreamWrapper;
+namespace Tests;
+
+use Exception;
+use Fize\IO\StreamWrapper;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamWrapper extends TestCase

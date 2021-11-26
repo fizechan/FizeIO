@@ -1,9 +1,9 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileF;
-use fize\io\Stream;
-use fize\io\StreamFilter;
+use Fize\IO\FileF;
+use Fize\IO\Stream;
+use Fize\IO\StreamFilter;
 
 /**
  * 自定义过滤器

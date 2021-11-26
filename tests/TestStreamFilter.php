@@ -1,7 +1,10 @@
 <?php
 
-use fize\io\FileF;
-use fize\io\StreamFilter;
+namespace Tests;
+
+use Fize\IO\FileF;
+use Fize\IO\StreamFilter;
+use php_user_filter;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamFilter extends TestCase

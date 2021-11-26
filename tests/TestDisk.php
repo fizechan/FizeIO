@@ -1,6 +1,8 @@
 <?php
 
-use fize\io\Disk;
+namespace Tests;
+
+use Fize\IO\Disk;
 use PHPUnit\Framework\TestCase;
 
 class TestDisk extends TestCase

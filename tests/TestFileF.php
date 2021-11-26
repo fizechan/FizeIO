@@ -1,6 +1,8 @@
 <?php
 
-use fize\io\FileF;
+namespace Tests;
+
+use Fize\IO\FileF;
 use PHPUnit\Framework\TestCase;
 
 class TestFileF extends TestCase

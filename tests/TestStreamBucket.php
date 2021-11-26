@@ -1,7 +1,10 @@
 <?php
 
-use fize\io\StreamBucket;
+namespace Tests;
+
+use Fize\IO\StreamBucket;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class TestStreamBucket extends TestCase
 {

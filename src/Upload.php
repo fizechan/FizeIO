@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\io;
+namespace Fize\IO;
 
 use Closure;
 use OutOfBoundsException;

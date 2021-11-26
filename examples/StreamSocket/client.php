@@ -1,8 +1,8 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileF;
-use fize\io\StreamSocket;
+use Fize\IO\FileF;
+use Fize\IO\StreamSocket;
 
 $fp = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
 if (!$fp) {

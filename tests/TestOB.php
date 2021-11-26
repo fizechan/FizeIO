@@ -1,132 +1,134 @@
 <?php
 
+namespace Tests;
+
 use PHPUnit\Framework\TestCase;
-use fize\io\Ob;
+use Fize\IO\OB;
 use GuzzleHttp\Client;
 
-class TestOb extends TestCase
+class TestOB extends TestCase
 {
 
     public function testClean()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
-        Ob::clean();
+        OB::clean();
         echo '3';
         echo '4';
-        $ob = Ob::getClean();
+        $ob = OB::getClean();
         self::assertEquals('34', $ob);
     }
 
     public function testEndClean()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
-        Ob::endClean();
-        Ob::start();
+        OB::endClean();
+        OB::start();
         echo '3';
         echo '4';
-        $ob = Ob::getClean();
+        $ob = OB::getClean();
         self::assertEquals('34', $ob);
     }
 
     public function testEndFlush()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
-        Ob::endFlush();
-        Ob::start();  //要重新打开了
+        OB::endFlush();
+        OB::start();  //要重新打开了
         echo '3';
         echo '4';
-        $ob = Ob::getClean();
+        $ob = OB::getClean();
         self::assertEquals('34', $ob);
     }
 
     public function testFlush()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
-        Ob::flush();
+        OB::flush();
         echo '3';
         echo '4';
-        $ob = Ob::getClean();
+        $ob = OB::getClean();
         self::assertEquals('34', $ob);
     }
 
     public function testGetClean()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
-        Ob::endClean();
-        Ob::start();
+        OB::endClean();
+        OB::start();
         echo '3';
         echo '4';
-        $ob = Ob::getClean();
+        $ob = OB::getClean();
         self::assertEquals('34', $ob);
     }
 
     public function testGetContents()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        $ob = Ob::getContents();
-        Ob::endClean();
+        $ob = OB::getContents();
+        OB::endClean();
         self::assertEquals('1234', $ob);
     }
 
     public function testGetFlush()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        $ob = Ob::getFlush();  //调用后缓冲区自动关闭了
+        $ob = OB::getFlush();  //调用后缓冲区自动关闭了
         self::assertEquals('1234', $ob);
     }
 
     public function testGetLength()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        $ob_length = Ob::getLength();
-        Ob::endClean();
+        $ob_length = OB::getLength();
+        OB::endClean();
         self::assertEquals(4, $ob_length);
     }
 
     public function testGetLevel()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        $ob_level = Ob::getLevel();
-        Ob::endClean();
+        $ob_level = OB::getLevel();
+        OB::endClean();
         self::assertEquals(2, $ob_level);
     }
 
     public function testGetStatus()
     {
-        Ob::start();
+        OB::start();
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        Ob::endClean();
+        OB::endClean();
         echo '5';
-        $statuses = Ob::getStatus(true);
+        $statuses = OB::getStatus(true);
         var_dump($statuses);
 
         self::assertIsArray($statuses);
@@ -137,7 +139,7 @@ class TestOb extends TestCase
      */
     public function testGzhandler()
     {
-        $str = Ob::gzhandler('测试看看', 1);
+        $str = OB::gzhandler('测试看看', 1);
         var_dump($str);
         self::assertIsString($str);
 
@@ -158,32 +160,32 @@ class TestOb extends TestCase
 
     public function testImplicitFlush()
     {
-        Ob::start();
-        Ob::implicitFlush(true);
+        OB::start();
+        OB::implicitFlush(true);
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        Ob::endClean();
+        OB::endClean();
         self::assertTrue(true);
     }
 
     public function testListHandlers()
     {
-        $handlers = Ob::listHandlers();
+        $handlers = OB::listHandlers();
         var_dump($handlers);
         self::assertIsArray($handlers);
     }
 
     public function testStart()
     {
-        $result = Ob::start();
-        Ob::implicitFlush(true);
+        $result = OB::start();
+        OB::implicitFlush(true);
         echo '1';
         echo '2';
         echo '3';
         echo '4';
-        Ob::endClean();
+        OB::endClean();
         self::assertTrue($result);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\Directory;
+use Fize\IO\Directory;
 
 
 $dir = new Directory("./data/dir0");

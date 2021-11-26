@@ -1,7 +1,6 @@
 <?php
 
-
-namespace fize\io;
+namespace Fize\IO;
 
 use RuntimeException;
 use SplFileObject;

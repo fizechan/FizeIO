@@ -1,6 +1,8 @@
 <?php
 
-use fize\io\StreamSocket;
+namespace Tests;
+
+use Fize\IO\StreamSocket;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamSocket extends TestCase

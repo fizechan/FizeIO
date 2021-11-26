@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\StreamSocket;
+use Fize\IO\StreamSocket;
 
 $socket = new StreamSocket();
 $socket->open('https://www.baidu.com', 'r');

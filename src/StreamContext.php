@@ -1,6 +1,6 @@
 <?php
 
-namespace fize\io;
+namespace Fize\IO;
 
 /**
  * 流上下文

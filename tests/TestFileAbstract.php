@@ -1,8 +1,10 @@
 <?php
 
-use fize\io\FileAbstract;
-use fize\io\FileF;
-use fize\io\FileP;
+namespace Tests;
+
+use Fize\IO\FileAbstract;
+use Fize\IO\FileF;
+use Fize\IO\FileP;
 use PHPUnit\Framework\TestCase;
 
 class TestFileAbstract extends TestCase

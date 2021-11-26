@@ -1,7 +1,9 @@
 <?php
 
-use fize\io\File;
-use fize\io\StreamContext;
+namespace Tests;
+
+use Fize\IO\File;
+use Fize\IO\StreamContext;
 use PHPUnit\Framework\TestCase;
 
 class TestStreamContext extends TestCase

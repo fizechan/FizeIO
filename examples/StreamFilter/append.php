@@ -1,8 +1,8 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileF;
-use fize\io\StreamFilter;
+use Fize\IO\FileF;
+use Fize\IO\StreamFilter;
 
 $fp = fopen('../temp/testStreamFilterAppend.txt', 'w+');
 StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);

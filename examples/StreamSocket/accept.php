@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\StreamSocket;
+use Fize\IO\StreamSocket;
 
 $socket = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
 

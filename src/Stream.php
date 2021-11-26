@@ -1,7 +1,7 @@
 <?php
 
 
-namespace fize\io;
+namespace Fize\IO;
 
 /**
  * 流处理

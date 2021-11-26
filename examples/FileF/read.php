@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\FileF;
+use Fize\IO\FileF;
 
 $file = new FileF();
 $file->open('../temp/test.txt', 'r');

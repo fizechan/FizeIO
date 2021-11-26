@@ -1,11 +1,11 @@
 <?php
 
-namespace fize\io;
+namespace Fize\IO;
 
 /**
  * 缓冲区
  */
-class Ob
+class OB
 {
 
     /**

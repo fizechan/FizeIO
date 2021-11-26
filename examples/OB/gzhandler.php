@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\Ob;
+use Fize\IO\OB;
 
 //ob_gzhandler在win下不受支持
 //Ob::gzhandler('', 4);
@@ -11,4 +11,4 @@ echo '1';
 echo '2';
 echo '3';
 echo '4';
-Ob::endFlush();
+OB::endFlush();

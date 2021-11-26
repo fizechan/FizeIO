@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use fize\io\File;
+use Fize\IO\File;
 
 $file = new File('../temp/test.txt', 'a+');
 

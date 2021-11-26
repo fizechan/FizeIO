@@ -1,6 +1,8 @@
 <?php
 
-use fize\io\Directory;
+namespace Tests;
+
+use Fize\IO\Directory;
 use PHPUnit\Framework\TestCase;
 
 class TestDirectory extends TestCase

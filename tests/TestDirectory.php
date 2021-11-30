@@ -178,7 +178,7 @@ class TestDirectory extends TestCase
     public function testTempnam()
     {
         $root = dirname(__DIR__);
-        $dir = new Directory( $root . "/temp/temp/");
+        $dir = new Directory( $root . "/temp/temp1/测试目录1", true);
         $file_full_name = $dir->tempnam('txt');
         var_dump($file_full_name);
         self::assertIsString($file_full_name);
@@ -234,5 +234,8 @@ class TestDirectory extends TestCase
         var_dump($realpath4);
 
         self::assertEquals($realpath3, $realpath4);
+
+//        $realpath5 = Directory::realpath($root . "/temp/data5/");
+//        var_dump($realpath5);
     }
 }

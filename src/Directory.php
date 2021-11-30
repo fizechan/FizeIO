@@ -204,7 +204,7 @@ class Directory
     {
         if ($check) {
             if (!self::exists($path)) {
-                throw new RuntimeException('path is not exists: ' . $path);
+                throw new RuntimeException('path is not exists: ' . self::realpath($path, false));
             }
             return realpath($path);
         } else {

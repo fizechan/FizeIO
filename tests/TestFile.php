@@ -204,12 +204,13 @@ class TestFile extends TestCase
         self::assertIsString($mime);
     }
 
-    public function testgetExtensionPossible()
+    public function testgetExtension()
     {
         $file = new File(dirname(__DIR__) . '/temp/test_docx');
-        $ext = $file->getExtensionPossible();
+        $ext = $file->getExtension();
         var_dump($ext);
         self::assertIsString($ext);
+        self::assertEquals('docx', $ext);
     }
 
     public function testExists()
@@ -234,11 +235,5 @@ class TestFile extends TestCase
         var_dump($realpath);
 
         self::assertIsString($realpath);
-    }
-
-    public function testGetExtensionFromMime()
-    {
-        $ext = File::getExtensionFromMime('application/pdf');
-        self::assertEquals('pdf', $ext);
     }
 }

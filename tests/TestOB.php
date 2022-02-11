@@ -161,7 +161,7 @@ class TestOB extends TestCase
     public function testImplicitFlush()
     {
         OB::start();
-        OB::implicitFlush(true);
+        OB::implicitFlush();
         echo '1';
         echo '2';
         echo '3';
@@ -180,7 +180,7 @@ class TestOB extends TestCase
     public function testStart()
     {
         $result = OB::start();
-        OB::implicitFlush(true);
+        OB::implicitFlush();
         echo '1';
         echo '2';
         echo '3';

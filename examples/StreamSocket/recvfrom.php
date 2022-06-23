@@ -5,7 +5,7 @@ use Fize\IO\StreamSocket;
 
 $server = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
 
-if (!$server) {
+if ($server === false) {
     echo "$errstr ($errno)<br />\n";
 } else {
     $server2 = new StreamSocket($server);

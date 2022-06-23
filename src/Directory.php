@@ -126,7 +126,7 @@ class Directory
     /**
      * 在当前文件夹建立一个具有唯一文件名的文件
      * @param string $prefix 产生临时文件的前缀
-     * @return string 返回完整文件路径
+     * @return string|false 返回完整文件路径
      */
     public function tempnam(string $prefix = ''): string
     {
@@ -198,7 +198,7 @@ class Directory
      * 返回规范化的绝对路径名
      * @param string $path  路径
      * @param bool   $check 是否检测路径真实有效
-     * @return string
+     * @return string|false
      */
     public static function realpath(string $path, bool $check = true): string
     {

@@ -5,7 +5,7 @@ use Fize\IO\FileF;
 use Fize\IO\StreamSocket;
 
 $fp = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
-if (!$fp) {
+if ($fp === false) {
     echo "$errstr ($errno)<br />\n";
 } else {
     $ffp = new FileF($fp);

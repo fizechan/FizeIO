@@ -29,7 +29,7 @@ class StreamSocket extends Stream
      * 参数 `$want_peer` :
      *   如果设置为 TRUE ，那么将返回 remote 套接字连接名称；如果设置为 FALSE 则返回 local 套接字连接名称。
      * @param int $want_peer 是否远程套接字
-     * @return string
+     * @return string|false
      */
     public function getName(int $want_peer): string
     {
@@ -48,7 +48,7 @@ class StreamSocket extends Stream
      * @param int $domain   使用的协议族
      * @param int $type     通信类型
      * @param int $protocol 使用的传输协议
-     * @return array 数组包括了两个socket资源，失败返回false
+     * @return array|false 数组包括了两个socket资源，失败返回false
      */
     public static function pair(int $domain, int $type, int $protocol): array
     {
@@ -60,7 +60,7 @@ class StreamSocket extends Stream
      * @param int         $length  长度
      * @param int         $flags   标识
      * @param string|null $address 将使用远程套接字的地址填充。
-     * @return string 以字符串的形式返回读取的数据
+     * @return string|false 以字符串的形式返回读取的数据
      */
     public function recvfrom(int $length, int $flags = 0, string &$address = null): string
     {
@@ -72,7 +72,7 @@ class StreamSocket extends Stream
      * @param string      $data    消息
      * @param int         $flags   标识
      * @param string|null $address 将使用远程套接字的地址填充。
-     * @return int 以整数形式返回结果代码。
+     * @return int|false 以整数形式返回结果代码。
      */
     public function sendto(string $data, int $flags = 0, string $address = null): int
     {
@@ -105,7 +105,7 @@ class StreamSocket extends Stream
      * @param string|null $peername 设置给连接中的客户端主机的名称（地址）
      * @return StreamSocket|false 失败时返回false
      */
-    public function accept(float $timeout = null, string &$peername = null)
+    public function accept(float $timeout = null, string &$peername = null): StreamSocket
     {
         if (is_null($timeout)) {
             $stream = stream_socket_accept($this->stream);
@@ -131,7 +131,7 @@ class StreamSocket extends Stream
      * @param resource    $context       使用stream_context_create()创建的有效上下文资源。
      * @return StreamSocket|false 失败时返回false
      */
-    public static function client(string $remote_socket, int &$errno = null, string &$errstr = null, float $timeout = null, int $flags = 4, $context = null)
+    public static function client(string $remote_socket, int &$errno = null, string &$errstr = null, float $timeout = null, int $flags = 4, $context = null): StreamSocket
     {
         if (is_null($context)) {
             $stream = stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags);
@@ -156,7 +156,7 @@ class StreamSocket extends Stream
      * @param resource    $context      有效上下文资源。
      * @return StreamSocket|false 失败时返回false
      */
-    public static function server(string $local_socket, int &$errno = null, string &$errstr = null, int $flags = 12, $context = null)
+    public static function server(string $local_socket, int &$errno = null, string &$errstr = null, int $flags = 12, $context = null): StreamSocket
     {
         if (is_null($context)) {
             $stream = stream_socket_server($local_socket, $errno, $errstr, $flags);

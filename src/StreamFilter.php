@@ -26,7 +26,7 @@ class StreamFilter
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数
-     * @return resource
+     * @return resource|false
      */
     public static function append($stream, string $filtername, int $read_write = null, $params = null)
     {
@@ -42,7 +42,7 @@ class StreamFilter
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数
-     * @return resource
+     * @return resource|false
      */
     public static function prepend($stream, string $filtername, int $read_write = null, $params = null)
     {

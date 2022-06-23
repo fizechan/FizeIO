@@ -27,7 +27,7 @@ class FileP extends FileAbstract
     public function close(): int
     {
         if (!is_resource($this->stream)) {
-            return true;
+            return -1;
         }
         $result = pclose($this->stream);
         if ($result != -1) {

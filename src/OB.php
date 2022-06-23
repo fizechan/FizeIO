@@ -47,7 +47,7 @@ class OB
 
     /**
      * 得到当前缓冲区的内容并删除当前输出缓冲区。
-     * @return string 当前缓冲区的内容
+     * @return string|false 当前缓冲区的内容
      */
     public static function getClean(): string
     {
@@ -56,7 +56,7 @@ class OB
 
     /**
      * 返回输出缓冲区的内容
-     * @return string 如果输出缓冲区无效将返回FALSE。
+     * @return string|false 如果输出缓冲区无效将返回FALSE。
      */
     public static function getContents(): string
     {
@@ -65,7 +65,7 @@ class OB
 
     /**
      * 输出缓冲区内容，以字符串形式返回内容，并关闭输出缓冲区。
-     * @return string 如果没有起作用的输出缓冲区，返回FALSE。
+     * @return string|false 如果没有起作用的输出缓冲区，返回FALSE。
      */
     public static function getFlush(): string
     {
@@ -74,7 +74,7 @@ class OB
 
     /**
      * 返回输出缓冲区内容的长度
-     * @return int
+     * @return int|false
      */
     public static function getLength(): int
     {
@@ -110,8 +110,7 @@ class OB
      * @notice 未讲过手动调用该方法的情况
      * @param string $buffer 待输出缓冲区内容
      * @param int    $mode   指定模式
-     * @return string 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
-     * @noinspection PhpComposerExtensionStubsInspection
+     * @return string|false 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
      */
     public static function gzhandler(string $buffer, int $mode): string
     {

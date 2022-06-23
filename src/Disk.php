@@ -25,7 +25,7 @@ class Disk extends Directory
 
     /**
      * 返回可用空间
-     * @return float 可用的字节数
+     * @return float|false 可用的字节数
      */
     public function freeSpace(): float
     {
@@ -34,7 +34,7 @@ class Disk extends Directory
 
     /**
      * 返回总大小
-     * @return float 字节数
+     * @return float|false 字节数
      */
     public function totalSpace(): float
     {

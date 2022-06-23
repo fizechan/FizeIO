@@ -5,7 +5,7 @@ use Fize\IO\StreamSocket;
 
 $socket = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
 
-if (!$socket) {
+if ($socket === false) {
     echo "$errstr ($errno)<br />\n";
 } else {
     while ($fpconn = $socket->accept(100)) {  // 接受连接

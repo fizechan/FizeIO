@@ -12,7 +12,7 @@ use Fize\IO\StreamFilter;
  */
 class StrToUpperFilter extends php_user_filter
 {
-    function filter($in, $out, &$consumed, $closing): int
+    public function filter($in, $out, &$consumed, $closing): int
     {
         while ($bucket = stream_bucket_make_writeable($in)) {
             $bucket->data = strtoupper($bucket->data);

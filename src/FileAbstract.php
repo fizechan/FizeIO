@@ -24,7 +24,7 @@ abstract class FileAbstract
     /**
      * 返回当前上下文
      * @notice 请谨慎使用该方法
-     * @return resource 不存在时返回 null
+     * @return resource|null 不存在时返回 null
      */
     public function getStream()
     {
@@ -51,7 +51,7 @@ abstract class FileAbstract
 
     /**
      * 从文件指针中读取一个字符。 碰到 EOF 则返回 FALSE 。
-     * @return string 如果碰到 EOF 则返回 FALSE。
+     * @return string|false 如果碰到 EOF 则返回 FALSE。
      */
     public function getc(): string
     {
@@ -65,7 +65,7 @@ abstract class FileAbstract
      *   默认是 1024 字节。
      *   实际返回的字节是 $length - 1
      * @param int|null $length 规定要读取的字节数
-     * @return string 若失败，则返回 false。
+     * @return string|false 若失败，则返回 false。
      */
     public function gets(int $length = null): string
     {
@@ -86,7 +86,7 @@ abstract class FileAbstract
      *   形如“<p>,<b>”
      * @param int|null    $length         规定要读取的字节数
      * @param string|null $allowable_tags 规定不会被删除的标签
-     * @return string
+     * @return string|false
      * @deprecated PHP7.3不建议使用该方法
      */
     public function getss(int $length = null, string $allowable_tags = null): string
@@ -115,7 +115,7 @@ abstract class FileAbstract
 
     /**
      * 输出文件指针处的所有剩余数据
-     * @return int 返回剩余数据字节数
+     * @return int|false 返回剩余数据字节数
      */
     public function passthru(): int
     {
@@ -126,7 +126,7 @@ abstract class FileAbstract
      * 写入文件（可安全用于二进制文件）
      * @param string   $string 要写入的字符串
      * @param int|null $length 指定写入长度
-     * @return int 如果失败返回false
+     * @return int|false 如果失败返回false
      */
     public function puts(string $string, int $length = null): int
     {
@@ -141,7 +141,7 @@ abstract class FileAbstract
     /**
      * 读取文件（可安全用于二进制文件）
      * @param int $length
-     * @return string
+     * @return string|false
      */
     public function read(int $length): string
     {
@@ -178,7 +178,7 @@ abstract class FileAbstract
 
     /**
      * 返回文件指针读/写的位置
-     * @return int
+     * @return int|false
      */
     public function tell(): int
     {
@@ -199,7 +199,7 @@ abstract class FileAbstract
      * 写入文件（可安全用于二进制文件）
      * @param string   $string 要写入的字符串
      * @param int|null $length 指定写入长度
-     * @return int 失败时返回false
+     * @return int|false 失败时返回false
      */
     public function write(string $string, int $length = null): int
     {
@@ -223,7 +223,7 @@ abstract class FileAbstract
     /**
      * 设置当前打开文件的缓冲大小。
      * @param int $buffer 规定缓冲大小，以字节计。
-     * @return int 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
+     * @return int|false 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
      */
     public function setBuffer(int $buffer): int
     {

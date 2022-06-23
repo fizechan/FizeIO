@@ -53,7 +53,7 @@ class FileF extends FileAbstract
      * @param string $delimiter 设置字段分界符
      * @param string $enclosure 设置字段环绕符
      * @param string $escape    设置转义字符
-     * @return array 如果碰到 EOF 则返回 FALSE。
+     * @return array|false 如果碰到 EOF 则返回 FALSE。
      */
     public function getcsv(int $length = 0, string $delimiter = ",", string $enclosure = '"', string $escape = "\\"): array
     {
@@ -66,7 +66,7 @@ class FileF extends FileAbstract
      * @param string $delimiter   分隔符
      * @param string $enclosure   界限符
      * @param string $escape_char 转义符
-     * @return int 如果失败返回false
+     * @return int|false 如果失败返回false
      */
     public function putcsv(array $fields, string $delimiter = ",", string $enclosure = '"', string $escape_char = "\\"): int
     {

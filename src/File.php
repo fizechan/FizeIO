@@ -137,7 +137,7 @@ class File extends SplFileObject
      * @param resource $context          上下文支持
      * @param int      $offset           插入位置偏移量
      * @param int|null $maxlen           指定读取长度
-     * @return string
+     * @return string|false
      */
     public function getContents(bool $use_include_path = false, $context = null, int $offset = 0, int $maxlen = null): string
     {
@@ -158,7 +158,7 @@ class File extends SplFileObject
      * @param mixed    $data    要写入的数据
      * @param int      $flags   指定配置
      * @param resource $context 上下文支持
-     * @return int
+     * @return int|false
      */
     public function putContents($data, int $flags = 0, $context = null): int
     {
@@ -202,7 +202,7 @@ class File extends SplFileObject
 
     /**
      * 获取一个连接的信息
-     * @return int
+     * @return int|false
      */
     public function linkinfo(): int
     {
@@ -213,7 +213,7 @@ class File extends SplFileObject
      * 读取文件并写入到输出缓冲。
      * @param bool     $use_include_path 是否在 include_path 中搜寻文件
      * @param resource $context          上下文支持
-     * @return int
+     * @return int|false
      */
     public function readfile(bool $use_include_path = false, $context = null): int
     {
@@ -222,7 +222,7 @@ class File extends SplFileObject
 
     /**
      * 返回符号连接指向的目标
-     * @return string
+     * @return string|false
      */
     public function readlink(): string
     {
@@ -351,7 +351,7 @@ class File extends SplFileObject
      * 返回规范化的绝对路径名
      * @param string $path  路径
      * @param bool   $check 是否检测路径真实有效
-     * @return string
+     * @return string|false
      */
     public static function realpath(string $path, bool $check = true): string
     {

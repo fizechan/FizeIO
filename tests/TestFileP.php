@@ -10,10 +10,10 @@ class TestFileP extends TestCase
 
     public function test__construct()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";
+            $cmd = 'bash php --version';
         }
         $progress = new FileP();
         $progress->open($cmd, 'r');
@@ -24,10 +24,10 @@ class TestFileP extends TestCase
 
     public function test__destruct()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";
+            $cmd = 'bash php --version';
         }
         $progress = new FileP();
         $progress->open($cmd, 'r');
@@ -39,10 +39,10 @@ class TestFileP extends TestCase
 
     public function testClose()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version > ../temp/cfztest.txt';
         } else {
-            $cmd = "bash php --version > ../temp/cfztest.txt";
+            $cmd = 'bash php --version > ../temp/cfztest.txt';
         }
         $fp = new FileP();
         $fp->open($cmd, 'w');
@@ -52,10 +52,10 @@ class TestFileP extends TestCase
 
     public function testOpen()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version > ../temp/cfztest.txt';
         } else {
-            $cmd = "bash php --version > ../temp/cfztest.txt";
+            $cmd = 'bash php --version > ../temp/cfztest.txt';
         }
         $fp = new FileP();
         $fp->open($cmd, 'w');
@@ -66,10 +66,10 @@ class TestFileP extends TestCase
 
     public function testGets()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";
+            $cmd = 'bash php --version';
         }
         $progress = new FileP();
         $progress->open($cmd, 'r');
@@ -80,10 +80,10 @@ class TestFileP extends TestCase
 
     public function testPassthru()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";  //@todo 待验证
+            $cmd = 'bash php --version';  //@todo 待验证
         }
         $file = new FileP();
         $file->open($cmd, 'r');
@@ -93,10 +93,10 @@ class TestFileP extends TestCase
 
     public function testRead()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";
+            $cmd = 'bash php --version';
         }
         $progress = new FileP();
         $progress->open($cmd, 'r');
@@ -107,10 +107,10 @@ class TestFileP extends TestCase
 
     public function testWrite()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version > ../temp/cfztest.txt";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version > ../temp/cfztest.txt';
         } else {
-            $cmd = "bash php --version > ../temp/cfztest.txt";
+            $cmd = 'bash php --version > ../temp/cfztest.txt';
         }
         $progress = new FileP();
         $progress->open($cmd, 'w');

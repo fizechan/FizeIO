@@ -55,7 +55,7 @@ class FileF extends FileAbstract
      * @param string $escape    设置转义字符
      * @return array|false 如果碰到 EOF 则返回 FALSE。
      */
-    public function getcsv(int $length = 0, string $delimiter = ",", string $enclosure = '"', string $escape = "\\"): array
+    public function getcsv(int $length = 0, string $delimiter = ',', string $enclosure = '"', string $escape = "\\"): array
     {
         return fgetcsv($this->stream, $length, $delimiter, $enclosure, $escape);
     }
@@ -68,7 +68,7 @@ class FileF extends FileAbstract
      * @param string $escape_char 转义符
      * @return int|false 如果失败返回false
      */
-    public function putcsv(array $fields, string $delimiter = ",", string $enclosure = '"', string $escape_char = "\\"): int
+    public function putcsv(array $fields, string $delimiter = ',', string $enclosure = '"', string $escape_char = "\\"): int
     {
         return fputcsv($this->stream, $fields, $delimiter, $enclosure, $escape_char);
     }

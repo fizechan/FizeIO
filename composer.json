@@ -29,7 +29,7 @@
   },
   "require-dev": {
     "ext-json": "*",
-    "fize/crypt": "^4.0.0",
+    "fize/codec": "^5.0.0",
     "guzzlehttp/guzzle": "^7.4.0",
     "phpunit/phpunit": "^9.5.0"
   }

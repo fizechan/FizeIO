@@ -25,15 +25,15 @@ class TestStreamWrapper extends TestCase
 
     public function testRestore()
     {
-        $existed = in_array("http", StreamWrapper::gets());
+        $existed = in_array('http', StreamWrapper::gets());
         if ($existed) {
-            StreamWrapper::unregister("http");
+            StreamWrapper::unregister('http');
         }
-        $rst = StreamWrapper::register("http", TxtStreamWrapper::class);
+        $rst = StreamWrapper::register('http', TxtStreamWrapper::class);
         self::assertTrue($rst);
-        $myvar = "";
+        $myvar = '';
 
-        $fp = fopen("http://myvar", "r+");
+        $fp = fopen('http://myvar', 'r+');
 
         fwrite($fp, "line1\n");
         fwrite($fp, "line2\n");
@@ -46,21 +46,21 @@ class TestStreamWrapper extends TestCase
         fclose($fp);
         var_dump($myvar);
 
-        $existed = in_array("http", StreamWrapper::gets());
+        $existed = in_array('http', StreamWrapper::gets());
         if ($existed) {
-            $rst = StreamWrapper::restore("http");
+            $rst = StreamWrapper::restore('http');
             var_dump($rst);
             self::assertTrue($rst);
         }
-        $rst = StreamWrapper::restore("http");
+        $rst = StreamWrapper::restore('http');
         var_dump($rst);
         self::assertTrue($rst);
     }
 
     public function testUnregister()
     {
-        StreamWrapper::register("var", TxtStreamWrapper::class);
-        $rst = StreamWrapper::unregister("var");
+        StreamWrapper::register('var', TxtStreamWrapper::class);
+        $rst = StreamWrapper::unregister('var');
         var_dump($rst);
         self::assertTrue($rst);
     }
@@ -72,7 +72,7 @@ class TestStreamWrapper extends TestCase
  */
 class TxtStreamWrapper
 {
-    const WRAPPER_NAME = 'callback';
+    public const WRAPPER_NAME = 'callback';
 
     public $context;
 

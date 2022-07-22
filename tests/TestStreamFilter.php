@@ -20,7 +20,7 @@ class TestStreamFilter extends TestCase
     public function testAppend()
     {
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterAppend.txt', 'w+');
-        $res = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
+        $res = StreamFilter::append($fp, 'string.rot13', STREAM_FILTER_WRITE);
         self::assertIsResource($res);
         $ff = new FileF($fp);
         $ff->write("This is a test\n");
@@ -32,7 +32,7 @@ class TestStreamFilter extends TestCase
     public function testPrepend()
     {
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterPrepend.txt', 'w+');
-        $res = StreamFilter::prepend($fp, "string.rot13", STREAM_FILTER_WRITE);
+        $res = StreamFilter::prepend($fp, 'string.rot13', STREAM_FILTER_WRITE);
         self::assertIsResource($res);
         $ff = new FileF($fp);
         $ff->write("This is a test\n");
@@ -43,12 +43,12 @@ class TestStreamFilter extends TestCase
 
     public function testRegister()
     {
-        $rst = StreamFilter::register("strtoupper", strtoupper_filter::class);
+        $rst = StreamFilter::register('strtoupper', strtoupper_filter::class);
         var_dump($rst);
         self::assertTrue($rst);
 
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRegister.txt', 'w+');
-        StreamFilter::append($fp, "strtoupper");
+        StreamFilter::append($fp, 'strtoupper');
         $ff = new FileF($fp);
         $ff->write("Line1\n");
         $ff->write("Word - 2\n");
@@ -62,7 +62,7 @@ class TestStreamFilter extends TestCase
     public function testFilterRemove()
     {
         $fp = fopen(dirname(__DIR__) . '/temp/testStreamFilterRemove.txt', 'w+');
-        $filter = StreamFilter::append($fp, "string.rot13", STREAM_FILTER_WRITE);
+        $filter = StreamFilter::append($fp, 'string.rot13', STREAM_FILTER_WRITE);
         $rst = StreamFilter::remove($filter);
         self::assertTrue($rst);
         $ff = new FileF($fp);

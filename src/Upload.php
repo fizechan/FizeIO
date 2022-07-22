@@ -89,8 +89,8 @@ class Upload
         $this->checkUpload();
 
         $dir = rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $saveName = $this->buildSaveName($savename, $auto_append_ext);  // 文件保存命名规则
-        $filename = $dir . $saveName;
+        $savename = $this->buildSaveName($savename, $auto_append_ext);  // 文件保存命名规则
+        $filename = $dir . $savename;
         $this->path = $filename;
 
         // 检测目录

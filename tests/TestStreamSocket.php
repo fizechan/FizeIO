@@ -13,7 +13,7 @@ class TestStreamSocket extends TestCase
      */
     public function testEnableCrypto()
     {
-        $client = StreamSocket::client("tcp://127.0.0.1:1935", $errno, $errstr, 30);
+        $client = StreamSocket::client('tcp://127.0.0.1:1935', $errno, $errstr, 30);
         if (!$client) {
             echo "$errstr ($errno)<br />\n";
             return;
@@ -47,7 +47,7 @@ class TestStreamSocket extends TestCase
      */
     public function testRecvfrom()
     {
-        $server = StreamSocket::server("tcp://127.0.0.1:1935", $errno, $errstr);
+        $server = StreamSocket::server('tcp://127.0.0.1:1935', $errno, $errstr);
         if (!$server) {
             echo "$errstr ($errno)<br />\n";
             return;
@@ -69,15 +69,15 @@ class TestStreamSocket extends TestCase
 
     public function testSendto()
     {
-        $client = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
-        $rst = $client->sendto("Out of Band data.", STREAM_OOB);
+        $client = StreamSocket::client('tcp://www.baidu.com:80', $errno, $errstr, 30);
+        $rst = $client->sendto('Out of Band data.', STREAM_OOB);
         var_dump($rst);
         self::assertIsInt($rst);
     }
 
     public function testShutdown()
     {
-        $client = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
+        $client = StreamSocket::client('tcp://www.baidu.com:80', $errno, $errstr, 30);
         $rst = $client->shutdown(STREAM_SHUT_WR);
         var_dump($rst);
         self::assertTrue($rst);
@@ -88,7 +88,7 @@ class TestStreamSocket extends TestCase
      */
     public function testAccept()
     {
-        $server = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
+        $server = StreamSocket::server('tcp://0.0.0.0:8000', $errno, $errstr);
         if (!$server) {
             echo "$errstr ($errno)<br />\n";
             return;
@@ -103,14 +103,14 @@ class TestStreamSocket extends TestCase
 
     public function testClient()
     {
-        $fp = StreamSocket::client("tcp://www.baidu.com:80", $errno, $errstr, 30);
+        $fp = StreamSocket::client('tcp://www.baidu.com:80', $errno, $errstr, 30);
         var_dump($fp);
         self::assertInstanceOf(StreamSocket::class, $fp);
     }
 
     public function testSocketServer()
     {
-        $socket = StreamSocket::server("tcp://0.0.0.0:8000", $errno, $errstr);
+        $socket = StreamSocket::server('tcp://0.0.0.0:8000', $errno, $errstr);
         var_dump($socket);
         self::assertInstanceOf(StreamSocket::class, $socket);
     }

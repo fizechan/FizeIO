@@ -13,7 +13,7 @@ class TestStreamContext extends TestCase
     {
         $opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
                     "Cookie: foo=bar\r\n"
             ]
@@ -27,7 +27,7 @@ class TestStreamContext extends TestCase
     {
         $opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
                     "Cookie: foo=bar\r\n"
             ]
@@ -41,7 +41,7 @@ class TestStreamContext extends TestCase
     {
         $opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
                     "Cookie: foo=bar\r\n"
             ]
@@ -54,7 +54,7 @@ class TestStreamContext extends TestCase
 
     public function testGetParams()
     {
-        $params = ["notification" => "stream_notification_callback"];
+        $params = ['notification' => 'stream_notification_callback'];
         $sc = new StreamContext();
         $sc->setParams($params);
         $params = $sc->getParams();
@@ -67,7 +67,7 @@ class TestStreamContext extends TestCase
         $sc = new StreamContext();
         $opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
                     "Cookie: foo=bar\r\n"
             ]
@@ -82,7 +82,7 @@ class TestStreamContext extends TestCase
     public function testSetParams()
     {
         $sc = new StreamContext();
-        $params = ["notification" => "stream_notification_callback"];
+        $params = ['notification' => 'stream_notification_callback'];
         $sc->setParams($params);
 
         $params = $sc->getParams();
@@ -94,7 +94,7 @@ class TestStreamContext extends TestCase
     {
         $opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
                     "Cookie: foo=bar\r\n"
             ]
@@ -112,9 +112,9 @@ class TestStreamContext extends TestCase
     {
         $default_opts = [
             'http' => [
-                'method' => "GET",
+                'method' => 'GET',
                 'header' => "Accept-language: en\r\n" .
-                    "Cookie: foo=bar",
+                    'Cookie: foo=bar',
             ]
         ];
 
@@ -128,18 +128,18 @@ class TestStreamContext extends TestCase
     {
         $default_opts = [
             'http' => [
-                'method' => "GET",
-                'header' => "Accept-language: en\r\n" . "Cookie: foo=bar",
+                'method' => 'GET',
+                'header' => "Accept-language: en\r\n" . 'Cookie: foo=bar',
             ]
         ];
 
 
         $alternate_opts = [
             'http' => [
-                'method'  => "POST",
+                'method'  => 'POST',
                 'header'  => "Content-type: application/x-www-form-urlencoded\r\n" .
-                    "Content-length: " . strlen("baz=bomb"),
-                'content' => "baz=bomb"
+                    'Content-length: ' . strlen('baz=bomb'),
+                'content' => 'baz=bomb'
             ]
         ];
 

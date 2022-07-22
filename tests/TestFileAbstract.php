@@ -95,7 +95,7 @@ class TestFileAbstract extends TestCase
         $file->open('../temp/test.txt', 'w+');
         $rst1 = $file->lock(LOCK_EX);
         self::assertTrue($rst1);
-        if($rst1) {
+        if ($rst1) {
             $file->write("\n这是我要写入的内容1");
             $file->write("\n这是我要写入的内容2");
             $rst2 = $file->lock(LOCK_UN);
@@ -106,10 +106,10 @@ class TestFileAbstract extends TestCase
 
     public function testPassthru()
     {
-        if (substr(php_uname(), 0, 7) == "Windows"){
-            $cmd = "start /B php --version";
+        if (substr(php_uname(), 0, 7) == 'Windows') {
+            $cmd = 'start /B php --version';
         } else {
-            $cmd = "bash php --version";  //@todo 待验证
+            $cmd = 'bash php --version';  //@todo 待验证
         }
         $file = new FileP();
         $file->open($cmd, 'r');
@@ -212,7 +212,7 @@ class TestFileAbstract extends TestCase
 
     public function testSetBuffer()
     {
-        $fp = fopen('../temp/test.txt', "w");
+        $fp = fopen('../temp/test.txt', 'w');
         $rst = stream_set_write_buffer($fp, 0);
         var_dump($rst);
         self::assertEquals(-1, $rst);

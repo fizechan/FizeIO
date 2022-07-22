@@ -40,7 +40,7 @@ class TestStream extends TestCase
         $line1 = $stream->getLine(100);
         var_dump($line1);
         self::assertIsString($line1);
-        $line2 = $stream->getLine(100, ">");
+        $line2 = $stream->getLine(100, '>');
         var_dump($line2);
         self::assertIsString($line2);
     }
@@ -99,7 +99,7 @@ class TestStream extends TestCase
     public function testSelect()
     {
         $sock1 = $sock2 = $sock3 = fopen('../temp/testStreamFilterRemove.txt', 'w+');
-        $sockets = ["sock_1" => $sock1, "sock_2" => $sock2, "sock_3" => $sock3];
+        $sockets = ['sock_1' => $sock1, 'sock_2' => $sock2, 'sock_3' => $sock3];
 
         $read = $write = $error = $sockets;
         $num = Stream::select($read, $write, $error, 10);

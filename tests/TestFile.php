@@ -61,9 +61,9 @@ class TestFile extends TestCase
     {
         $root = dirname(__DIR__);
         $file = new File($root . '/temp/test.txt', 'a+');
-        $file->fwrite("123456");
+        $file->fwrite('123456');
         $size1 = $file->getSize();
-        $file->fwrite("789000");
+        $file->fwrite('789000');
         $size2 = $file->getSize();
         self::assertEquals($size1, $size2);
         $file->clearstatcache();

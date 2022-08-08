@@ -21,4 +21,11 @@ class TestMime extends TestCase
         $ext = $mime->getExtension();
         self::assertEquals('3gp', $ext);
     }
+
+    public function testGetByExtension()
+    {
+        $ext = '3gp';
+        $mime = Mime::getByExtension($ext);
+        self::assertEquals('video/3gp', $mime);
+    }
 }

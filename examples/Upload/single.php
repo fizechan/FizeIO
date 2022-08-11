@@ -1,7 +1,7 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use Fize\Crypt\Json;
+use Fize\Codec\Json;
 use Fize\IO\Upload;
 
 $info = Upload::single('upfile');

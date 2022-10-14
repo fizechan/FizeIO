@@ -15,10 +15,10 @@ class Extension
      */
     public static function isImage(string $ext): bool
     {
-        $imgExts = [
+        $img_exts = [
             'bmp', 'gif', 'ico', 'iff', 'jb2', 'jp2', 'jpc', 'jpeg', 'jpg', 'jph', 'jpx', 'png', 'psd', 'svg', 'swc', 'swf', 'tiff', 'wbmp', 'webp', 'xbm'
         ];
-        return in_array(strtolower($ext), $imgExts);
+        return in_array(strtolower($ext), $img_exts);
     }
 
 }

@@ -71,7 +71,7 @@ class Directory
     public function read(callable $func, bool $filter_base = false)
     {
         while (($item = readdir($this->handle)) !== false) {
-            if ($filter_base && ($item == "." || $item == "..")) {
+            if ($filter_base && ($item == '.' || $item == '..')) {
                 continue;
             }
             $func($item);
@@ -100,7 +100,7 @@ class Directory
         $handle = opendir($path);
         while (false !== ($item = readdir($handle))) {
             clearstatcache();
-            if ($item != "." && $item != "..") {
+            if ($item != '.' && $item != '..') {
                 if (is_dir("$path/$item")) {
                     $result = $result && $this->clear("$path/$item");
                     $result = $result && rmdir("$path/$item");

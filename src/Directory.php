@@ -126,11 +126,15 @@ class Directory
     /**
      * 在当前文件夹建立一个具有唯一文件名的文件
      * @param string $prefix 产生临时文件的前缀
-     * @return string|false 返回完整文件路径
+     * @return string 返回完整文件路径
      */
     public function tempnam(string $prefix = ''): string
     {
-        return tempnam($this->path, $prefix);
+        $tempnam = tempnam($this->path, $prefix);
+        if ($tempnam === false) {
+            throw new RuntimeException('cannot tempnam');
+        }
+        return $tempnam;
     }
 
     /**
@@ -198,7 +202,7 @@ class Directory
      * 返回规范化的绝对路径名
      * @param string $path  路径
      * @param bool   $check 是否检测路径真实有效
-     * @return string|false
+     * @return string
      */
     public static function realpath(string $path, bool $check = true): string
     {
@@ -209,7 +213,11 @@ class Directory
             return realpath($path);
         } else {
             if (self::exists($path)) {
-                return realpath($path);
+                $realpath = realpath($path);
+                if ($realpath === false) {
+                    throw new RuntimeException('path cannot realpath');
+                }
+                return $realpath;
             }
             $path = str_replace('\\', '/', $path);
             $last = '';

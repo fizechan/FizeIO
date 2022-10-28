@@ -137,15 +137,19 @@ class File extends SplFileObject
      * @param resource $context          上下文支持
      * @param int      $offset           插入位置偏移量
      * @param int|null $maxlen           指定读取长度
-     * @return string|false
+     * @return string
      */
     public function getContents(bool $use_include_path = false, $context = null, int $offset = 0, int $maxlen = null): string
     {
         if (is_null($maxlen)) {
-            return file_get_contents($this->path, $use_include_path, $context, $offset);
+            $contents = file_get_contents($this->path, $use_include_path, $context, $offset);
         } else {
-            return file_get_contents($this->path, $use_include_path, $context, $offset, $maxlen);
+            $contents = file_get_contents($this->path, $use_include_path, $context, $offset, $maxlen);
         }
+        if ($contents === false) {
+            throw new RuntimeException('error on file_get_contents');
+        }
+        return $contents;
     }
 
     /**
@@ -158,11 +162,15 @@ class File extends SplFileObject
      * @param mixed    $data    要写入的数据
      * @param int      $flags   指定配置
      * @param resource $context 上下文支持
-     * @return int|false
+     * @return int
      */
     public function putContents($data, int $flags = 0, $context = null): int
     {
-        return file_put_contents($this->path, $data, $flags, $context);
+        $number = file_put_contents($this->path, $data, $flags, $context);
+        if ($number === false) {
+            throw new RuntimeException('error on file_put_contents');
+        }
+        return $number;
     }
 
     /**
@@ -202,31 +210,43 @@ class File extends SplFileObject
 
     /**
      * 获取一个连接的信息
-     * @return int|false
+     * @return int
      */
     public function linkinfo(): int
     {
-        return linkinfo($this->path);
+        $linkinfo = linkinfo($this->path);
+        if ($linkinfo === false) {
+            throw new RuntimeException('error on linkinfo');
+        }
+        return $linkinfo;
     }
 
     /**
      * 读取文件并写入到输出缓冲。
      * @param bool     $use_include_path 是否在 include_path 中搜寻文件
      * @param resource $context          上下文支持
-     * @return int|false
+     * @return int
      */
     public function readfile(bool $use_include_path = false, $context = null): int
     {
-        return readfile($this->path, $use_include_path, $context);
+        $number = readfile($this->path, $use_include_path, $context);
+        if ($number === false) {
+            throw new RuntimeException('error on readfile');
+        }
+        return $number;
     }
 
     /**
      * 返回符号连接指向的目标
-     * @return string|false
+     * @return string
      */
     public function readlink(): string
     {
-        return readlink($this->path);
+        $contents = readlink($this->path);
+        if ($contents === false) {
+            throw new RuntimeException('error on readlink');
+        }
+        return $contents;
     }
 
     /**
@@ -351,7 +371,7 @@ class File extends SplFileObject
      * 返回规范化的绝对路径名
      * @param string $path  路径
      * @param bool   $check 是否检测路径真实有效
-     * @return string|false
+     * @return string
      */
     public static function realpath(string $path, bool $check = true): string
     {
@@ -359,10 +379,18 @@ class File extends SplFileObject
             if (!self::exists($path)) {
                 throw new RuntimeException('path is not exists: ' . $path);
             }
-            return realpath($path);
+            $realpath = realpath($path);
+            if ($realpath === false) {
+                throw new RuntimeException('path cannot realpath');
+            }
+            return $realpath;
         } else {
             if (self::exists($path)) {
-                return realpath($path);
+                $realpath = realpath($path);
+                if ($realpath === false) {
+                    throw new RuntimeException('path cannot realpath');
+                }
+                return $realpath;
             }
             return Directory::realpath(dirname($path), false) . DIRECTORY_SEPARATOR . basename($path);
         }

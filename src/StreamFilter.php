@@ -2,6 +2,8 @@
 
 namespace Fize\IO;
 
+use RuntimeException;
+
 /**
  * 流过滤器
  */
@@ -26,11 +28,15 @@ class StreamFilter
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数
-     * @return resource|false
+     * @return resource
      */
     public static function append($stream, string $filtername, int $read_write = null, $params = null)
     {
-        return stream_filter_append($stream, $filtername, $read_write, $params);
+        $resource = stream_filter_append($stream, $filtername, $read_write, $params);
+        if ($resource === false) {
+            throw new RuntimeException('error on stream_filter_append');
+        }
+        return $resource;
     }
 
     /**
@@ -42,11 +48,15 @@ class StreamFilter
      * @param string   $filtername 过滤器
      * @param int|null $read_write 读写模式
      * @param mixed    $params     相关参数
-     * @return resource|false
+     * @return resource
      */
     public static function prepend($stream, string $filtername, int $read_write = null, $params = null)
     {
-        return stream_filter_prepend($stream, $filtername, $read_write, $params);
+        $resource = stream_filter_prepend($stream, $filtername, $read_write, $params);
+        if ($resource === false) {
+            throw new RuntimeException('error on stream_filter_prepend');
+        }
+        return $resource;
     }
 
     /**

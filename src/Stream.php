@@ -3,6 +3,8 @@
 
 namespace Fize\IO;
 
+use RuntimeException;
+
 /**
  * 流处理
  */
@@ -14,11 +16,15 @@ class Stream extends FileF
      * @param resource $dest      目标流
      * @param int      $maxlength 最大长度
      * @param int      $offset    偏移量
-     * @return int|false 失败时返回false
+     * @return int 复制的字节数
      */
     public function copyToStream($dest, int $maxlength = -1, int $offset = 0): int
     {
-        return stream_copy_to_stream($this->stream, $dest, $maxlength, $offset);
+        $count = stream_copy_to_stream($this->stream, $dest, $maxlength, $offset);
+        if ($count === false) {
+            throw new RuntimeException('error on stream_copy_to_stream');
+        }
+        return $count;
     }
 
     /**
@@ -30,11 +36,15 @@ class Stream extends FileF
      *   如果这个数字是负数，就不进行查找，直接从当前位置开始读取。
      * @param int $maxlength 需要读取的最大的字节数
      * @param int $offset    在读取数据之前先查找指定的偏移量
-     * @return string|false 失败时返回false
+     * @return string 读取的内容
      */
     public function getContents(int $maxlength = -1, int $offset = -1): string
     {
-        return stream_get_contents($this->stream, $maxlength, $offset);
+        $string = stream_get_contents($this->stream, $maxlength, $offset);
+        if ($string === false) {
+            throw new RuntimeException('error on stream_get_contents');
+        }
+        return $string;
     }
 
     /**
@@ -51,11 +61,15 @@ class Stream extends FileF
      * 从资源流里读取一行直到给定的定界符
      * @param int         $length 需要从句柄里读取的字节数。
      * @param string|null $ending 可选参数，字符串定界符。
-     * @return string|false 如果发生错误，则返回 FALSE.
+     * @return string 读取的内容
      */
     public function getLine(int $length, string $ending = null): string
     {
-        return stream_get_line($this->stream, $length, $ending);
+        $string = stream_get_line($this->stream, $length, $ending);
+        if ($string === false) {
+            throw new RuntimeException('error on stream_get_line');
+        }
+        return $string;
     }
 
     /**
@@ -102,7 +116,6 @@ class Stream extends FileF
     /**
      * 确定流是否引用有效的终端类型设备
      * @return bool
-     * @since        PHP7.2
      */
     public function isatty(): bool
     {
@@ -112,11 +125,15 @@ class Stream extends FileF
     /**
      * 根据包含路径解析文件名
      * @param string $filename 包含路径
-     * @return string|false 失败时返回false
+     * @return string 解析后的文件名
      */
     public static function resolveIncludePath(string $filename): string
     {
-        return stream_resolve_include_path($filename);
+        $fname = stream_resolve_include_path($filename);
+        if ($fname === false) {
+            throw new RuntimeException('error on stream_resolve_include_path');
+        }
+        return $fname;
     }
 
     /**
@@ -126,11 +143,15 @@ class Stream extends FileF
      * @param array    $except  流组成的数组，以查看是否可导出
      * @param int      $tv_sec  指定秒数
      * @param int|null $tv_usec 指定微秒数
-     * @return int|false
+     * @return int
      */
     public static function select(array &$read, array &$write, array &$except, int $tv_sec, int $tv_usec = null): int
     {
-        return stream_select($read, $write, $except, $tv_sec, $tv_usec);
+        $number = stream_select($read, $write, $except, $tv_sec, $tv_usec);
+        if ($number === false) {
+            throw new RuntimeException('error on stream_select');
+        }
+        return $number;
     }
 
     /**
@@ -146,11 +167,15 @@ class Stream extends FileF
     /**
      * 设置资源流区块大小
      * @param int $chunk_size 想设置的新的区块大小。
-     * @return int|false 失败时返回false
+     * @return int 新的资源流区块大小
      */
     public function setChunkSize(int $chunk_size): int
     {
-        return stream_set_chunk_size($this->stream, $chunk_size);
+        $size = stream_set_chunk_size($this->stream, $chunk_size);
+        if ($size === false) {
+            throw new RuntimeException('error on stream_select');
+        }
+        return $size;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Fize\IO;
 
+use RuntimeException;
+
 /**
  * 缓冲区
  */
@@ -47,38 +49,54 @@ class OB
 
     /**
      * 得到当前缓冲区的内容并删除当前输出缓冲区。
-     * @return string|false 当前缓冲区的内容
+     * @return string 当前缓冲区的内容
      */
     public static function getClean(): string
     {
-        return ob_get_clean();
+        $content = ob_get_clean();
+        if ($content === false) {
+            throw new RuntimeException('error on ob_get_clean');
+        }
+        return $content;
     }
 
     /**
      * 返回输出缓冲区的内容
-     * @return string|false 如果输出缓冲区无效将返回FALSE。
+     * @return string
      */
     public static function getContents(): string
     {
-        return ob_get_contents();
+        $content = ob_get_contents();
+        if ($content === false) {
+            throw new RuntimeException('error on ob_get_contents');
+        }
+        return $content;
     }
 
     /**
      * 输出缓冲区内容，以字符串形式返回内容，并关闭输出缓冲区。
-     * @return string|false 如果没有起作用的输出缓冲区，返回FALSE。
+     * @return string
      */
     public static function getFlush(): string
     {
-        return ob_get_flush();
+        $content = ob_get_flush();
+        if ($content === false) {
+            throw new RuntimeException('error on ob_get_flush');
+        }
+        return $content;
     }
 
     /**
      * 返回输出缓冲区内容的长度
-     * @return int|false
+     * @return int
      */
     public static function getLength(): int
     {
-        return ob_get_length();
+        $length = ob_get_length();
+        if ($length === false) {
+            throw new RuntimeException('error on ob_get_length');
+        }
+        return $length;
     }
 
     /**
@@ -110,11 +128,15 @@ class OB
      * @notice 未讲过手动调用该方法的情况
      * @param string $buffer 待输出缓冲区内容
      * @param int    $mode   指定模式
-     * @return string|false 如果一个浏览器不支持压缩过的页面，此函数返回FALSE。
+     * @return string
      */
     public static function gzhandler(string $buffer, int $mode): string
     {
-        return ob_gzhandler($buffer, $mode);
+        $content = ob_gzhandler($buffer, $mode);
+        if ($content === false) {
+            throw new RuntimeException('error on ob_gzhandler');
+        }
+        return $content;
     }
 
     /**

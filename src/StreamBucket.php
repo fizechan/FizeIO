@@ -14,7 +14,7 @@ class StreamBucket
      * @param object   $bucket  桶
      * @todo 本函数还未编写文档，仅有参数列表。
      */
-    public static function append($brigade, $bucket)
+    public static function append($brigade, object $bucket)
     {
         stream_bucket_append($brigade, $bucket);
     }
@@ -25,7 +25,7 @@ class StreamBucket
      * @return object
      * @todo 本函数还未编写文档，仅有参数列表。
      */
-    public static function makeWriteable($brigade)
+    public static function makeWriteable($brigade): object
     {
         return stream_bucket_make_writeable($brigade);
     }
@@ -37,7 +37,7 @@ class StreamBucket
      * @return object
      * @todo 本函数还未编写文档，仅有参数列表。
      */
-    public static function bucketNew($stream, string $buffer)
+    public static function bucketNew($stream, string $buffer): object
     {
         return stream_bucket_new($stream, $buffer);
     }

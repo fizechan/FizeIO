@@ -2,6 +2,8 @@
 
 namespace Fize\IO;
 
+use RuntimeException;
+
 /**
  * 流套接字
  */
@@ -29,11 +31,15 @@ class StreamSocket extends Stream
      * 参数 `$want_peer` :
      *   如果设置为 TRUE ，那么将返回 remote 套接字连接名称；如果设置为 FALSE 则返回 local 套接字连接名称。
      * @param int $want_peer 是否远程套接字
-     * @return string|false
+     * @return string
      */
     public function getName(int $want_peer): string
     {
-        return stream_socket_get_name($this->stream, $want_peer);
+        $name = stream_socket_get_name($this->stream, $want_peer);
+        if ($name === false) {
+            throw new RuntimeException('error on stream_socket_get_name');
+        }
+        return $name;
     }
 
     /**
@@ -48,11 +54,15 @@ class StreamSocket extends Stream
      * @param int $domain   使用的协议族
      * @param int $type     通信类型
      * @param int $protocol 使用的传输协议
-     * @return array|false 数组包括了两个socket资源，失败返回false
+     * @return array 数组包括了两个socket资源。
      */
     public static function pair(int $domain, int $type, int $protocol): array
     {
-        return stream_socket_pair($domain, $type, $protocol);
+        $sockets = stream_socket_pair($domain, $type, $protocol);
+        if ($sockets === false) {
+            throw new RuntimeException('error on stream_socket_pair');
+        }
+        return $sockets;
     }
 
     /**
@@ -60,11 +70,15 @@ class StreamSocket extends Stream
      * @param int         $length  长度
      * @param int         $flags   标识
      * @param string|null $address 将使用远程套接字的地址填充。
-     * @return string|false 以字符串的形式返回读取的数据
+     * @return string 以字符串的形式返回读取的数据
      */
     public function recvfrom(int $length, int $flags = 0, string &$address = null): string
     {
-        return stream_socket_recvfrom($this->stream, $length, $flags, $address);
+        $content = stream_socket_recvfrom($this->stream, $length, $flags, $address);
+        if ($content === false) {
+            throw new RuntimeException('error on stream_socket_recvfrom');
+        }
+        return $content;
     }
 
     /**
@@ -72,11 +86,15 @@ class StreamSocket extends Stream
      * @param string      $data    消息
      * @param int         $flags   标识
      * @param string|null $address 将使用远程套接字的地址填充。
-     * @return int|false 以整数形式返回结果代码。
+     * @return int 以整数形式返回结果代码。
      */
     public function sendto(string $data, int $flags = 0, string $address = null): int
     {
-        return stream_socket_sendto($this->stream, $data, $flags, $address);
+        $code = stream_socket_sendto($this->stream, $data, $flags, $address);
+        if ($code === false) {
+            throw new RuntimeException('error on stream_socket_sendto');
+        }
+        return $code;
     }
 
     /**
@@ -103,7 +121,7 @@ class StreamSocket extends Stream
      *   如果包含该参数并且是可以从选中的传输数据中获取到，则将被设置给连接中的客户端主机的名称（地址）
      * @param float|null  $timeout  覆盖默认的套接字接受的超时时限
      * @param string|null $peername 设置给连接中的客户端主机的名称（地址）
-     * @return StreamSocket|false 失败时返回false
+     * @return StreamSocket
      */
     public function accept(float $timeout = null, string &$peername = null): StreamSocket
     {
@@ -113,7 +131,7 @@ class StreamSocket extends Stream
             $stream = stream_socket_accept($this->stream, $timeout, $peername);
         }
         if ($stream === false) {
-            return false;
+            throw new RuntimeException('error on stream_socket_accept');
         }
         return new StreamSocket($stream);
     }
@@ -129,7 +147,7 @@ class StreamSocket extends Stream
      * @param float|null  $timeout       超时时限。输入的时间需以秒为单位。
      * @param int         $flags         标识
      * @param resource    $context       使用stream_context_create()创建的有效上下文资源。
-     * @return StreamSocket|false 失败时返回false
+     * @return StreamSocket
      */
     public static function client(string $remote_socket, int &$errno = null, string &$errstr = null, float $timeout = null, int $flags = 4, $context = null): StreamSocket
     {
@@ -139,7 +157,7 @@ class StreamSocket extends Stream
             $stream = stream_socket_client($remote_socket, $errno, $errstr, $timeout, $flags, $context);
         }
         if ($stream === false) {
-            return false;
+            throw new RuntimeException('error on stream_socket_client');
         }
         return new StreamSocket($stream);
     }
@@ -154,7 +172,7 @@ class StreamSocket extends Stream
      * @param string|null $errstr       错误描述
      * @param int         $flags        标识
      * @param resource    $context      有效上下文资源。
-     * @return StreamSocket|false 失败时返回false
+     * @return StreamSocket
      */
     public static function server(string $local_socket, int &$errno = null, string &$errstr = null, int $flags = 12, $context = null): StreamSocket
     {
@@ -164,7 +182,7 @@ class StreamSocket extends Stream
             $stream = stream_socket_server($local_socket, $errno, $errstr, $flags, $context);
         }
         if ($stream === false) {
-            return false;
+            throw new RuntimeException('error on stream_socket_server');
         }
         return new StreamSocket($stream);
     }

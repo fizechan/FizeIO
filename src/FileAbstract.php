@@ -2,6 +2,8 @@
 
 namespace Fize\IO;
 
+use RuntimeException;
+
 /**
  * 文件
  */
@@ -50,12 +52,16 @@ abstract class FileAbstract
     }
 
     /**
-     * 从文件指针中读取一个字符。 碰到 EOF 则返回 FALSE 。
-     * @return string|false 如果碰到 EOF 则返回 FALSE。
+     * 从文件指针中读取一个字符。
+     * @return string
      */
     public function getc(): string
     {
-        return fgetc($this->stream);
+        $string = fgetc($this->stream);
+        if ($string === false) {
+            throw new RuntimeException('error on fgetc');
+        }
+        return $string;
     }
 
     /**
@@ -65,16 +71,19 @@ abstract class FileAbstract
      *   默认是 1024 字节。
      *   实际返回的字节是 $length - 1
      * @param int|null $length 规定要读取的字节数
-     * @return string|false 若失败，则返回 false。
+     * @return string
      */
     public function gets(int $length = null): string
     {
         if (is_null($length)) {
-            $rst = fgets($this->stream);
+            $string = fgets($this->stream);
         } else {
-            $rst = fgets($this->stream, $length);
+            $string = fgets($this->stream, $length);
         }
-        return $rst;
+        if ($string === false) {
+            throw new RuntimeException('error on fgets');
+        }
+        return $string;
     }
 
     /**
@@ -86,17 +95,20 @@ abstract class FileAbstract
      *   形如“<p>,<b>”
      * @param int|null    $length         规定要读取的字节数
      * @param string|null $allowable_tags 规定不会被删除的标签
-     * @return string|false
+     * @return string
      * @deprecated PHP7.3不建议使用该方法
      */
     public function getss(int $length = null, string $allowable_tags = null): string
     {
         if (is_null($length)) {
-            $rst = fgetss($this->stream);
+            $string = fgetss($this->stream);
         } else {
-            $rst = fgetss($this->stream, $length, $allowable_tags);
+            $string = fgetss($this->stream, $length, $allowable_tags);
         }
-        return $rst;
+        if ($string === false) {
+            throw new RuntimeException('error on fgetss');
+        }
+        return $string;
     }
 
     /**
@@ -115,47 +127,62 @@ abstract class FileAbstract
 
     /**
      * 输出文件指针处的所有剩余数据
-     * @return int|false 返回剩余数据字节数
+     * @return int 返回剩余数据字节数
      */
     public function passthru(): int
     {
-        return fpassthru($this->stream);
+        $number = fpassthru($this->stream);
+        if ($number === false) {
+            throw new RuntimeException('error on passthru');
+        }
+        return $number;
     }
 
     /**
      * 写入文件（可安全用于二进制文件）
      * @param string   $string 要写入的字符串
      * @param int|null $length 指定写入长度
-     * @return int|false 如果失败返回false
+     * @return int
      */
     public function puts(string $string, int $length = null): int
     {
         if (is_null($length)) {
-            $rst = fputs($this->stream, $string);
+            $number = fputs($this->stream, $string);
         } else {
-            $rst = fputs($this->stream, $string, $length);
+            $number = fputs($this->stream, $string, $length);
         }
-        return $rst;
+        if ($number === false) {
+            throw new RuntimeException('error on fputs');
+        }
+        return $number;
     }
 
     /**
      * 读取文件（可安全用于二进制文件）
      * @param int $length
-     * @return string|false
+     * @return string
      */
     public function read(int $length): string
     {
-        return fread($this->stream, $length);
+        $string = fread($this->stream, $length);
+        if ($string === false) {
+            throw new RuntimeException('error on fread');
+        }
+        return $string;
     }
 
     /**
      * 从文件中格式化输入
      * @param string $format
-     * @return array|int|false|null
+     * @return array|int|null
      */
     public function scanf(string $format)
     {
-        return fscanf($this->stream, $format);
+        $result = fscanf($this->stream, $format);
+        if ($result === false) {
+            throw new RuntimeException('error on fscanf');
+        }
+        return $result;
     }
 
     /**
@@ -178,11 +205,15 @@ abstract class FileAbstract
 
     /**
      * 返回文件指针读/写的位置
-     * @return int|false
+     * @return int
      */
     public function tell(): int
     {
-        return ftell($this->stream);
+        $position = ftell($this->stream);
+        if ($position === false) {
+            throw new RuntimeException('error on ftell');
+        }
+        return $position;
     }
 
     /**
@@ -199,16 +230,19 @@ abstract class FileAbstract
      * 写入文件（可安全用于二进制文件）
      * @param string   $string 要写入的字符串
      * @param int|null $length 指定写入长度
-     * @return int|false 失败时返回false
+     * @return int
      */
     public function write(string $string, int $length = null): int
     {
         if (is_null($length)) {
-            $rst = fwrite($this->stream, $string);
+            $number = fwrite($this->stream, $string);
         } else {
-            $rst = fwrite($this->stream, $string, $length);
+            $number = fwrite($this->stream, $string, $length);
         }
-        return $rst;
+        if ($number === false) {
+            throw new RuntimeException('error on fwrite');
+        }
+        return $number;
     }
 
     /**
@@ -223,7 +257,7 @@ abstract class FileAbstract
     /**
      * 设置当前打开文件的缓冲大小。
      * @param int $buffer 规定缓冲大小，以字节计。
-     * @return int|false 未启动句柄时返回false；否则如果成功，该函数返回 0，否则返回 EOF。
+     * @return int
      */
     public function setBuffer(int $buffer): int
     {

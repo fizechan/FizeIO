@@ -48,7 +48,7 @@ class StreamBucket
      * @param object   $bucket  桶
      * @todo 官方文档过于复杂，暂时不测试
      */
-    public static function prepend($brigade, $bucket)
+    public static function prepend($brigade, object $bucket)
     {
         stream_bucket_prepend($brigade, $bucket);
     }

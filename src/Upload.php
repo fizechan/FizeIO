@@ -186,7 +186,7 @@ class Upload
 
     /**
      * 检测上传文件类型
-     * @param mixed $mime 允许类型
+     * @param array|string $mime 允许类型
      */
     protected function checkMime($mime)
     {
@@ -201,7 +201,7 @@ class Upload
 
     /**
      * 检测上传文件后缀
-     * @param mixed $ext 允许后缀
+     * @param array|string $ext 允许后缀
      */
     protected function checkExt($ext)
     {
@@ -333,8 +333,8 @@ class Upload
 
     /**
      * 简易模式下的单文件上传
-     * @param mixed $file   文件输入框名或者$_FILES数组
-     * @param array $config 配置
+     * @param array|string $file   文件输入框名或者$_FILES数组
+     * @param array        $config 配置
      * @return array [file, path, error]
      */
     public static function single($file, array $config = []): array
@@ -351,8 +351,8 @@ class Upload
 
     /**
      * 简易模式下的多文件上传
-     * @param mixed $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
-     * @param array $config 配置
+     * @param array|string $files  多文件输入框名、文件输入框名数组或者符合$_FILES格式的数组
+     * @param array        $config 配置
      * @return array
      */
     public static function multiple($files, array $config = []): array

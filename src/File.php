@@ -334,7 +334,7 @@ class File extends SplFileObject
         if (!empty($ext)) {
             return $ext;
         }
-        $ext = (new Mime($this->getMime()))->getExtension();
+        $ext = (new MIME($this->getMime()))->getExtension();
         if (empty($ext)) {
             $ext = '';
         }

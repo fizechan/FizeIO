@@ -2,22 +2,22 @@
 
 namespace Tests;
 
-use Fize\IO\Mime;
+use Fize\IO\MIME;
 use PHPUnit\Framework\TestCase;
 
-class TestMime extends TestCase
+class TestMIME extends TestCase
 {
 
     public function test__construct()
     {
-        $mime = new Mime('video/3gp');
+        $mime = new MIME('video/3gp');
         var_dump($mime);
-        self::assertInstanceOf(Mime::class, $mime);
+        self::assertInstanceOf(MIME::class, $mime);
     }
 
     public function testGetExtension()
     {
-        $mime = new Mime('video/3gp');
+        $mime = new MIME('video/3gp');
         $ext = $mime->getExtension();
         self::assertEquals('3gp', $ext);
     }
@@ -25,7 +25,7 @@ class TestMime extends TestCase
     public function testGetByExtension()
     {
         $ext = '3gp';
-        $mime = Mime::getByExtension($ext);
+        $mime = MIME::getByExtension($ext);
         self::assertEquals('video/3gp', $mime);
     }
 }

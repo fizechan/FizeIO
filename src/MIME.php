@@ -5,7 +5,7 @@ namespace Fize\IO;
 /**
  * MIME
  */
-class Mime
+class MIME
 {
 
     /**

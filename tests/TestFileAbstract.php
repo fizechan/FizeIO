@@ -95,12 +95,10 @@ class TestFileAbstract extends TestCase
         $file->open('../temp/test.txt', 'w+');
         $rst1 = $file->lock(LOCK_EX);
         self::assertTrue($rst1);
-        if ($rst1) {
-            $file->write("\n这是我要写入的内容1");
-            $file->write("\n这是我要写入的内容2");
-            $rst2 = $file->lock(LOCK_UN);
-            self::assertTrue($rst2);
-        }
+        $file->write("\n这是我要写入的内容1");
+        $file->write("\n这是我要写入的内容2");
+        $rst2 = $file->lock(LOCK_UN);
+        self::assertTrue($rst2);
         $file->close();
     }
 

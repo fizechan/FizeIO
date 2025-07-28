@@ -13,7 +13,7 @@
       "Fize\\IO\\": "src"
     }
   },
-  "version": "9.0.1",
+  "version": "9.0.2",
   "require": {
     "php": ">=7.2.0"
   },

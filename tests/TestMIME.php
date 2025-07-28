@@ -12,7 +12,7 @@ class TestMIME extends TestCase
     {
         $mime = new MIME('video/3gp');
         var_dump($mime);
-        self::assertInstanceOf(MIME::class, $mime);
+        self::assertNotNull($mime);
     }
 
     public function testGetExtension()

@@ -144,7 +144,7 @@ class Directory
      * @param resource $context   上下文支持
      * @return bool
      */
-    public function create(int $mode = 0777, bool $recursive = false, $context = null): bool
+    public function create(int $mode = 0775, bool $recursive = false, $context = null): bool
     {
         return mkdir($this->path, $mode, $recursive, $context);
     }
@@ -175,7 +175,7 @@ class Directory
         if (self::exists($this->path)) {
             return;
         }
-        mkdir($this->path, 0777, true);
+        mkdir($this->path, 0775, true);
     }
 
     /**

@@ -29,7 +29,6 @@
   },
   "require-dev": {
     "ext-json": "*",
-    "fize/codec": "^5.0.0",
     "guzzlehttp/guzzle": "^7.4.0",
     "phpunit/phpunit": "^9.5.0"
   }

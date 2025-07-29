@@ -1,7 +1,6 @@
 <?php
 require_once "../../vendor/autoload.php";
 
-use Fize\Codec\Json;
 use Fize\IO\Upload;
 
 $upload = new Upload('upfile');
@@ -17,4 +16,4 @@ $result = [
     ]
 ];
 
-echo Json::encode($result);
+echo json_encode($result);

@@ -26,7 +26,15 @@ class File extends SplFileObject
     public function __construct($filename, $mode = 'r', $useIncludePath = false, $context = null)
     {
         if (strstr($filename, '://') === false || substr($filename, 0, 4) == 'file') {
-            if (in_array($mode, ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+'])) {
+            $autoBuild = false;
+            $wchars = ['w', 'a', 'x', '+'];
+            foreach ($wchars as $char) {
+                if (strpos($mode, $char) !== false) {
+                    $autoBuild = true;
+                    break;
+                }
+            }
+            if ($autoBuild) {
                 $dir = dirname($filename);
                 if (!is_dir($dir)) {
                     mkdir($dir, 0777, true);

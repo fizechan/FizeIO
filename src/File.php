@@ -403,4 +403,69 @@ class File extends SplFileObject
             return Directory::realpath(dirname($path), false) . DIRECTORY_SEPARATOR . basename($path);
         }
     }
+
+    /**
+     * 按文件大小分割文件
+     * @param string $targetDir 目标文件夹路径
+     * @param int    $partSize  每个分割文件的大小，单位MB
+     * @param string $prefix    分割文件的前缀名
+     * @return array 分割文件路径数组
+     */
+    public function split(string $targetDir, int $partSize, string $prefix = 'part_'): array
+    {
+        // 检查目标目录是否存在，不存在则尝试创建
+        if (!is_dir($targetDir)) {
+            if (!mkdir($targetDir, 0777, true)) {
+                throw new RuntimeException("Failed to create target directory: " . $targetDir);
+            }
+        }
+
+        $sourceFile = $this->path;
+
+        // 计算文件总大小和需要分割的数量
+        $fileSize = filesize($sourceFile);
+        $partSizeBytes = $partSize * 1024 * 1024; // 将MB转换为字节
+        $partCount = ceil($fileSize / $partSizeBytes);
+
+        $sourceHandle = fopen($sourceFile, 'rb');
+        if (!$sourceHandle) {
+            throw new RuntimeException("Failed to open source file: " . $sourceFile);
+        }
+
+        // 循环读取并创建分割文件
+        $partFiles = [];
+        for ($i = 0; $i < $partCount; $i++) {
+            $targetFile = $targetDir . '/' . $prefix . ($i + 1) . '.part';
+
+            // 以二进制写入模式打开目标文件
+            $targetHandle = fopen($targetFile, 'wb');
+            if (!$targetHandle) {
+                fclose($sourceHandle);
+                throw new RuntimeException("Failed to create part file: " . $targetFile);
+            }
+
+            // 计算本次需要读取的字节数（防止超出文件末尾）
+            $bytesToRead = min($partSizeBytes, $fileSize - ($i * $partSizeBytes));
+
+            // 从源文件读取指定大小的数据
+            $buffer = fread($sourceHandle, $bytesToRead);
+            if ($buffer === false) {
+                fclose($sourceHandle);
+                fclose($targetHandle);
+                throw new RuntimeException("Failed to read from source file: " . $sourceFile);
+            }
+
+            // 将数据写入分割文件
+            if (fwrite($targetHandle, $buffer) === false) {
+                fclose($sourceHandle);
+                fclose($targetHandle);
+                throw new RuntimeException("Failed to write to part file: " . $targetFile);
+            }
+            fclose($targetHandle);
+            $partFiles[] = $targetFile;
+        }
+        fclose($sourceHandle);
+
+        return $partFiles;
+    }
 }

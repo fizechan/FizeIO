@@ -236,4 +236,17 @@ class TestFile extends TestCase
 
         self::assertIsString($realpath);
     }
+
+    public function testSplit()
+    {
+        // 使用示例
+        $sourceFile = '/Users/sjsj/Downloads/360zip_v1.0.4.dmg'; // 替换为你的大文件路径
+        $targetDir = '/Users/sjsj/Downloads/360zip_v1.0.4_split';          // 替换为分割文件存放目录
+        $partSize = 2;                               // 每个分割文件5MB
+        $prefix = 'chunk_';                          // 分割文件前缀
+        $file = new File($sourceFile);
+        $parts = $file->split($targetDir, $partSize, $prefix);
+        print_r($parts);
+        self::assertNotEmpty($parts);
+    }
 }

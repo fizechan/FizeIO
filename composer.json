@@ -30,6 +30,6 @@
   "require-dev": {
     "ext-json": "*",
     "guzzlehttp/guzzle": "^7.4.0",
-    "phpunit/phpunit": "^9.5.0"
+    "phpunit/phpunit": "^9.6.34"
   }
 }

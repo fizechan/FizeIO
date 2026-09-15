@@ -40,7 +40,7 @@ class CSV
     {
         $row = [];
         foreach ($fields as $field) {
-            $row[] = $this->formatCsvValue($field);
+            $row[] = self::formatValue($field);
         }
         fputcsv($this->output, $row);
     }
@@ -55,7 +55,7 @@ class CSV
         fclose($this->output);
     }
 
-    private function formatCsvValue($value): string
+    public static function formatValue($value): string
     {
         if (is_array($value)) {
             $value = implode(',', $value);

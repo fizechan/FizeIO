@@ -14,7 +14,8 @@
     }
   },
   "require": {
-    "php": ">=7.2.0"
+    "php": ">=7.2.0",
+    "ext-json": "*"
   },
   "suggest": {
     "ext-exif": "*",
@@ -27,7 +28,6 @@
     }
   },
   "require-dev": {
-    "ext-json": "*",
     "guzzlehttp/guzzle": "^7.4.0",
     "phpunit/phpunit": "^9.6.34"
   }

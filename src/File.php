@@ -109,7 +109,7 @@ class File extends SplFileObject
      * @param bool        $cover 如果指定文件存在，是否覆盖
      * @return bool
      */
-    public function copy(string $dir, string $name = null, bool $cover = false): bool
+    public function copy(string $dir, ?string $name = null, bool $cover = false): bool
     {
         if (is_null($name)) {
             $name = $this->getBasename();
@@ -147,7 +147,7 @@ class File extends SplFileObject
      * @param int|null $maxlen           指定读取长度
      * @return string
      */
-    public function getContents(bool $use_include_path = false, $context = null, int $offset = 0, int $maxlen = null): string
+    public function getContents(bool $use_include_path = false, $context = null, int $offset = 0, ?int $maxlen = null): string
     {
         if (is_null($maxlen)) {
             $contents = file_get_contents($this->path, $use_include_path, $context, $offset);
@@ -294,7 +294,7 @@ class File extends SplFileObject
      * @param int|null $atime 要设定的访问时间
      * @return bool
      */
-    public function touch(int $time = null, int $atime = null): bool
+    public function touch(?int $time = null, ?int $atime = null): bool
     {
         if (is_null($time)) {
             $time = time();

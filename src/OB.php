@@ -166,7 +166,7 @@ class OB
      * @param bool          $erase           如果可选参数 erase 被赋成 FALSE，直到脚本执行完成缓冲区才被删除
      * @return bool
      */
-    public static function start(callable $output_callback = null, int $chunk_size = 0, bool $erase = true): bool
+    public static function start(?callable $output_callback = null, int $chunk_size = 0, bool $erase = true): bool
     {
         if (!$output_callback) {
             return ob_start();

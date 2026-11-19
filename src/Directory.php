@@ -91,7 +91,7 @@ class Directory
      * @param string|null $path 目录路径,不指定则为当前文件夹
      * @return bool
      */
-    public function clear(string $path = null): bool
+    public function clear(?string $path = null): bool
     {
         if (is_null($path)) {
             $path = $this->path;
